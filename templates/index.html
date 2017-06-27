@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>Data Viewer</title>
+        <style>
+        .mark:hover {
+            fill: red;
+        }
+        .selected-view__data {
+            width: 600px;
+            height: 300px;
+            overflow: scroll;
+            border: 1px solid #CCC;
+            padding: 10px;
+        }
+        .selected-view__data-annotations-col {
+            padding-left: 10px;
+            width: 200px;
+        }
+        .selected-text {
+            background-color: rgba(255, 255, 0, 0.5);
+        }
+        .selected-text:hover {
+            background-color: rgba(225, 255, 30, 0.5);
+        }
+        .row {
+            font-family: monospace;
+            font-size: 16px;
+            height: 18px;
+            margin: 0;
+        }
+        .selected-view__data-container {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+            -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+        }
+        .selected-view__new-annotation-input-container {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #CCF;
+        }
+        .selected-view__new-annotation-input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Data Viewer</h1>
+        <div class="signals-overview">
+            <div class="signals-overview__signal--code">
+                <h3>Code</h3>
+                <div class="signals-overview__signal-timeline">
+                    <svg width="900" height="50" class="signals-overview__signal-timeline-svg"></svg>
+                </div>
+            </div>
+            <div class="signals-overview__signal--serial-logs">
+                <h3>Serial Logs</h3>
+                <div class="signals-overview__signal-timeline">
+                    <svg width="900" height="50" class="signals-overview__signal-timeline-svg"></svg>
+                </div>
+            </div>
+        </div>
+        <div class="selected-view">
+            <h3>Selected View: <span class="selected-view__title">Code commit a81sflj0</span></h3>
+            <p class="selected-view__timestamp">9:43pm 6/12/2017</p>
+            <div class="selected-view__data-container">
+                <div class="selected-view__data"></div>
+                <div class="selected-view__data-annotations-col">
+                    <input type="submit" value="Add Annotation" class="selected-view__data-add-annotation">
+                    <div class="selected-view__new-annotation-input-container">
+                        <input type="text" class="selected-view__new-annotation-input">
+                        <div>
+                            <input type="submit" value="Save" class="selected-view__data-save-annotation">
+                            <input type="submit" value="Cancel" class="selected-view__data-cancel-add-annotation">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>Annotations</h3>
+            <ol class="selected-view__annotation-list">
+                <li><strong>41:0 - 42:0</strong>: projector on signal</li>
+            </ol>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+        <script src="/static/script.js"></script>
+    </body>
+</html>
