@@ -22,12 +22,12 @@ Visit `localhost:8005` and see signals, click on them, and add annotations.
 
 ### pfgp "particle flash & git push"
 ```
-pfgp PHOTON-IDENTIFIED FIRMWARE-FILE
+pfgp PHOTON-IDENTIFIED FIRMWARE-FILE-OR-FOLDER
 ```
 
 example usage:
 ```
-pfgp turkey_laser blink.ino
+pfgp turkey_laser ir_recording
 ```
 
 ---
