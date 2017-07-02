@@ -52,9 +52,10 @@
         </style>
     </head>
     <body>
+        <div class="vega-test"></div>
         <h1>Data Viewer</h1>
         <div class="signals-overview">
-            <div class="signals-overview__signal--code">
+            <!-- <div class="signals-overview__signal--code">
                 <h3>Code</h3>
                 <div class="signals-overview__signal-timeline">
                     <svg width="900" height="50" class="signals-overview__signal-timeline-svg"></svg>
@@ -65,7 +66,9 @@
                 <div class="signals-overview__signal-timeline">
                     <svg width="900" height="50" class="signals-overview__signal-timeline-svg"></svg>
                 </div>
-            </div>
+            </div> -->
+            <div class="signals-overview__signal--code"></div>
+            <div class="signals-overview__signal--serial-logs"></div>
         </div>
         <div class="selected-view">
             <h3>Selected View: <span class="selected-view__title">Code commit a81sflj0</span></h3>
@@ -94,6 +97,9 @@
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"
           integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
           crossorigin="anonymous"></script>
+        <script src="/static/underscore-min.js"></script>
+        <script src="/static/vega.js"></script>
+        <script src="/static/vega-spec--dot-timeline.js"></script>
         <script src="/static/script.js"></script>
     </body>
 </html>

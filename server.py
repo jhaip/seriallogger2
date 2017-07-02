@@ -75,11 +75,19 @@ def dataAccess():
         results = {"results": []}
         keys = ["id", "source", "timestamp", "value", "type"]
         filter_source = request.args.get('source')
+        filter_start = request.args.get('start')
+        filter_stop = request.args.get('stop')
         query = 'select * from data'
         query_args = ()
         if filter_source:
-            query = 'select * from data where source = ?'
-            query_args = (filter_source,)
+            if filter_start and filter_stop:
+                query = 'select * from data where timestamp > datetime(?) and timestamp < datetime(?)'
+                query_args = (filter_start, filter_stop)
+                print query
+                print query_args
+            else:
+                query = 'select * from data where source = ?'
+                query_args = (filter_source,)
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
         print results

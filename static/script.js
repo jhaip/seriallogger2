@@ -47,6 +47,39 @@ function addOverviewSignal(svg, data) {
             });
 }
 
+function detailViewNew(source, range) {
+    console.log("detailViewNew");
+    $(".selected-view__title").text("Detail view on "+source);
+    var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
+    var timestampText1 = moment(range[1]).format("dddd, MMMM Do YYYY, h:mm:ss a");
+    $(".selected-view__timestamp").text(timestampText0 + " - " + timestampText1);
+    $(".selected-view__annotation-list").empty();
+    $(".selected-view__new-annotation-selection").empty();
+    $(".selected-view__data").empty();
+    // stupid thing with js dates by default having the users timezone
+    var startString = moment(range[0]).utc().add(moment(range[0]).utcOffset(), 'm').toISOString();
+    var stopString = moment(range[1]).utc().add(moment(range[1]).utcOffset(), 'm').toISOString();
+    $.get("/api/data?source=" + encodeURIComponent(source)
+          + "&start=" + startString
+          + "&stop=" + stopString
+    ).done(function(d) {
+        console.log(d);
+        var rn = 0;
+        d.results.forEach(function(rawDataValue, i) {
+            var dataValue = rawDataValue.value;
+            var lines = dataValue.split(/\r\n/);
+            for (var i = 0; i < lines.length; i+=1) {
+                var subline = lines[i].split(/\n/);
+                for (var y = 0; y < subline.length; y+=1) {
+                    var $newRow = $("<pre></pre>").addClass("row").text(subline[y]).data("rn", rn);
+                    $(".selected-view__data").append($newRow);
+                    rn += 1;
+                }
+            }
+        });
+    });
+}
+
 function detailView(title, timestamp, dataId, dataValue) {
     $(".selected-view__title").text(title);
     var timestampText = moment(timestamp, moment.ISO_8601).format("dddd, MMMM Do YYYY, h:mm:ss a");
@@ -250,12 +283,45 @@ function showData() {
     d3.json("/api/data", function(data) {
       d3.select(".signals-overview__signal--code svg").selectAll("*").remove();
       d3.select(".signals-overview__signal--serial-logs svg").selectAll("*").remove();
-      that.addOverviewSignal(d3.select(".signals-overview__signal--code svg"), data.results);
-      that.addOverviewSignal(d3.select(".signals-overview__signal--serial-logs svg"), data.results);
-      setTimeout(function() {
-        console.log("polling");
-        showData();
-      }, 5000);
+    //   that.addOverviewSignal(d3.select(".signals-overview__signal--code svg"), data.results);
+    //   that.addOverviewSignal(d3.select(".signals-overview__signal--serial-logs svg"), data.results);
+    //   createTimeline(".signals-overview__signal--code",
+    //                  "900",
+    //                  [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+    //                  data.results);
+      var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
+                     "900",
+                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                     data.results);
+      view_serialLogs.addSignalListener("detailDomain", _.debounce(function(name, details) {
+        console.log(details);
+        // clear detail selection
+        // ask API for data in that range
+        if (details) {
+            detailViewNew("serial", details);
+        }
+    }, 500));
+    //   setTimeout(function() {
+    //     console.log("polling");
+    //     showData();
+    //   }, 5000);
     });
 }
 showData();
+
+
+function createTimeline(elSelector, width, domain, data) {
+    var spec = $.extend(true, {}, vegaSpec__DotTimeline);
+    spec["width"] = width;
+    spec["signals"][1]["update"] = width;
+    // spec["scales"][0]["domain"] = [domain[0], domain[1]];
+    console.log(data);
+    spec["data"][0]["values"] = JSON.parse(JSON.stringify(data));
+    // console.log(this.spec);
+    var view = new vega.View(vega.parse(spec), {
+        loader: vega.loader({baseURL: 'https://vega.github.io/vega/'}),
+        logLevel: vega.Warn,
+        renderer: 'canvas'
+    }).initialize(elSelector).hover().run();
+    return view;
+}
