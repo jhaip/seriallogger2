@@ -81,8 +81,8 @@ def dataAccess():
         query_args = ()
         if filter_source:
             if filter_start and filter_stop:
-                query = 'select * from data where timestamp > datetime(?) and timestamp < datetime(?)'
-                query_args = (filter_start, filter_stop)
+                query = 'select * from data where source = ? and timestamp > datetime(?) and timestamp < datetime(?)'
+                query_args = (filter_source, filter_start, filter_stop)
                 print query
                 print query_args
             else:
@@ -101,21 +101,23 @@ def annotationsFetch():
             abort(400)
         print data
         tdata = (data["data_id"], data["timestamp"], data["annotation"], data["value"], data["start_line"], data["start_char"], data["end_line"], data["end_char"])
-        # data = ('log-2017-06-11--20-42-24.txt',
-        #     '2017-06-09T00:57:42+00:00',
-        #     'projector remote on',
-        #     '3169354 167 84 11 30 11 31 12 30 10 11 10 32 10 12 9 31 12 30 11 83 10 31 11 31 11 11 10 31 10 11 10 11 11 11 9 11 12',
-        #     1, 0, 2, 0)
-        # log text, timestamp text, annotation text, value text, start_line integer, start_char integer, end_line integer, end_char integer)
         commit_to_db('INSERT INTO annotations (data_id, timestamp, annotation, value, start_line, start_char, end_line, end_char) VALUES (?,?,?,?,?,?,?,?)', tdata)
         return ('', 204)
     else:
         results = {"results": []}
         keys = ["id", "data_id", "timestamp", "annotation", "value", "start_line", "start_char", "end_line", "end_char"]
         filter_data_id = request.args.get('data_id')
+        filter_start = request.args.get('start')
+        filter_stop = request.args.get('stop')
         query = 'select * from annotations'
         query_args = ()
-        if filter_data_id:
+        if filter_start and filter_stop:
+            print "filtering only by start and stop"
+            query = 'select * from annotations where timestamp > ? and timestamp < ?'
+            query_args = (filter_start, filter_stop)
+            print query
+            print query_args
+        elif filter_data_id:
             query = 'select * from annotations where data_id = ?'
             query_args = (filter_data_id,)
         for r in query_db(query, query_args):

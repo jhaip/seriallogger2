@@ -59,14 +59,27 @@ function detailViewNew(source, range) {
     // stupid thing with js dates by default having the users timezone
     var startString = moment(range[0]).utc().add(moment(range[0]).utcOffset(), 'm').toISOString();
     var stopString = moment(range[1]).utc().add(moment(range[1]).utcOffset(), 'm').toISOString();
-    $.get("/api/data?source=" + encodeURIComponent(source)
-          + "&start=" + startString
-          + "&stop=" + stopString
+    var baseURL = "/api/data";
+    if (source === "annotations") {
+        baseURL = "/api/annotations";
+        startString = moment(range[0]).toISOString();
+        stopString = moment(range[1]).toISOString();
+    }
+    $.get(baseURL
+        + "?source=" + encodeURIComponent(source)
+        + "&start=" + startString
+        + "&stop=" + stopString
     ).done(function(d) {
         console.log(d);
         var rn = 0;
         d.results.forEach(function(rawDataValue, i) {
-            var dataValue = rawDataValue.value;
+            var dataValue;
+            if (source === "serial" ||
+                source === "view") {
+                dataValue = rawDataValue.value;
+            } else if (source === "annotations") {
+                dataValue = rawDataValue.annotation;
+            }
             var lines = dataValue.split(/\r\n/);
             for (var i = 0; i < lines.length; i+=1) {
                 var subline = lines[i].split(/\n/);
@@ -77,6 +90,32 @@ function detailViewNew(source, range) {
                 }
             }
         });
+    });
+
+    saveView(source, range);
+}
+
+function saveView(selectedSource, selectedRange) {
+    var viewDescription = {
+        "selectedSource": selectedSource,
+        "selectedRange": selectedRange
+    };
+    console.log(viewDescription);
+    console.log(JSON.stringify(viewDescription));
+    jQuery.ajax({
+        type: "POST",
+        url: "/api/data",
+        data: JSON.stringify({
+            "source": "view",
+            "value": JSON.stringify(viewDescription),
+            "type": "View"
+        }),
+        dataType: "json",
+        contentType: "application/json"
+    }).done(function() {
+        console.log("success saving view");
+    }).fail(function(e) {
+        console.error(e);
     });
 }
 
@@ -150,7 +189,7 @@ $(".selected-view__data-save-annotation").click(function() {
         console.log("success saving annotation");
     }).fail(function(e) {
         console.error(e);
-    })
+    });
 
     $(".selected-view__new-annotation-input-container").hide();
     $(".selected-view__new-annotation-input").val("");
@@ -279,24 +318,15 @@ function markSelection() {
 }
 
 var that = this;
-function showData() {
-    d3.json("/api/data", function(data) {
-      d3.select(".signals-overview__signal--code svg").selectAll("*").remove();
-      d3.select(".signals-overview__signal--serial-logs svg").selectAll("*").remove();
-    //   that.addOverviewSignal(d3.select(".signals-overview__signal--code svg"), data.results);
-    //   that.addOverviewSignal(d3.select(".signals-overview__signal--serial-logs svg"), data.results);
-    //   createTimeline(".signals-overview__signal--code",
-    //                  "900",
-    //                  [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-    //                  data.results);
+
+function showSerialDataTimeline() {
+    d3.json("/api/data?source=serial", function(data) {
       var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
                      "900",
                      [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
                      data.results);
       view_serialLogs.addSignalListener("detailDomain", _.debounce(function(name, details) {
         console.log(details);
-        // clear detail selection
-        // ask API for data in that range
         if (details) {
             detailViewNew("serial", details);
         }
@@ -306,6 +336,41 @@ function showData() {
     //     showData();
     //   }, 5000);
     });
+}
+function showAnnotationDataTimeline() {
+    d3.json("/api/annotations", function(data) {
+      var view_annotations = createTimeline(".signals-overview__signal--annotations",
+                     "900",
+                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                     data.results);
+      view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
+        console.log(details);
+        if (details) {
+            detailViewNew("annotations", details);
+        }
+      }, 500));
+    });
+}
+
+function showViewDataTimeline() {
+    d3.json("/api/data?source=view", function(data) {
+      var view_view = createTimeline(".signals-overview__signal--view",
+                     "900",
+                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                     data.results);
+      view_view.addSignalListener("detailDomain", _.debounce(function(name, details) {
+        console.log(details);
+        if (details) {
+            detailViewNew("view", details);
+        }
+      }, 500));
+    });
+}
+
+function showData() {
+    showSerialDataTimeline();
+    showAnnotationDataTimeline();
+    showViewDataTimeline();
 }
 showData();
 
