@@ -321,49 +321,92 @@ var that = this;
 
 function showSerialDataTimeline() {
     d3.json("/api/data?source=serial", function(data) {
-      var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
-                     "900",
-                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                     data.results);
-      view_serialLogs.addSignalListener("detailDomain", _.debounce(function(name, details) {
-        console.log(details);
-        if (details) {
-            detailViewNew("serial", details);
-        }
-    }, 500));
-    //   setTimeout(function() {
-    //     console.log("polling");
-    //     showData();
-    //   }, 5000);
+        var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
+                                             "900",
+                                             [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                                             data.results);
+        view_serialLogs.addSignalListener("detailDomain", _.debounce(function(name, details) {
+            console.log(details);
+            if (details) {
+                detailViewNew("serial", details);
+            }
+        }, 500));
+        //   setTimeout(function() {
+        //     console.log("polling");
+        //     showData();
+        //   }, 5000);
     });
 }
 function showAnnotationDataTimeline() {
     d3.json("/api/annotations", function(data) {
-      var view_annotations = createTimeline(".signals-overview__signal--annotations",
-                     "900",
-                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                     data.results);
-      view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
-        console.log(details);
-        if (details) {
-            detailViewNew("annotations", details);
-        }
-      }, 500));
+        var view_annotations = createTimeline(".signals-overview__signal--annotations",
+                                              "900",
+                                              [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                                              data.results);
+        view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
+            console.log(details);
+            if (details) {
+                detailViewNew("annotations", details);
+            }
+        }, 500));
     });
 }
 
 function showViewDataTimeline() {
     d3.json("/api/data?source=view", function(data) {
-      var view_view = createTimeline(".signals-overview__signal--view",
-                     "900",
-                     [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                     data.results);
-      view_view.addSignalListener("detailDomain", _.debounce(function(name, details) {
-        console.log(details);
-        if (details) {
-            detailViewNew("view", details);
+        var view_view = createTimeline(".signals-overview__signal--view",
+                                       "900",
+                                       [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                                       data.results);
+        view_view.addSignalListener("detailDomain", _.debounce(function(name, details) {
+            console.log(details);
+            if (details) {
+                detailViewNew("view", details);
+            }
+        }, 500));
+    });
+}
+
+function showCodeTimeline() {
+    var that = this;
+    var auth_token = Cookies.get('smv-github');
+    if (!auth_token) {
+        throw new Error('MISSING GITHUB AUTH TOKEN!');
+    }
+    $.ajax({
+        type: "GET",
+        url: "https://api.github.com/repos/jhaip/seriallogger2/commits",
+        headers: {
+            "Authorization": "Basic "+btoa("jhaip:"+auth_token)
+        },
+        data: {
+            sha: "master",
+            path: "photon/"
         }
-      }, 500));
+    }).done(function(commits) {
+        that.data = [];
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
+        var data = commits.map(function(c) {
+            return {
+                "timestamp": parseTime(c.commit.author.date),
+                "label": c.commit.message,
+                "commit": c.sha
+            };
+        });
+        console.log(data);
+
+        var view_code = createTimeline(".signals-overview__signal--code",
+                                       "900",
+                                       [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                                       data);
+        view_code.addSignalListener("detailDomain", _.debounce(function(name, details) {
+            console.log(details);
+            if (details) {
+                detailViewNew("code", details);
+            }
+        }, 500));
+    }).fail(function(err) {
+        console.error(err);
     });
 }
 
@@ -371,6 +414,7 @@ function showData() {
     showSerialDataTimeline();
     showAnnotationDataTimeline();
     showViewDataTimeline();
+    showCodeTimeline();
 }
 showData();
 
