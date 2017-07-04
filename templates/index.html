@@ -49,11 +49,13 @@
             width: 100%;
             margin-bottom: 10px;
         }
+        .p-padded-top {
+            padding-top: 1.5rem;
+        }
         </style>
     </head>
     <body>
         <div class="vega-test"></div>
-        <h1>Data Viewer</h1>
         <div class="signals-overview">
             <!-- <div class="signals-overview__signal--code">
                 <h3>Code</h3>
@@ -67,13 +69,13 @@
                     <svg width="900" height="50" class="signals-overview__signal-timeline-svg"></svg>
                 </div>
             </div> -->
-            <h5>Code</h5>
+            <div class="p-padded-top">Code</div>
             <div class="signals-overview__signal--code"></div>
-            <h5>Serial Logs</h5>
+            <div class="p-padded-top">Serial Logs</div>
             <div class="signals-overview__signal--serial-logs"></div>
-            <h5>Annotations</h5>
+            <div class="p-padded-top">Annotations</div>
             <div class="signals-overview__signal--annotations"></div>
-            <h5>View</h5>
+            <div class="p-padded-top">View</div>
             <div class="signals-overview__signal--view"></div>
         </div>
         <div class="selected-view">
