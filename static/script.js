@@ -53,7 +53,6 @@ function detailViewNew(source, range) {
     var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
     var timestampText1 = moment(range[1]).format("dddd, MMMM Do YYYY, h:mm:ss a");
     $(".selected-view__timestamp").text(timestampText0 + " - " + timestampText1);
-    $(".selected-view__annotation-list").empty();
     $(".selected-view__new-annotation-selection").empty();
     $(".selected-view__data").empty();
     // stupid thing with js dates by default having the users timezone
@@ -73,12 +72,25 @@ function detailViewNew(source, range) {
         console.log(d);
         var rn = 0;
         d.results.forEach(function(rawDataValue, i) {
+            var timestampRowText = moment(rawDataValue.timestamp).fromNow();
+            var $newTimestampRow = $("<div></div>")
+                .addClass("timestamp-row noselect")
+                .text(timestampRowText);
+            // todo: also add timestamp data to row like "rn"
+            $(".selected-view__data").append($newTimestampRow);
+
             var dataValue;
             if (source === "serial" ||
                 source === "view") {
                 dataValue = rawDataValue.value;
             } else if (source === "annotations") {
                 dataValue = rawDataValue.annotation;
+            }
+            if (source === "serial") {
+                // serial logs sometimes include a trailing newline which isn't wanted
+                if (dataValue.substring(dataValue.length-2) === "\r\n") {
+                    dataValue = dataValue.substr(0, dataValue.length-2);
+                }
             }
             var lines = dataValue.split(/\r\n/);
             for (var i = 0; i < lines.length; i+=1) {
@@ -123,7 +135,6 @@ function detailView(title, timestamp, dataId, dataValue) {
     $(".selected-view__title").text(title);
     var timestampText = moment(timestamp, moment.ISO_8601).format("dddd, MMMM Do YYYY, h:mm:ss a");
     $(".selected-view__timestamp").text(timestampText);
-    $(".selected-view__annotation-list").empty();
     $(".selected-view__new-annotation-selection").empty();
     $(".selected-view__data").empty();
     currentDataPoint = dataId;

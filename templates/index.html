@@ -52,6 +52,20 @@
         .p-padded-top {
             padding-top: 1.5rem;
         }
+        .noselect {
+            color: blue;
+          -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+             -khtml-user-select: none; /* Konqueror HTML */
+               -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Non-prefixed version, currently
+                                          supported by Chrome and Opera */
+        }
+        .timestamp-row {
+            color: #9c9c9c;
+            font-size: 12px;
+        }
         </style>
     </head>
     <body>
@@ -94,10 +108,6 @@
                     </div>
                 </div>
             </div>
-            <h3>Annotations</h3>
-            <ol class="selected-view__annotation-list">
-                <li><strong>41:0 - 42:0</strong>: projector on signal</li>
-            </ol>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
