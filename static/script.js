@@ -72,31 +72,50 @@ function detailViewNew(source, range) {
         console.log(d);
         var rn = 0;
         d.results.forEach(function(rawDataValue, i) {
-            var timestampRowText = moment(rawDataValue.timestamp).fromNow();
-            var $newTimestampRow = $("<div></div>")
-                .addClass("timestamp-row noselect")
-                .text(timestampRowText);
-            // todo: also add timestamp data to row like "rn"
-            $(".selected-view__data").append($newTimestampRow);
-
+            console.log(rawDataValue);
             var dataValue;
+            var dataId;
+            var dataType;
+            var dataTimestamp;
             if (source === "serial" ||
                 source === "view") {
                 dataValue = rawDataValue.value;
+                dataId = rawDataValue.id;
+                dataType = rawDataValue.type;
+                dataTimestamp = rawDataValue.timestamp;
             } else if (source === "annotations") {
                 dataValue = rawDataValue.annotation;
+                dataId = rawDataValue.id;
+                dataType = "Annotation";
+                dataTimestamp = rawDataValue.timestamp;
             }
+
+            // serial logs sometimes include a trailing newline which isn't wanted
             if (source === "serial") {
-                // serial logs sometimes include a trailing newline which isn't wanted
                 if (dataValue.substring(dataValue.length-2) === "\r\n") {
                     dataValue = dataValue.substr(0, dataValue.length-2);
                 }
             }
+
+            // add timestamp label row
+            var timestampRowText = moment(dataTimestamp).fromNow();
+            var $newTimestampRow = $("<div></div>")
+                .addClass("timestamp-row noselect")
+                .text(timestampRowText);
+            $(".selected-view__data").append($newTimestampRow);
+
             var lines = dataValue.split(/\r\n/);
             for (var i = 0; i < lines.length; i+=1) {
                 var subline = lines[i].split(/\n/);
                 for (var y = 0; y < subline.length; y+=1) {
-                    var $newRow = $("<pre></pre>").addClass("row").text(subline[y]).data("rn", rn);
+                    var $newRow = $("<pre></pre>")
+                        .addClass("row row-rn-"+dataId)
+                        .text(subline[y])
+                        .data("rn", rn)
+                        .data("dataid", dataId)
+                        .data("datasource", source)
+                        .data("datatype", dataType)
+                        .data("datatimestamp", dataTimestamp);
                     $(".selected-view__data").append($newRow);
                     rn += 1;
                 }
@@ -179,6 +198,7 @@ $(".selected-view__data-add-annotation").click(function() {
 $(".selected-view__data-save-annotation").click(function() {
     console.log("save")
     console.log(currentSelectionDetails);
+    return;  // TODO remove this after refactoring the backend to accept all the new annotation data
     var data = {
         "annotation": $(".selected-view__new-annotation-input").val(),
         "end_char": currentSelectionDetails.end.character,
@@ -261,11 +281,11 @@ function mark(selectionDetails) {
                               .replace(specialStartChar, "<span class='"+classString+"'>")
                               .replace(specialEndChar, "</span>"));
     } else {
-        var currentRow = startRow.next(".row");
+        var currentRow = startRow.nextAll(".row").first();
         startRow.html(startRow.html().replace(specialStartChar, "<span class='"+classString+"'>")+"</span>");
         while (!currentRow.is(endRow) && currentRow.length > 0) {
             currentRow.wrapInner("<span class='"+classString+"'></span >");
-            currentRow = currentRow.next(".row");
+            currentRow = currentRow.nextAll(".row").first();
         }
         endRow.html("<span class='"+classString+"'>"+endRow.html().replace(specialEndChar, "</span>"));
     }
@@ -297,16 +317,32 @@ function markSelection() {
     var endRow = $(s.endContainer.parentElement).closest(".row");
     var startRowNumber = startRow.data("rn");
     var endRowNumber = endRow.data("rn");
+    var startRowDataId = startRow.data("dataid");
+    var endRowDataId = endRow.data("dataid");
+    var startRowDataSource = startRow.data("datasource");
+    var endRowDataSource = endRow.data("datasource");
+    var startRowDataType = startRow.data("datatype");
+    var endRowDataType = endRow.data("datatype");
+    var startRowDataTimestamp = startRow.data("datatimestamp");
+    var endRowDataTimestamp = endRow.data("datatimestamp");
     var id = guidGenerator();
 
     var selectionDetails = {
         "start": {
             "row": startRowNumber,
-            "character": startRow[0].innerText.indexOf(specialStartChar)
+            "character": startRow[0].innerText.indexOf(specialStartChar),
+            "data_id": startRowDataId,
+            "data_source": startRowDataSource,
+            "data_type": startRowDataType,
+            "data_timestamp": startRowDataTimestamp,
         },
         "end": {
             "row": endRowNumber,
-            "character": endRow[0].innerText.replace(specialStartChar, "").indexOf(specialEndChar)-1
+            "character": endRow[0].innerText.replace(specialStartChar, "").indexOf(specialEndChar) - 1,
+            "data_id": endRowDataId,
+            "data_source": endRowDataSource,
+            "data_type": endRowDataType,
+            "data_timestamp": endRowDataTimestamp,
         },
         "id": id
     };
@@ -317,11 +353,11 @@ function markSelection() {
                               .replace("<span>"+specialStartChar+"</span>", "<span class='"+classString+"'>")
                               .replace("<span>"+specialEndChar+"</span>", "</span>"));
     } else {
-        var currentRow = startRow.next(".row");
+        var currentRow = startRow.nextAll(".row").first();
         startRow.html(startRow.html().replace("<span>"+specialStartChar+"</span>", "<span class='"+classString+"'>")+"</span>");
         while (!currentRow.is(endRow) && currentRow.length > 0) {
             currentRow.wrapInner("<span class='"+classString+"'></span >");
-            currentRow = currentRow.next(".row");
+            currentRow = currentRow.nextAll(".row").first();
         }
         endRow.html("<span class='"+classString+"'>"+endRow.html().replace("<span>"+specialEndChar+"</span>", "</span>"));
     }
