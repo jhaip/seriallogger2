@@ -47,80 +47,166 @@ function addOverviewSignal(svg, data) {
             });
 }
 
-function detailViewNew(source, range) {
-    console.log("detailViewNew");
-    $(".selected-view__title").text("Detail view on "+source);
-    var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
-    var timestampText1 = moment(range[1]).format("dddd, MMMM Do YYYY, h:mm:ss a");
-    $(".selected-view__timestamp").text(timestampText0 + " - " + timestampText1);
-    $(".selected-view__new-annotation-selection").empty();
-    $(".selected-view__data").empty();
+/**
+ * Fetch detail data in a particular time range
+ * specifically for the "serial" and "view" sources
+ */
+function fetchDetailViewData(source, range) {
+    var defer = jQuery.Deferred();
     // stupid thing with js dates by default having the users timezone
     var startString = moment(range[0]).utc().add(moment(range[0]).utcOffset(), 'm').toISOString();
     var stopString = moment(range[1]).utc().add(moment(range[1]).utcOffset(), 'm').toISOString();
     var baseURL = "/api/data";
-    if (source === "annotations") {
-        baseURL = "/api/annotations";
-        startString = moment(range[0]).toISOString();
-        stopString = moment(range[1]).toISOString();
-    }
     $.get(baseURL
         + "?source=" + encodeURIComponent(source)
         + "&start=" + startString
         + "&stop=" + stopString
     ).done(function(d) {
         console.log(d);
-        var rn = 0;
-        d.results.forEach(function(rawDataValue, i) {
-            console.log(rawDataValue);
-            var dataValue;
-            var dataId;
-            var dataType;
-            var dataTimestamp;
-            if (source === "serial" ||
-                source === "view") {
-                dataValue = rawDataValue.value;
-                dataId = rawDataValue.id;
-                dataType = rawDataValue.type;
-                dataTimestamp = rawDataValue.timestamp;
-            } else if (source === "annotations") {
-                dataValue = rawDataValue.annotation;
-                dataId = rawDataValue.id;
-                dataType = "Annotation";
-                dataTimestamp = rawDataValue.timestamp;
-            }
-
-            // serial logs sometimes include a trailing newline which isn't wanted
+        var data = d.results.map(function(rawDataValue) {
+            var dataValue = rawDataValue.value;
             if (source === "serial") {
                 if (dataValue.substring(dataValue.length-2) === "\r\n") {
                     dataValue = dataValue.substr(0, dataValue.length-2);
                 }
             }
-
-            // add timestamp label row
-            var timestampRowText = moment(dataTimestamp).fromNow();
-            var $newTimestampRow = $("<div></div>")
-                .addClass("timestamp-row noselect")
-                .text(timestampRowText);
-            $(".selected-view__data").append($newTimestampRow);
-
-            var lines = dataValue.split(/\r\n/);
-            for (var i = 0; i < lines.length; i+=1) {
-                var subline = lines[i].split(/\n/);
-                for (var y = 0; y < subline.length; y+=1) {
-                    var $newRow = $("<pre></pre>")
-                        .addClass("row row-rn-"+dataId)
-                        .text(subline[y])
-                        .data("rn", rn)
-                        .data("dataid", dataId)
-                        .data("datasource", source)
-                        .data("datatype", dataType)
-                        .data("datatimestamp", dataTimestamp);
-                    $(".selected-view__data").append($newRow);
-                    rn += 1;
-                }
-            }
+            return {
+                value: dataValue,
+                id: rawDataValue.id,
+                type: rawDataValue.type,
+                timestamp: rawDataValue.timestamp,
+            };
         });
+        defer.resolve(data);
+    }).fail(function(e) {
+        defer.reject(e);
+    });
+    return defer;
+}
+
+/**
+ * Fetch detail data for the "Annotation" source in a time range
+ */
+function fetchDetailViewAnnotations(source, range) {
+    var defer = jQuery.Deferred();
+    // stupid thing with js dates by default having the users timezone
+    var baseURL = "/api/annotations";
+    var startString = moment(range[0]).toISOString();
+    var stopString = moment(range[1]).toISOString();
+    $.get(baseURL
+        + "?source=" + encodeURIComponent(source)
+        + "&start=" + startString
+        + "&stop=" + stopString
+    ).done(function(d) {
+        console.log(d);
+        var data = d.results.map(function(rawDataValue) {
+            return {
+                value: rawDataValue.annotation,
+                id: rawDataValue.id,
+                type: "Annotation",
+                timestamp: rawDataValue.timestamp,
+            };
+        });
+        defer.resolve(data);
+    }).fail(function(e) {
+        defer.reject(e);
+    });
+    return defer;
+}
+
+/**
+ * Fetch detail data for the "Code" source in a time range
+ */
+function fetchDetailViewCode(source, range) {
+    var defer = jQuery.Deferred();
+    var auth_token = Cookies.get('smv-github');
+    if (!auth_token) {
+        throw new Error('MISSING GITHUB AUTH TOKEN!');
+    }
+    var startString = moment(range[0]).utc().add(moment(range[0]).utcOffset(), 'm').toISOString();
+    var stopString = moment(range[1]).utc().add(moment(range[1]).utcOffset(), 'm').toISOString();
+    $.ajax({
+        type: "GET",
+        url: "https://api.github.com/repos/jhaip/seriallogger2/commits",
+        headers: {
+            "Authorization": "Basic "+btoa("jhaip:"+auth_token)
+        },
+        data: {
+            sha: "master",
+            path: "photon/",
+            since: startString,
+            until: stopString,
+        }
+    }).done(function(commits) {
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
+        var data = commits.map(function(c) {
+            var value = c.commit.message;
+            value += "\r\n" + c.commit.url;
+            return {
+                value: value,
+                id: c.sha,
+                type: "code",
+                timestamp: parseTime(c.commit.author.date),
+            };
+        });
+        defer.resolve(data);
+    }).fail(function(err) {
+        defer.reject(e);
+    });
+    return defer;
+}
+
+function renderDetailViewTextView(data) {
+    var $container = $("<div></div>");
+    var rn = 0;
+    data.forEach(function(datum, i) {
+        // add timestamp label row
+        var timestampRowText = moment(datum.timestamp).fromNow();
+        var $newTimestampRow = $("<div></div>")
+            .addClass("timestamp-row noselect")
+            .text(timestampRowText);
+        $container.append($newTimestampRow);
+
+        var lines = datum.value.split(/\r\n/);
+        for (var i = 0; i < lines.length; i+=1) {
+            var subline = lines[i].split(/\n/);
+            for (var y = 0; y < subline.length; y+=1) {
+                var $newRow = $("<pre></pre>")
+                    .addClass("row row-rn-"+datum.id)
+                    .text(subline[y])
+                    .data("rn", rn)
+                    .data("dataid", datum.id)
+                    .data("datasource", datum.source)
+                    .data("datatype", datum.type)
+                    .data("datatimestamp", datum.timestamp);
+                $container.append($newRow);
+                rn += 1;
+            }
+        }
+    });
+    $(".selected-view__data").append($container);
+}
+
+function detailViewNew(source, range) {
+    $(".selected-view__title").text("Detail view on "+source);
+    var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
+    var timestampText1 = moment(range[1]).format("dddd, MMMM Do YYYY, h:mm:ss a");
+    $(".selected-view__timestamp").text(timestampText0 + " - " + timestampText1);
+    $(".selected-view__new-annotation-selection").empty();
+    $(".selected-view__data").empty();
+
+    var dataRequest;
+    if (source === "serial" ||
+        source === "view") {
+        dataRequest = fetchDetailViewData(source, range);
+    } else if (source === "annotations") {
+        dataRequest = fetchDetailViewAnnotations(source, range);
+    } else if (source === "code") {
+        dataRequest = fetchDetailViewCode(source, range);
+    }
+
+    dataRequest.done(function(data) {
+        renderDetailViewTextView(data);
     });
 
     saveView(source, range);
@@ -131,8 +217,6 @@ function saveView(selectedSource, selectedRange) {
         "selectedSource": selectedSource,
         "selectedRange": selectedRange
     };
-    console.log(viewDescription);
-    console.log(JSON.stringify(viewDescription));
     jQuery.ajax({
         type: "POST",
         url: "/api/data",
