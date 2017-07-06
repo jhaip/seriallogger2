@@ -1,51 +1,4 @@
 var currentSelectionDetails;
-var currentDataPoint;
-
-function addOverviewSignal(svg, data) {
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom,
-        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var parseTime = d3.timeParse("%d-%b-%y");
-
-    var x = d3.scaleTime()
-        .rangeRound([0, width])
-        .domain(d3.extent(data, function(d) {
-            var t = moment(d.timestamp, moment.ISO_8601).toDate();
-            return t;
-        }));
-        // .domain([
-        //     moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(),
-        //     moment().toDate(),
-        // ]);
-
-    g.append("g")
-        .attr("transform", "translate(0," + 10 + ")")
-        .call(d3.axisBottom(x))
-        .select(".domain")
-        .remove();
-
-    console.log(data);
-
-    g.selectAll(".mark")
-        .data(data)
-        .enter().append("circle")
-            .attr("class", "mark")
-            .attr("cx", function(d) {
-                console.log(d.timestamp);
-                var t = moment(d.timestamp, moment.ISO_8601).toDate();
-                console.log(t);
-                console.log(x(t));
-                return x(t);
-            })
-            .attr("cy", 0)
-            .attr("r", 5)
-            .attr("fill", "steelblue")
-            .on("click", d => {
-                detailView("Log from source "+d.source, d.timestamp, d.id, d.value);
-            });
-}
 
 /**
  * Fetch detail data in a particular time range
@@ -73,6 +26,7 @@ function fetchDetailViewData(source, range) {
             return {
                 value: dataValue,
                 id: rawDataValue.id,
+                source: source,
                 type: rawDataValue.type,
                 timestamp: rawDataValue.timestamp,
             };
@@ -91,11 +45,12 @@ function fetchDetailViewAnnotations(source, range) {
     var defer = jQuery.Deferred();
     // stupid thing with js dates by default having the users timezone
     var baseURL = "/api/annotations";
-    var startString = moment(range[0]).toISOString();
-    var stopString = moment(range[1]).toISOString();
+    console.log(moment(range[0]).utc().add(moment(range[0]).utcOffset(), 'm').toISOString());
+    console.log(moment(range[0]).utc().toISOString());
+    var startString = moment(range[0]).utc().toISOString();
+    var stopString = moment(range[1]).utc().toISOString();
     $.get(baseURL
-        + "?source=" + encodeURIComponent(source)
-        + "&start=" + startString
+        + "?start=" + startString
         + "&stop=" + stopString
     ).done(function(d) {
         console.log(d);
@@ -103,6 +58,7 @@ function fetchDetailViewAnnotations(source, range) {
             return {
                 value: rawDataValue.annotation,
                 id: rawDataValue.id,
+                source: source,
                 type: "Annotation",
                 timestamp: rawDataValue.timestamp,
             };
@@ -145,6 +101,7 @@ function fetchDetailViewCode(source, range) {
             return {
                 value: value,
                 id: c.sha,
+                source: source,
                 type: "code",
                 timestamp: parseTime(c.commit.author.date),
             };
@@ -187,6 +144,37 @@ function renderDetailViewTextView(data) {
     $(".selected-view__data").append($container);
 }
 
+function showAnnotationsOnDetailView(source, range) {
+    var startString = moment(range[0]).utc().toISOString();
+    var stopString = moment(range[1]).utc().toISOString();
+    $.get("/api/annotations"
+        + "?source=" + encodeURIComponent(source)
+        + "&start=" + startString
+        + "&stop=" + stopString).done(function(d) {
+        console.log("DETAIL VIEW'S ANNOTATIONS:");
+        console.log(d);
+        for (var i=0; i<d.results.length; i+=1) {
+            var a = d.results[i];
+            console.log(a);
+            mark({
+                "start": {
+                    "id": a.start_id,
+                    "timestamp": a.start_timestamp,
+                    "row": a.start_line,
+                    "character": a.start_char,
+                },
+                "end": {
+                    "id": a.end_id,
+                    "timestamp": a.end_timestamp,
+                    "row": a.end_line,
+                    "character": a.end_char,
+                },
+                "id": a.id
+            });
+        }
+    });
+}
+
 function detailViewNew(source, range) {
     $(".selected-view__title").text("Detail view on "+source);
     var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
@@ -207,6 +195,7 @@ function detailViewNew(source, range) {
 
     dataRequest.done(function(data) {
         renderDetailViewTextView(data);
+        showAnnotationsOnDetailView(source, range);
     });
 
     saveView(source, range);
@@ -234,44 +223,6 @@ function saveView(selectedSource, selectedRange) {
     });
 }
 
-function detailView(title, timestamp, dataId, dataValue) {
-    $(".selected-view__title").text(title);
-    var timestampText = moment(timestamp, moment.ISO_8601).format("dddd, MMMM Do YYYY, h:mm:ss a");
-    $(".selected-view__timestamp").text(timestampText);
-    $(".selected-view__new-annotation-selection").empty();
-    $(".selected-view__data").empty();
-    currentDataPoint = dataId;
-    console.log(dataValue.split(/\r\n/));
-    var lines = dataValue.split(/\r\n/);
-    var rn = 0;
-    for (var i = 0; i < lines.length; i+=1) {
-        var subline = lines[i].split(/\n/);
-        for (var y = 0; y < subline.length; y+=1) {
-            var $newRow = $("<pre></pre>").addClass("row").text(subline[y]).data("rn", rn);
-            $(".selected-view__data").append($newRow);
-            rn += 1;
-        }
-    }
-    $.get("/api/annotations?data_id="+encodeURIComponent(dataId)).done(function(d) {
-        console.log(d);
-        for (var i=0; i<d.results.length; i+=1) {
-            var a = d.results[i];
-            console.log(a);
-            mark({
-                "start": {
-                    "row": a.start_line,
-                    "character": a.start_char
-                },
-                "end": {
-                    "row": a.end_line,
-                    "character": a.end_char
-                },
-                "id": a.id
-            });
-        }
-    });
-}
-
 $(".selected-view__data-add-annotation").click(function() {
     currentSelectionDetails = markSelection();
     clearTextSelection();
@@ -282,16 +233,20 @@ $(".selected-view__data-add-annotation").click(function() {
 $(".selected-view__data-save-annotation").click(function() {
     console.log("save")
     console.log(currentSelectionDetails);
-    return;  // TODO remove this after refactoring the backend to accept all the new annotation data
     var data = {
+        "timestamp": moment().utc().toISOString(),
         "annotation": $(".selected-view__new-annotation-input").val(),
-        "end_char": currentSelectionDetails.end.character,
-        "end_line": currentSelectionDetails.end.row,
-        "data_id": currentDataPoint,
-        "start_char": currentSelectionDetails.start.character,
+        "source": currentSelectionDetails.start.data_source,
+        "source_type": currentSelectionDetails.start.data_type,
+        "value": "",
+        "start_id": currentSelectionDetails.start.data_id,
+        "start_timestamp": currentSelectionDetails.start.data_timestamp,
         "start_line": currentSelectionDetails.start.row,
-        "timestamp": moment().toISOString(),
-        "value": ""
+        "start_char": currentSelectionDetails.start.character,
+        "end_id": currentSelectionDetails.end.data_id,
+        "end_timestamp": currentSelectionDetails.end.data_timestamp,
+        "end_line": currentSelectionDetails.end.row,
+        "end_char": currentSelectionDetails.end.character,
     };
     console.log(data);
     jQuery.ajax({
@@ -347,10 +302,12 @@ function mark(selectionDetails) {
     var specialEndChar = "\u2601";
     var id = selectionDetails.id;
     var startRow = $('.row').filter(function() {
-        return $(this).data("rn") === selectionDetails.start.row;
+        // return $(this).data("rn") === selectionDetails.start.row;
+        return $(this).data("dataid") === selectionDetails.start.id;
     }).first();
     var endRow = $('.row').filter(function() {
-        return $(this).data("rn") === selectionDetails.end.row;
+        // return $(this).data("rn") === selectionDetails.end.row;
+        return $(this).data("dataid") === selectionDetails.end.id;
     }).first();
 
     // TODO: currently only works for non overlapping annotations!
@@ -470,16 +427,20 @@ function showSerialDataTimeline() {
 }
 function showAnnotationDataTimeline() {
     d3.json("/api/annotations", function(data) {
-        var view_annotations = createTimeline(".signals-overview__signal--annotations",
-                                              "900",
-                                              [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                                              data.results);
-        view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
-            console.log(details);
-            if (details) {
-                detailViewNew("annotations", details);
-            }
-        }, 500));
+        if (data.results.length > 0) {
+            var view_annotations = createTimeline(".signals-overview__signal--annotations",
+                                                  "900",
+                                                  [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
+                                                  data.results);
+            view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
+                console.log(details);
+                if (details) {
+                    detailViewNew("annotations", details);
+                }
+            }, 500));
+        } else {
+            $(".signals-overview__signal--annotations").text("No annotations");
+        }
     });
 }
 

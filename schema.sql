@@ -1,2 +1,23 @@
-CREATE TABLE annotations (id integer primary key, data_id text, timestamp text, annotation text, value text, start_line integer, start_char integer, end_line integer, end_char integer);
-CREATE TABLE data (id integer primary key, source text, timestamp text, value text, type text);
+CREATE TABLE IF NOT EXISTS annotations (
+    id integer primary key,
+    timestamp TEXT,
+    annotation TEXT,
+    source TEXT,
+    source_type TEXT,
+    value TEXT,
+    start_id TEXT,
+    start_timestamp TEXT,
+    start_line INTEGER,
+    start_char INTEGER,
+    end_id TEXT,
+    end_timestamp TEXT,
+    end_line INTEGER,
+    end_char INTEGER
+);
+CREATE TABLE IF NOT EXISTS data (
+    id integer primary key,
+    source TEXT,
+    timestamp TEXT,
+    value TEXT,
+    type TEXT
+);

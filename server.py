@@ -100,26 +100,73 @@ def annotationsFetch():
         if data is None:
             abort(400)
         print data
-        tdata = (data["data_id"], data["timestamp"], data["annotation"], data["value"], data["start_line"], data["start_char"], data["end_line"], data["end_char"])
-        commit_to_db('INSERT INTO annotations (data_id, timestamp, annotation, value, start_line, start_char, end_line, end_char) VALUES (?,?,?,?,?,?,?,?)', tdata)
+        tdata = (
+            data["timestamp"],
+            data["annotation"],
+            data["source"],
+            data["source_type"],
+            data["value"],
+            data["start_id"],
+            data["start_timestamp"],
+            data["start_line"],
+            data["start_char"],
+            data["end_id"],
+            data["end_timestamp"],
+            data["end_line"],
+            data["end_char"],
+        )
+        sql = ('INSERT INTO annotations ('
+               'timestamp, '
+               'annotation, '
+               'source, '
+               'source_type, '
+               'value, '
+               'start_id, '
+               'start_timestamp, '
+               'start_line, '
+               'start_char, '
+               'end_id, '
+               'end_timestamp, '
+               'end_line, '
+               'end_char)'
+               'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        commit_to_db(sql, tdata)
         return ('', 204)
     else:
         results = {"results": []}
-        keys = ["id", "data_id", "timestamp", "annotation", "value", "start_line", "start_char", "end_line", "end_char"]
-        filter_data_id = request.args.get('data_id')
+        keys = [
+            "id",
+            "timestamp",
+            "annotation",
+            "source",
+            "source_type",
+            "value",
+            "start_id",
+            "start_timestamp",
+            "start_line",
+            "start_char",
+            "end_id",
+            "end_timestamp",
+            "end_line",
+            "end_char",
+        ]
+        filter_source = request.args.get('source')
         filter_start = request.args.get('start')
         filter_stop = request.args.get('stop')
         query = 'select * from annotations'
         query_args = ()
         if filter_start and filter_stop:
-            print "filtering only by start and stop"
-            query = 'select * from annotations where timestamp > ? and timestamp < ?'
-            query_args = (filter_start, filter_stop)
+            if filter_source:
+                query = ('select * from annotations '
+                         'where end_timestamp > ? '
+                         'and start_timestamp < ? '
+                         'and source = ?')
+                query_args = (filter_start, filter_stop, filter_source)
+            else:
+                query = 'select * from annotations where timestamp > ? and timestamp < ?'
+                query_args = (filter_start, filter_stop)
             print query
             print query_args
-        elif filter_data_id:
-            query = 'select * from annotations where data_id = ?'
-            query_args = (filter_data_id,)
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
         print results
