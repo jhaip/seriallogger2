@@ -1,4 +1,4 @@
-var vegaSpec__DotTimeline = {
+export default {
   "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 720,
   "height": 100,

@@ -1,9 +1,15 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
+
 var currentSelectionDetails;
 
 /**
  * Fetch detail data in a particular time range
  * specifically for the "serial" and "view" sources
  */
+ // impurities: jQuery, moment
+ // category: data fetch
 function fetchDetailViewData(source, range) {
     var defer = jQuery.Deferred();
     // stupid thing with js dates by default having the users timezone
@@ -41,6 +47,8 @@ function fetchDetailViewData(source, range) {
 /**
  * Fetch detail data for the "Annotation" source in a time range
  */
+ // impurities: jQuery, moment
+ // category: data fetch
 function fetchDetailViewAnnotations(source, range) {
     var defer = jQuery.Deferred();
     // stupid thing with js dates by default having the users timezone
@@ -73,6 +81,8 @@ function fetchDetailViewAnnotations(source, range) {
 /**
  * Fetch detail data for the "Code" source in a time range
  */
+ // impurities: jQuery, moment, Cookies, d3
+ // category: data fetch
 function fetchDetailViewCode(source, range) {
     var defer = jQuery.Deferred();
     var auth_token = Cookies.get('smv-github');
@@ -113,37 +123,8 @@ function fetchDetailViewCode(source, range) {
     return defer;
 }
 
-function renderDetailViewTextView(data) {
-    var $container = $("<div></div>");
-    var rn = 0;
-    data.forEach(function(datum, i) {
-        // add timestamp label row
-        var timestampRowText = moment(datum.timestamp).fromNow();
-        var $newTimestampRow = $("<div></div>")
-            .addClass("timestamp-row noselect")
-            .text(timestampRowText);
-        $container.append($newTimestampRow);
-
-        var lines = datum.value.split(/\r\n/);
-        for (var i = 0; i < lines.length; i+=1) {
-            var subline = lines[i].split(/\n/);
-            for (var y = 0; y < subline.length; y+=1) {
-                var $newRow = $("<pre></pre>")
-                    .addClass("row row-rn-"+datum.id)
-                    .text(subline[y])
-                    .data("rn", rn)
-                    .data("dataid", datum.id)
-                    .data("datasource", datum.source)
-                    .data("datatype", datum.type)
-                    .data("datatimestamp", datum.timestamp);
-                $container.append($newRow);
-                rn += 1;
-            }
-        }
-    });
-    $(".selected-view__data").append($container);
-}
-
+// impurities: moment, mark()
+// category: data fetch AND view
 function showAnnotationsOnDetailView(source, range) {
     var startString = moment(range[0]).utc().toISOString();
     var stopString = moment(range[1]).utc().toISOString();
@@ -175,6 +156,8 @@ function showAnnotationsOnDetailView(source, range) {
     });
 }
 
+// impurities: jQuery, moment, impure function calls, jQuery selects
+// category: view AND data fetch
 function detailViewNew(source, range) {
     $(".selected-view__title").text("Detail view on "+source);
     var timestampText0 = moment(range[0]).format("dddd, MMMM Do YYYY, h:mm:ss a");
@@ -201,6 +184,8 @@ function detailViewNew(source, range) {
     saveView(source, range);
 }
 
+// impurities: jQuery
+// category: data fetch
 function saveView(selectedSource, selectedRange) {
     var viewDescription = {
         "selectedSource": selectedSource,
@@ -223,14 +208,9 @@ function saveView(selectedSource, selectedRange) {
     });
 }
 
-$(".selected-view__data-add-annotation").click(function() {
-    currentSelectionDetails = markSelection();
-    clearTextSelection();
-    $(".selected-view__new-annotation-input-container").show();
-    $(".selected-view__new-annotation-input").focus();
-});
-
-$(".selected-view__data-save-annotation").click(function() {
+// impurities: jQuery, moment, impure function calls, jQuery selects
+// category: view AND data fetch
+function onSaveAnnotation() {
     console.log("save")
     console.log(currentSelectionDetails);
     var data = {
@@ -263,14 +243,17 @@ $(".selected-view__data-save-annotation").click(function() {
 
     $(".selected-view__new-annotation-input-container").hide();
     $(".selected-view__new-annotation-input").val("");
-});
+}
 
-$(".selected-view__data-cancel-add-annotation").click(function() {
+// category: view
+function onCancelAnnotation() {
     $(".selected-view__new-annotation-input-container").hide();
     $(".selected-view__new-annotation-input").val("");
     unmark(currentSelectionDetails.id);
-});
+}
 
+// impurities: window
+// category: view
 function clearTextSelection() {
     // via https://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript
     if (window.getSelection) {
@@ -284,6 +267,8 @@ function clearTextSelection() {
     }
 }
 
+// PURE function
+// category: helper
 function guidGenerator() {
     var S4 = function() {
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -291,12 +276,16 @@ function guidGenerator() {
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
 
+// impurities: jQuery
+// category: view
 function unmark(id) {
     $(".selected-text--"+id).each(function() {
         $(this).contents().unwrap();
     });
 }
 
+// impurities: jQuery
+// category: view helper
 function mark(selectionDetails) {
     var specialStartChar = "\u2600";
     var specialEndChar = "\u2601";
@@ -332,6 +321,8 @@ function mark(selectionDetails) {
     }
 }
 
+// impurities: jQuery
+// category: view helper
 function markSelection() {
     var s = window.getSelection().getRangeAt(0);
     var specialStartChar = "\u2600";
@@ -405,8 +396,8 @@ function markSelection() {
     return selectionDetails;
 }
 
-var that = this;
-
+// impurities: d3, impure functions, underscore, moment
+// category: view
 function showSerialDataTimeline() {
     d3.json("/api/data?source=serial", function(data) {
         var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
@@ -425,6 +416,8 @@ function showSerialDataTimeline() {
         //   }, 5000);
     });
 }
+// impurities: d3, impure functions, underscore, jQuery, moment
+// category: view
 function showAnnotationDataTimeline() {
     d3.json("/api/annotations", function(data) {
         if (data.results.length > 0) {
@@ -444,6 +437,8 @@ function showAnnotationDataTimeline() {
     });
 }
 
+// impurities: d3, impure functions, underscore, moment
+// category: view
 function showViewDataTimeline() {
     d3.json("/api/data?source=view", function(data) {
         var view_view = createTimeline(".signals-overview__signal--view",
@@ -459,8 +454,9 @@ function showViewDataTimeline() {
     });
 }
 
+// impurities: jQuery, Cookies, d3, moment, etc
+// category: view
 function showCodeTimeline() {
-    var that = this;
     var auth_token = Cookies.get('smv-github');
     if (!auth_token) {
         throw new Error('MISSING GITHUB AUTH TOKEN!');
@@ -476,7 +472,6 @@ function showCodeTimeline() {
             path: "photon/"
         }
     }).done(function(commits) {
-        that.data = [];
         var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
         var data = commits.map(function(c) {
             return {
@@ -502,6 +497,8 @@ function showCodeTimeline() {
     });
 }
 
+// impurities: impure functions
+// category: view
 function showData() {
     showSerialDataTimeline();
     showAnnotationDataTimeline();
@@ -511,6 +508,8 @@ function showData() {
 showData();
 
 
+// impurities: jQuery, vega
+// category: data fetch
 function createTimeline(elSelector, width, domain, data) {
     var spec = $.extend(true, {}, vegaSpec__DotTimeline);
     spec["width"] = width;
@@ -526,3 +525,152 @@ function createTimeline(elSelector, width, domain, data) {
     }).initialize(elSelector).hover().run();
     return view;
 }
+
+function renderDetailViewTextView(data) {
+    ReactDOM.render(
+      <DetailViewText data={data} />,
+      document.getElementById('selected-view__data')
+    );
+}
+
+class DetailViewTextRow extends React.Component {
+    render() {
+      return (
+          <pre className={"row row-rn-"+this.props.id}
+               data-rn={this.props.rowNumber}
+               data-dataid={this.props.id}
+               data-datasource={this.props.dataSource}
+               data-datatype={this.props.dataType}
+               data-datatimestamp={this.props.dataTimestamp} >
+            {this.props.text}
+          </pre>
+      );
+    }
+}
+
+class DetailViewTimestampRow extends React.Component {
+    render() {
+      const text = moment(this.props.timestamp).fromNow();
+      return (
+          <div className="timestamp-row noselect">
+            {text}
+          </div>
+      );
+    }
+}
+
+let rn = 0; // BAD global state replace!
+class DetailViewTimeGroup extends React.Component {
+    render() {
+      let listRows = [];
+      let lines = this.props.value.split(/\r\n/);
+      for (let i = 0; i < lines.length; i+=1) {
+          let subline = lines[i].split(/\n/);
+          for (let y = 0; y < subline.length; y+=1) {
+              listRows.push((
+                <DetailViewTextRow id={this.props.id}
+                                   key={rn}
+                                   rowNumber={rn}
+                                   dataSource={this.props.source}
+                                   dataType={this.props.type}
+                                   dataTimestamp={this.props.timestamp}
+                                   text={subline[y]} />
+              ));
+              rn += 1;
+          }
+      }
+      return (
+          <div>
+            <DetailViewTimestampRow timestamp={this.props.timestamp} />
+            {listRows}
+          </div>
+      );
+    }
+}
+
+class DetailViewText extends React.Component {
+    render() {
+      const listRows = this.props.data.map((d) =>
+        <DetailViewTimeGroup key={d.id} {...d} />
+      );
+      return (
+          <div>
+            {listRows}
+          </div>
+      );
+    }
+}
+
+class AnnotationView extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onAddAnnotation = this.onAddAnnotation.bind(this);
+    this.onSaveAnnotation = this.onSaveAnnotation.bind(this);
+    this.onCancelAnnotation = this.onCancelAnnotation.bind(this);
+  }
+
+  onAddAnnotation(e) {
+    e.preventDefault();
+    currentSelectionDetails = markSelection();
+    clearTextSelection();
+    $(".selected-view__new-annotation-input-container").show();
+    $(".selected-view__new-annotation-input").focus();
+  }
+
+  onSaveAnnotation(e) {
+    e.preventDefault();
+    onSaveAnnotation();
+  }
+
+  onCancelAnnotation(e) {
+    e.preventDefault();
+    onCancelAnnotation();
+  }
+
+  render() {
+    return (
+        <div>
+            <input type="submit"
+                   value="Add Annotation"
+                   className="selected-view__data-add-annotation"
+                   onClick={this.onAddAnnotation} />
+            <div className="selected-view__new-annotation-input-container">
+                <input type="text" className="selected-view__new-annotation-input" />
+                <div>
+                    <input type="submit"
+                           value="Save"
+                           className="selected-view__data-save-annotation"
+                           onClick={this.onSaveAnnotation} />
+                    <input type="submit"
+                           value="Cancel"
+                           className="selected-view__data-cancel-add-annotation"
+                           onClick={this.onCancelAnnotation} />
+                </div>
+            </div>
+        </div>
+    );
+  }
+}
+
+class SelectedView extends React.Component {
+  render() {
+    return (
+        <div>
+            <h3>Selected View: <span className="selected-view__title">{this.props.title}</span></h3>
+            <p className="selected-view__timestamp">{this.props.timestamp}</p>
+            <div className="selected-view__data-container">
+                <div id="selected-view__data"></div>
+                <div className="selected-view__data-annotations-col">
+                    <AnnotationView />
+                </div>
+            </div>
+        </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <SelectedView title="Code commit a81sflj0"
+                timestamp="9:43pm 6/12/2017" />,
+  document.getElementById('selected-view')
+);

@@ -7,6 +7,11 @@ from server import init_db
 init_db()
 ```
 
+### Compile with Webpack
+```
+./node_modules/.bin/webpack -d
+```
+
 ### Run the server
 ```
 python server.py
