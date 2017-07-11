@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
+import exampleSerialData from './example-data';
+import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis } from 'victory';
 
 var currentSelectionDetails;
 
@@ -673,4 +675,41 @@ ReactDOM.render(
   <SelectedView title="Code commit a81sflj0"
                 timestamp="9:43pm 6/12/2017" />,
   document.getElementById('selected-view')
+);
+
+//exampleSerialData
+class DataOverviewTimeline extends React.Component {
+    render() {
+        return (
+          <div style={{width: '926px', height: '100px'}}>
+            <VictoryChart
+              padding={{top: 40, left: 0, right: 0, bottom: 40}}
+              width={926} height={100}
+              scale={{x: "time"}}
+              domainPadding={{x: 30, y: 50}}
+            >
+              <VictoryAxis
+                tickFormat={(x) => new Date(x).getHours()}
+                style={{
+                    axis: {stroke: "#756f6a"},
+                    axisLabel: {fontSize: 20, padding: 30},
+                    grid: {stroke: "grey"},
+                    ticks: {stroke: "grey", size: 5},
+                    tickLabels: {fontSize: 15, padding: 5}
+                }}
+              />
+              <VictoryScatter
+                data={exampleSerialData}
+                x={(datum) => new Date(datum.timestamp)}
+                y={(datum) => 0}
+              />
+            </VictoryChart>
+          </div>
+        )
+    }
+}
+
+ReactDOM.render(
+  <DataOverviewTimeline />,
+  document.getElementById('signals-overview__signal--serial-logs2')
 );
