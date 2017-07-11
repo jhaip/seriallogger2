@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
-import exampleSerialData from './example-data';
-import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis } from 'victory';
+import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis, VictoryBrushContainer } from 'victory';
 
 var currentSelectionDetails;
 
@@ -398,24 +397,25 @@ function markSelection() {
     return selectionDetails;
 }
 
+function makeOnDomainChangeHandler(source) {
+    return _.debounce(function(details) {
+        console.log(details);
+        if (details) {
+            detailViewNew(source, details.x);
+        }
+    }, 500);
+}
+
 // impurities: d3, impure functions, underscore, moment
 // category: view
 function showSerialDataTimeline() {
     d3.json("/api/data?source=serial", function(data) {
-        var view_serialLogs = createTimeline(".signals-overview__signal--serial-logs",
-                                             "900",
+        var view_serialLogs = createTimeline("signals-overview__signal--serial-logs",
+                                             900,
                                              [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                                             data.results);
-        view_serialLogs.addSignalListener("detailDomain", _.debounce(function(name, details) {
-            console.log(details);
-            if (details) {
-                detailViewNew("serial", details);
-            }
-        }, 500));
-        //   setTimeout(function() {
-        //     console.log("polling");
-        //     showData();
-        //   }, 5000);
+                                             data.results,
+                                             makeOnDomainChangeHandler("serial"));
+
     });
 }
 // impurities: d3, impure functions, underscore, jQuery, moment
@@ -423,18 +423,13 @@ function showSerialDataTimeline() {
 function showAnnotationDataTimeline() {
     d3.json("/api/annotations", function(data) {
         if (data.results.length > 0) {
-            var view_annotations = createTimeline(".signals-overview__signal--annotations",
-                                                  "900",
+            var view_annotations = createTimeline("signals-overview__signal--annotations",
+                                                  900,
                                                   [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                                                  data.results);
-            view_annotations.addSignalListener("detailDomain", _.debounce(function(name, details) {
-                console.log(details);
-                if (details) {
-                    detailViewNew("annotations", details);
-                }
-            }, 500));
+                                                  data.results,
+                                                  makeOnDomainChangeHandler("annotations"));
         } else {
-            $(".signals-overview__signal--annotations").text("No annotations");
+            $("signals-overview__signal--annotations").text("No annotations");
         }
     });
 }
@@ -443,16 +438,11 @@ function showAnnotationDataTimeline() {
 // category: view
 function showViewDataTimeline() {
     d3.json("/api/data?source=view", function(data) {
-        var view_view = createTimeline(".signals-overview__signal--view",
-                                       "900",
+        var view_view = createTimeline("signals-overview__signal--view",
+                                       900,
                                        [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                                       data.results);
-        view_view.addSignalListener("detailDomain", _.debounce(function(name, details) {
-            console.log(details);
-            if (details) {
-                detailViewNew("view", details);
-            }
-        }, 500));
+                                       data.results,
+                                       makeOnDomainChangeHandler("view"));
     });
 }
 
@@ -484,16 +474,11 @@ function showCodeTimeline() {
         });
         console.log(data);
 
-        var view_code = createTimeline(".signals-overview__signal--code",
-                                       "900",
+        var view_code = createTimeline("signals-overview__signal--code",
+                                       900,
                                        [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
-                                       data);
-        view_code.addSignalListener("detailDomain", _.debounce(function(name, details) {
-            console.log(details);
-            if (details) {
-                detailViewNew("code", details);
-            }
-        }, 500));
+                                       data,
+                                       makeOnDomainChangeHandler("code"));
     }).fail(function(err) {
         console.error(err);
     });
@@ -509,24 +494,6 @@ function showData() {
 }
 showData();
 
-
-// impurities: jQuery, vega
-// category: data fetch
-function createTimeline(elSelector, width, domain, data) {
-    var spec = $.extend(true, {}, vegaSpec__DotTimeline);
-    spec["width"] = width;
-    spec["signals"][1]["update"] = width;
-    // spec["scales"][0]["domain"] = [domain[0], domain[1]];
-    console.log(data);
-    spec["data"][0]["values"] = JSON.parse(JSON.stringify(data));
-    // console.log(this.spec);
-    var view = new vega.View(vega.parse(spec), {
-        loader: vega.loader({baseURL: 'https://vega.github.io/vega/'}),
-        logLevel: vega.Warn,
-        renderer: 'canvas'
-    }).initialize(elSelector).hover().run();
-    return view;
-}
 
 function renderDetailViewTextView(data) {
     ReactDOM.render(
@@ -677,29 +644,32 @@ ReactDOM.render(
   document.getElementById('selected-view')
 );
 
-//exampleSerialData
 class DataOverviewTimeline extends React.Component {
     render() {
         return (
-          <div style={{width: '926px', height: '100px'}}>
+          <div>
             <VictoryChart
-              padding={{top: 40, left: 0, right: 0, bottom: 40}}
-              width={926} height={100}
+              padding={{top: 0, left: 20, right: 20, bottom: 30}}
+              width={this.props.width}
+              height={60}
+              domain={{y: [0,1]}}
+              domainPadding={{x: 30}}
               scale={{x: "time"}}
-              domainPadding={{x: 30, y: 50}}
+              containerComponent={
+                <VictoryBrushContainer responsive={false}
+                  dimension="x"
+                  onDomainChange={this.props.onDomainChange}
+                />
+              }
             >
               <VictoryAxis
-                tickFormat={(x) => new Date(x).getHours()}
+                tickFormat={(x) => moment(x).format('h:mm:ss')}
                 style={{
-                    axis: {stroke: "#756f6a"},
-                    axisLabel: {fontSize: 20, padding: 30},
-                    grid: {stroke: "grey"},
-                    ticks: {stroke: "grey", size: 5},
-                    tickLabels: {fontSize: 15, padding: 5}
+                  ticks: {stroke: "grey", size: 5},
                 }}
               />
               <VictoryScatter
-                data={exampleSerialData}
+                data={this.props.data}
                 x={(datum) => new Date(datum.timestamp)}
                 y={(datum) => 0}
               />
@@ -709,7 +679,34 @@ class DataOverviewTimeline extends React.Component {
     }
 }
 
-ReactDOM.render(
-  <DataOverviewTimeline />,
-  document.getElementById('signals-overview__signal--serial-logs2')
-);
+function createTimeline(elSelector, width, domain, data, onDomainChange) {
+    // if (elSelector !== "signals-overview__signal--code") return;
+    var timestampData = data.map((d) => ({"timestamp": d.timestamp}));
+    ReactDOM.render(
+      <DataOverviewTimeline
+        width={width}
+        data={timestampData}
+        onDomainChange={onDomainChange}
+      />,
+      document.getElementById(elSelector)
+    );
+}
+
+// TODO: what is a good way to pass data to a list of overview items?
+// class DataOverviewItem extends React.Component {
+//     render() {
+//         const width = 900;
+//         let timelineBody = "Loading data";
+//         if (this.props.data !== undefined) {
+//             timelineBody = <DataOverviewTimeline width={width} data={this.props.data} />;
+//         }
+//         return (
+//             <div>
+//                 <div class="p-padded-top">{this.props.source}</div>
+//                 <div id={`signals-overview__signal--${this.props.source}`}>
+//                     {timelineBody}
+//                 </div>
+//             </div>
+//         );
+//     }
+// }
