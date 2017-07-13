@@ -1,7 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types'
+import { Provider } from 'react-redux'
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis, VictoryBrushContainer } from 'victory';
+import { createStore } from 'redux'
+import dataApp from './reducers'
+import App from './components/App'
+import { replaceViewData } from './actions'
+
+let store = createStore(dataApp)
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
+
 
 var currentSelectionDetails;
 
@@ -415,6 +431,7 @@ function showSerialDataTimeline() {
                                              [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
                                              data.results,
                                              makeOnDomainChangeHandler("serial"));
+        store.dispatch(replaceViewData("serial-logs", data.results));
 
     });
 }
@@ -428,6 +445,7 @@ function showAnnotationDataTimeline() {
                                                   [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
                                                   data.results,
                                                   makeOnDomainChangeHandler("annotations"));
+            store.dispatch(replaceViewData("annotations", data.results));
         } else {
             $("signals-overview__signal--annotations").text("No annotations");
         }
@@ -443,6 +461,7 @@ function showViewDataTimeline() {
                                        [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
                                        data.results,
                                        makeOnDomainChangeHandler("view"));
+        store.dispatch(replaceViewData("view", data.results));
     });
 }
 
@@ -479,6 +498,7 @@ function showCodeTimeline() {
                                        [moment("2017-06-11T18:42:24", moment.ISO_8601).toDate(), moment().toDate()],
                                        data,
                                        makeOnDomainChangeHandler("code"));
+        store.dispatch(replaceViewData("code", data));
     }).fail(function(err) {
         console.error(err);
     });
@@ -691,22 +711,3 @@ function createTimeline(elSelector, width, domain, data, onDomainChange) {
       document.getElementById(elSelector)
     );
 }
-
-// TODO: what is a good way to pass data to a list of overview items?
-// class DataOverviewItem extends React.Component {
-//     render() {
-//         const width = 900;
-//         let timelineBody = "Loading data";
-//         if (this.props.data !== undefined) {
-//             timelineBody = <DataOverviewTimeline width={width} data={this.props.data} />;
-//         }
-//         return (
-//             <div>
-//                 <div class="p-padded-top">{this.props.source}</div>
-//                 <div id={`signals-overview__signal--${this.props.source}`}>
-//                     {timelineBody}
-//                 </div>
-//             </div>
-//         );
-//     }
-// }
