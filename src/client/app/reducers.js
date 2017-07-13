@@ -25,7 +25,13 @@ const INITIAL_VIEW_STATE = {
 const INITIAL_SELECTED_STATE = {
     start: moment().subtract(1, 'days').toDate(),
     end: moment().toDate(),
-    sources: ["annotations"]
+    sources: ["annotations"],
+    data: {
+        "code": [],
+        "serial-logs": [],
+        "annotations": [],
+        "view": []
+    }
 }
 
 function view(state = INITIAL_VIEW_STATE, action) {

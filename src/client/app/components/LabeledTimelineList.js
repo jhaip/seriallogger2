@@ -18,8 +18,7 @@ class LabeledTimelineList extends React.Component {
         });
         return (
             <div>
-                <h3>Sources Overview</h3>
-                <p>Showing data for {moment(this.props.viewStartTime).fromNow()} - {moment(this.props.viewEndTime).fromNow()}</p>
+                <h2>Sources List</h2>
                 <p>Selection Range {moment(this.props.selectionStartTime).fromNow()} - {moment(this.props.selectionEndTime).fromNow()}</p>
                 <div>
                     {sourceList}

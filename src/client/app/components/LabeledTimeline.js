@@ -6,9 +6,7 @@ class LabeledTimeline extends React.Component {
     render() {
         return (
             <div>
-                <h3>{this.props.label}</h3>
-                Showing data for {moment(this.props.viewStartTime).fromNow()} - {moment(this.props.viewEndTime).fromNow()}
-                Selection Range {moment(this.props.selectionStartTime).fromNow()} - {moment(this.props.selectionEndTime).fromNow()}
+                <h5>{this.props.label}</h5>
                   <div>
                     <VictoryChart
                       padding={{top: 0, left: 20, right: 20, bottom: 30}}

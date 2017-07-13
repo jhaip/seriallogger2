@@ -5,9 +5,8 @@ class RangeSelection extends React.Component {
     render() {
         return (
             <div>
-                View Range Selection
-                <div>{moment(this.props.startTime).fromNow()}</div>
-                <div>{moment(this.props.endTime).fromNow()}</div>
+                <h2>View Range Selection</h2>
+                <div>{moment(this.props.startTime).fromNow()} to {moment(this.props.endTime).fromNow()}</div>
             </div>
         );
     }
