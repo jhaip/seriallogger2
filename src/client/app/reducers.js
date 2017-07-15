@@ -53,7 +53,8 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
     case CHANGE_SELECTION_RANGE:
       return Object.assign({}, state, {
         start: action.start,
-        end: action.end
+        end: action.end,
+        data: []
       })
     case CHANGE_SELECTED_SOURCE:
       return Object.assign({}, state, {
