@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import fetch from 'isomorphic-fetch'
 
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
@@ -12,14 +13,10 @@ export function changeViewRange(start, end) {
 }
 
 export function changeSelectionRange(start, end) {
-  return {
-    type: CHANGE_SELECTION_RANGE,
-    meta: {
-      debounce: 'simple',
-    },
-    start,
-    end
-  };
+  return (dispatch, getState) => {
+    dispatch({ type: CHANGE_SELECTION_RANGE, start, end });
+    dispatch(debouncedFetchDetailDataAction());
+  }
 }
 
 export function changeSelectedSource(source) {
@@ -41,6 +38,14 @@ export function receiveDetailData(source, data) {
     data
   }
 }
+
+const debouncedFetchDetailData = debounce((dispatch, getState) => {
+    const selectedSource = getState().selected.source;
+    dispatch(fetchDetailData(selectedSource));
+  },
+  1000
+);
+const debouncedFetchDetailDataAction = () => debouncedFetchDetailData;
 
 function getUtcDateString(date, normalize_timezone=false) {
   let utc_date = moment(date).utc();
@@ -115,8 +120,9 @@ function fetchDetailDataForCode(source, start, stop) {
     since: url_start,
     until: url_stop,
   };
+  const repo = "jhaip/seriallogger2";
   const urlParams = new URLSearchParams(Object.entries(params));
-  const url = `https://api.github.com/repos/jhaip/seriallogger2/commits?${urlParams}`;
+  const url = `https://api.github.com/repos/${repo}/commits?${urlParams}`;
   const options = {
     headers: {
       "Authorization": "Basic "+btoa("jhaip:"+auth_token)

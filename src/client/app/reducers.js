@@ -3,7 +3,8 @@ import {
   CHANGE_VIEW_RANGE,
   CHANGE_SELECTION_RANGE,
   CHANGE_SELECTED_SOURCE,
-  REPLACE_VIEW_DATA
+  REPLACE_VIEW_DATA,
+  RECEIVE_SELECTED_DATA
 } from './actions'
 
 const INITIAL_VIEW_STATE = {
@@ -25,13 +26,8 @@ const INITIAL_VIEW_STATE = {
 const INITIAL_SELECTED_STATE = {
     start: moment().subtract(1, 'days').toDate(),
     end: moment().toDate(),
-    sources: ["annotations"],
-    data: {
-        "code": [],
-        "serial-logs": [],
-        "annotations": [],
-        "view": []
-    }
+    source: "annotations",
+    data: []
 }
 
 function view(state = INITIAL_VIEW_STATE, action) {
@@ -61,7 +57,12 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
       })
     case CHANGE_SELECTED_SOURCE:
       return Object.assign({}, state, {
-        sources: [action.source]
+        source: action.source
+      })
+    case RECEIVE_SELECTED_DATA:
+      return Object.assign({}, state, {
+        source: action.source,
+        data: action.data
       })
     default:
       return state

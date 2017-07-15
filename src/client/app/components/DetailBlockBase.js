@@ -5,10 +5,12 @@ class DetailBlockBase extends React.Component {
     render() {
       return (
           <div>
-              <h3>Selected View: <span className="selected-view__title">{this.props.selectedSources.toString()}</span></h3>
+              <h3>Selected View: <span className="selected-view__title">{this.props.selectedSource}</span></h3>
               <p className="selected-view__timestamp">{moment(this.props.selectionStartTime).fromNow()} to {moment(this.props.selectionEndTime).fromNow()}</p>
               <div className="selected-view__data-container">
-                  <div id="selected-view__data"></div>
+                  <div id="selected-view__data">
+                    { this.props.selectedData.toString() }
+                  </div>
                   <div className="selected-view__data-annotations-col">
                       TODO
                   </div>
@@ -20,7 +22,8 @@ class DetailBlockBase extends React.Component {
 DetailBlockBase.propTypes = {
   selectionStartTime: PropTypes.instanceOf(Date).isRequired,
   selectionEndTime: PropTypes.instanceOf(Date).isRequired,
-  selectedSources: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedSource: PropTypes.string.isRequired,
+  selectedData: PropTypes.array.isRequired,
 };
 
 export default DetailBlockBase
