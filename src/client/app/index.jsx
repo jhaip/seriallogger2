@@ -1,15 +1,17 @@
+import 'babel-polyfill';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis, VictoryBrushContainer } from 'victory';
-import { createStore } from 'redux'
-import dataApp from './reducers'
+import configureStore from './configureStore'
 import App from './components/App'
-import { replaceViewData } from './actions'
+import { replaceViewData, fetchDetailData } from './actions'
 
-let store = createStore(dataApp)
+const store = configureStore()
+window.store = store;
+window.fetchDetailData = fetchDetailData;
 
 ReactDOM.render(
   <Provider store={store}>

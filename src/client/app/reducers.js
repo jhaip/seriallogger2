@@ -68,9 +68,9 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
   }
 }
 
-const dataApp = combineReducers({
+const rootReducer = combineReducers({
   view,
   selected
 })
 
-export default dataApp
+export default rootReducer
