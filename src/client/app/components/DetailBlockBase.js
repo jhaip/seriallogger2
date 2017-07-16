@@ -26,6 +26,7 @@ DetailBlockBase.propTypes = {
   selectionEndTime: PropTypes.instanceOf(Date).isRequired,
   selectedSource: PropTypes.string.isRequired,
   selectedData: PropTypes.array.isRequired,
+  selectedAnnotations: PropTypes.array.isRequired
 };
 
 export default DetailBlockBase

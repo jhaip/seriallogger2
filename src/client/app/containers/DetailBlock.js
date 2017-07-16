@@ -6,7 +6,8 @@ const mapStateToProps = state => {
     selectionStartTime: state.selected.start,
     selectionEndTime: state.selected.end,
     selectedSource: state.selected.source,
-    selectedData: state.selected.data
+    selectedData: state.selected.data,
+    selectedAnnotations: state.selected.annotations
   }
 }
 
