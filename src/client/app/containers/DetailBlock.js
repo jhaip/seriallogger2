@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import DetailBlockBase from '../components/DetailBlockBase'
+import { getAnnotatedSelectedDataTree } from '../selectors'
 
 const mapStateToProps = state => {
   return {
@@ -19,5 +20,7 @@ const DetailBlock = connect(
   mapStateToProps,
   mapDispatchToProps
 )(DetailBlockBase)
+
+window.getAnnotatedSelectedDataTree = getAnnotatedSelectedDataTree;
 
 export default DetailBlock
