@@ -16,11 +16,11 @@ class DetailViewTextRow extends React.Component {
     }
 }
 DetailViewTextRow.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.any.isRequired,
   rowNumber: PropTypes.number.isRequired,
   source: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  timestamp: PropTypes.string.isRequired,
+  timestamp: PropTypes.any.isRequired,
   text: PropTypes.string.isRequired
 };
 

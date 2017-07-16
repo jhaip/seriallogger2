@@ -12,7 +12,7 @@ class DetailViewTimestampRow extends React.Component {
     }
 }
 DetailViewTimestampRow.propTypes = {
-  timestamp: PropTypes.string.isRequired
+  timestamp: PropTypes.any.isRequired
 };
 
 export default DetailViewTimestampRow

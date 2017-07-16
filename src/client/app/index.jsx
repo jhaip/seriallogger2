@@ -7,7 +7,7 @@ import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis, VictoryBrushContainer } from 'victory';
 import configureStore from './configureStore'
 import App from './components/App'
-import { replaceViewData, fetchDetailData } from './actions'
+import { fetchOverviewData, fetchDetailData } from './actions'
 
 const store = configureStore()
 window.store = store;
@@ -19,6 +19,12 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 )
+
+store.dispatch(fetchOverviewData("code"));
+store.dispatch(fetchOverviewData("serial"));
+store.dispatch(fetchOverviewData("annotations"));
+store.dispatch(fetchOverviewData("view"));
+
 
 
 var currentSelectionDetails;
@@ -509,10 +515,10 @@ function showCodeTimeline() {
 // impurities: impure functions
 // category: view
 function showData() {
-    showSerialDataTimeline();
-    showAnnotationDataTimeline();
-    showViewDataTimeline();
-    showCodeTimeline();
+    // showSerialDataTimeline();
+    // showAnnotationDataTimeline();
+    // showViewDataTimeline();
+    // showCodeTimeline();
 }
 showData();
 
