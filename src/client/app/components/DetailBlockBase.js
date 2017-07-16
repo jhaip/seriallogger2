@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DetailViewText from "./DetailViewText"
+import AnnotationView from "./AnnotationView"
 
 class DetailBlockBase extends React.Component {
   render() {
@@ -13,7 +14,7 @@ class DetailBlockBase extends React.Component {
             <DetailViewText data={this.props.selectedData} />
           </div>
           <div className="selected-view__data-annotations-col">
-            TODO
+            <AnnotationView />
           </div>
         </div>
       </div>

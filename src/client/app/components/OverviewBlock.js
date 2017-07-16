@@ -4,14 +4,14 @@ import ViewRangeSelection from "../containers/ViewRangeSelection"
 import SourcesOverview from "../containers/SourcesOverview"
 
 class OverviewBlock extends React.Component {
-    render() {
-        return (
-            <div>
-                <ViewRangeSelection />
-                <SourcesOverview />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <ViewRangeSelection />
+        <SourcesOverview />
+      </div>
+    );
+  }
 }
 
 export default OverviewBlock

@@ -4,14 +4,14 @@ import OverviewBlock from "./OverviewBlock"
 import DetailBlock from "../containers/DetailBlock"
 
 class App extends React.Component {
-    render() {
-        return (
-            <div>
-                <OverviewBlock />
-                <DetailBlock />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <OverviewBlock />
+        <DetailBlock />
+      </div>
+    );
+  }
 }
 
 export default App
