@@ -3,16 +3,15 @@ import { createSelector } from 'reselect'
 const getSelectedData = (state) => state.selected.data
 const getSelectedAnnotations = (state) => state.selected.annotations
 
-function getRowsFromValue(value, id, source, type, timestamp) {
+function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
   let listRows = [];
   let lines = value.split(/\r\n/);
-  let rn = 0;
+  let rn = startRowNumber;
   for (let i = 0; i < lines.length; i+=1) {
     let subline = lines[i].split(/\n/);
     for (let y = 0; y < subline.length; y+=1) {
       listRows.push({
         id: id,
-        key: rn,
         rowNumber: rn,
         source: source,
         type: type,
@@ -83,19 +82,22 @@ function addAnnotationToRow(children, start, end, annotation_id) {
 
 export const getAnnotatedSelectedDataTree = createSelector(
   [ getSelectedData, getSelectedAnnotations ],
+// export const getAnnotatedSelectedDataTree =
   (data, annotations) => {
     let rows = [];
 
     // populate initial rows
+    let rn = 0;
     for (var datum of data) {
-      rows = rows.concat(getRowsFromValue(datum.value,
-                                          datum.id,
-                                          datum.source,
-                                          datum.type,
-                                          datum.timestamp));
+      const newRow = getRowsFromValue(datum.value,
+                                     datum.id,
+                                     datum.source,
+                                     datum.type,
+                                     datum.timestamp,
+                                     rn);
+      rn += newRow.length;
+      rows = rows.concat(newRow);
     }
-
-    console.log(rows);
 
     // annotate rows
     for (var annotation of annotations) {
@@ -107,14 +109,10 @@ export const getAnnotatedSelectedDataTree = createSelector(
                                                                    annotation.end.character,
                                                                    annotation.id);
         } else {
-          console.log("adding multi line annotation");
-          console.log(annotation.start.row);
-          console.log(annotation.end.row);
           rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
                                                                    annotation.start.character,
                                                                    null,
                                                                    annotation.id);
-          console.log(rows[annotation.start.row].children);
           for (var i = annotation.start.row + 1; i < annotation.end.row; i += 1) {
             rows[i].children = addAnnotationToRow(rows[i].children,
                                                   null,
@@ -129,6 +127,23 @@ export const getAnnotatedSelectedDataTree = createSelector(
       }
     }
 
-    return rows;
+    // Group consequtive rows that have the same timestamp
+    let newRows = [];
+    for (var row of rows) {
+      if ((newRows.length === 0) ||
+          (newRows[newRows.length-1].timestamp !== row.timestamp)) {
+        newRows.push({
+          id: row.id,
+          source: row.source,
+          type: row.type,
+          timestamp: row.timestamp,
+          rows: [row]
+        });
+      } else {
+        newRows[newRows.length-1].rows.push(row);
+      }
+    }
+
+    return newRows;
   }
 )

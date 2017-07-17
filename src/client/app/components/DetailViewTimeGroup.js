@@ -6,23 +6,17 @@ import DetailViewTimestampRow from "./DetailViewTimestampRow"
 let rn = 0; // BAD global state
 class DetailViewTimeGroup extends React.Component {
   render() {
-    let listRows = [];
-    let lines = this.props.value.split(/\r\n/);
-    for (let i = 0; i < lines.length; i+=1) {
-      let subline = lines[i].split(/\n/);
-      for (let y = 0; y < subline.length; y+=1) {
-        listRows.push((
-          <DetailViewTextRow id={this.props.id}
-                             key={rn}
-                             rowNumber={rn}
-                             source={this.props.source}
-                             type={this.props.type}
-                             timestamp={this.props.timestamp}
-                             text={subline[y]} />
-        ));
-        rn += 1;
-      }
-    }
+    const listRows = this.props.rows.map((r) => {
+      return (
+        <DetailViewTextRow id={this.props.id}
+                           key={r.rowNumber}
+                           rowNumber={r.rowNumber}
+                           source={this.props.source}
+                           type={this.props.type}
+                           timestamp={this.props.timestamp}
+                           childrenData={r.children} />
+      );
+    })
     return (
       <div>
         <DetailViewTimestampRow timestamp={this.props.timestamp} />
@@ -32,7 +26,6 @@ class DetailViewTimeGroup extends React.Component {
   }
 }
 DetailViewTimeGroup.propTypes = {
-  value: PropTypes.string.isRequired,
   id: PropTypes.any.isRequired,
   source: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,

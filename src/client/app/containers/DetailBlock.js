@@ -7,7 +7,7 @@ const mapStateToProps = state => {
     selectionStartTime: state.selected.start,
     selectionEndTime: state.selected.end,
     selectedSource: state.selected.source,
-    selectedData: state.selected.data,
+    selectedData: getAnnotatedSelectedDataTree(state),
     selectedAnnotations: state.selected.annotations
   }
 }
@@ -20,7 +20,5 @@ const DetailBlock = connect(
   mapStateToProps,
   mapDispatchToProps
 )(DetailBlockBase)
-
-window.getAnnotatedSelectedDataTree = getAnnotatedSelectedDataTree;
 
 export default DetailBlock
