@@ -29,40 +29,6 @@ store.dispatch(fetchOverviewData("view"));
 
 var currentSelectionDetails;
 
-
-// impurities: moment, mark()
-// category: data fetch AND view
-function showAnnotationsOnDetailView(source, range) {
-    var startString = moment(range[0]).utc().toISOString();
-    var stopString = moment(range[1]).utc().toISOString();
-    $.get("/api/annotations"
-        + "?source=" + encodeURIComponent(source)
-        + "&start=" + startString
-        + "&stop=" + stopString).done(function(d) {
-        console.log("DETAIL VIEW'S ANNOTATIONS:");
-        console.log(d);
-        for (var i=0; i<d.results.length; i+=1) {
-            var a = d.results[i];
-            console.log(a);
-            mark({
-                "start": {
-                    "id": a.start_id,
-                    "timestamp": a.start_timestamp,
-                    "row": a.start_line,
-                    "character": a.start_char,
-                },
-                "end": {
-                    "id": a.end_id,
-                    "timestamp": a.end_timestamp,
-                    "row": a.end_line,
-                    "character": a.end_char,
-                },
-                "id": a.id
-            });
-        }
-    });
-}
-
 // impurities: jQuery
 // category: data fetch
 function saveView(selectedSource, selectedRange) {
@@ -161,43 +127,6 @@ function unmark(id) {
     $(".selected-text--"+id).each(function() {
         $(this).contents().unwrap();
     });
-}
-
-// impurities: jQuery
-// category: view helper
-function mark(selectionDetails) {
-    var specialStartChar = "\u2600";
-    var specialEndChar = "\u2601";
-    var id = selectionDetails.id;
-    var startRow = $('.row').filter(function() {
-        // return $(this).data("rn") === selectionDetails.start.row;
-        return $(this).data("dataid") === selectionDetails.start.id;
-    }).first();
-    var endRow = $('.row').filter(function() {
-        // return $(this).data("rn") === selectionDetails.end.row;
-        return $(this).data("dataid") === selectionDetails.end.id;
-    }).first();
-
-    // TODO: currently only works for non overlapping annotations!
-    var newStartRowHMTL = [startRow.text().slice(0, selectionDetails.start.character), specialStartChar, startRow.text().slice(selectionDetails.start.character)].join('');
-    startRow.text(newStartRowHMTL);
-    var newEndRowHMTL = [endRow.text().slice(0, selectionDetails.end.character+1), specialEndChar, endRow.text().slice(selectionDetails.end.character+1)].join('');
-    endRow.text(newEndRowHMTL);
-
-    var classString = "selected-text selected-text--"+id;
-    if (startRow.is(endRow)) {
-        startRow.html(startRow.html()
-                              .replace(specialStartChar, "<span class='"+classString+"'>")
-                              .replace(specialEndChar, "</span>"));
-    } else {
-        var currentRow = startRow.nextAll(".row").first();
-        startRow.html(startRow.html().replace(specialStartChar, "<span class='"+classString+"'>")+"</span>");
-        while (!currentRow.is(endRow) && currentRow.length > 0) {
-            currentRow.wrapInner("<span class='"+classString+"'></span >");
-            currentRow = currentRow.nextAll(".row").first();
-        }
-        endRow.html("<span class='"+classString+"'>"+endRow.html().replace(specialEndChar, "</span>"));
-    }
 }
 
 // impurities: jQuery

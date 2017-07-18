@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import AnnotationList from "../containers/AnnotationList"
 
 class AnnotationView extends React.Component {
   constructor(props) {
@@ -47,6 +48,8 @@ class AnnotationView extends React.Component {
                    onClick={this.onCancelAnnotation} />
           </div>
         </div>
+
+        <AnnotationList />
       </div>
     );
   }
