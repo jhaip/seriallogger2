@@ -67,8 +67,8 @@ function addAnnotationToRow(children, start, end, annotation_id) {
     temp_children = split(temp_children, end, false);
   }
   for (var child of temp_children) {
-    if ((start === null || start >= chars_seen) &&
-        (  end === null || chars_seen + child.text.length < end)) {
+    if ((start === null || chars_seen >= start) &&
+        (  end === null || chars_seen + child.text.length <= end + 1)) {
       new_children.push(Object.assign({}, child, {
         annotationGroups: child.annotationGroups.concat(annotation_id)
       }));
@@ -100,7 +100,7 @@ export const getAnnotatedSelectedDataTree = createSelector(
     }
 
     // annotate rows
-    for (var annotation of annotations.slice(0,1)) {
+    for (var annotation of annotations) {
       // check that data is loaded enough to match annotation
       if (rows.length > annotation.end.row) {
         if (annotation.start.row == annotation.end.row) {
@@ -113,9 +113,7 @@ export const getAnnotatedSelectedDataTree = createSelector(
                                                                    annotation.start.character,
                                                                    null,
                                                                    annotation.id);
-          console.log(`looking at row ${annotation.start.row}`);
           for (var i = annotation.start.row + 1; i < annotation.end.row; i += 1) {
-            console.log(`looking at row ${i}`);
             rows[i].children = addAnnotationToRow(rows[i].children,
                                                   null,
                                                   null,
@@ -145,8 +143,6 @@ export const getAnnotatedSelectedDataTree = createSelector(
         newRows[newRows.length-1].rows.push(row);
       }
     }
-
-    console.log(newRows);
 
     return newRows;
   }
