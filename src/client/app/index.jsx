@@ -6,11 +6,12 @@ import { Provider } from 'react-redux'
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import configureStore from './configureStore'
 import App from './components/App'
-import { fetchOverviewData, fetchDetailData } from './actions'
+import { fetchOverviewData, fetchDetailData, changeActiveAnnotation } from './actions'
 
 const store = configureStore()
 window.store = store;
 window.fetchDetailData = fetchDetailData;
+window.changeActiveAnnotation = changeActiveAnnotation;
 
 ReactDOM.render(
   <Provider store={store}>

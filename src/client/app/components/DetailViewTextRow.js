@@ -9,7 +9,8 @@ class DetailViewTextRow extends React.Component {
       return (
         <DetailViewTextRowSubtext text={c.text}
                                   key={k++}
-                                  annotationGroups={c.annotationGroups} />
+                                  annotationGroups={c.annotationGroups}
+                                  activeAnnotation={this.props.activeAnnotation} />
       )
     })
     return (
@@ -30,7 +31,8 @@ DetailViewTextRow.propTypes = {
   source: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   timestamp: PropTypes.any.isRequired,
-  childrenData: PropTypes.array.isRequired
+  childrenData: PropTypes.array.isRequired,
+  activeAnnotation: PropTypes.string.isRequired
 };
 
 export default DetailViewTextRow

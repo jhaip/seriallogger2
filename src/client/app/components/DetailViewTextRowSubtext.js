@@ -9,7 +9,11 @@ class DetailViewTextRowSubtext extends React.Component {
     }
     for (var g of this.props.annotationGroups) {
       classes += ` selected-text--${g}`;
+      if (String(g) === String(this.props.activeAnnotation)) {
+        classes += " selected-text-active";
+      }
     }
+
     return (
       <span className={classes}>{this.props.text}</span>
     );
@@ -17,7 +21,8 @@ class DetailViewTextRowSubtext extends React.Component {
 }
 DetailViewTextRowSubtext.propTypes = {
   annotationGroups: PropTypes.array.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  activeAnnotation: PropTypes.string.isRequired,
 };
 
 export default DetailViewTextRowSubtext

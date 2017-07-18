@@ -5,7 +5,9 @@ import DetailViewTimeGroup from "./DetailViewTimeGroup"
 class DetailViewText extends React.Component {
   render() {
     const listRows = this.props.data.map((d) =>
-      <DetailViewTimeGroup key={d.id} {...d} />
+      <DetailViewTimeGroup key={d.id}
+                           {...d}
+                           activeAnnotation={this.props.activeAnnotation}/>
     );
     return (
       <div>
@@ -15,7 +17,8 @@ class DetailViewText extends React.Component {
   }
 }
 DetailViewText.propTypes = {
-  data: PropTypes.array
+  data: PropTypes.array,
+  activeAnnotation: PropTypes.string.isRequired,
 };
 
 export default DetailViewText

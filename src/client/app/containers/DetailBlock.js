@@ -8,7 +8,8 @@ const mapStateToProps = state => {
     selectionEndTime: state.selected.end,
     selectedSource: state.selected.source,
     selectedData: getAnnotatedSelectedDataTree(state),
-    selectedAnnotations: state.selected.annotations
+    selectedAnnotations: state.selected.annotations,
+    activeAnnotation: state.selected.activeAnnotation
   }
 }
 

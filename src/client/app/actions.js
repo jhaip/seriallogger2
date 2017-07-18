@@ -10,6 +10,7 @@ export const REQUEST_SELECTED_DATA = 'REQUEST_SELECTED_DATA'
 export const RECEIVE_SELECTED_DATA = 'RECEIVE_SELECTED_DATA'
 export const REQUEST_SELECTED_DATA_ANNOTATIONS = 'REQUEST_SELECTED_DATA_ANNOTATIONS'
 export const RECEIVE_SELECTED_DATA_ANNOTATIONS = 'RECEIVE_SELECTED_DATA_ANNOTATIONS'
+export const CHANGE_ACTIVE_ANNOTATION = 'CHANGE_ACTIVE_ANNOTATION'
 
 export function changeViewRange(start, end) {
   return { type: CHANGE_VIEW_RANGE, start, end }
@@ -48,6 +49,13 @@ export function requestDetailDataAnnotations(source) {
 
 export function receiveDetailDataAnnotations(source, data) {
   return { type: RECEIVE_SELECTED_DATA_ANNOTATIONS, source, data }
+}
+
+export function changeActiveAnnotation(new_active_annotation) {
+  return {
+    type: CHANGE_ACTIVE_ANNOTATION,
+    active_annotation: new_active_annotation
+  }
 }
 
 const debouncedFetchDetailData = debounce((dispatch, getState) => {

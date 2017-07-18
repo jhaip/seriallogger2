@@ -5,7 +5,8 @@ import {
   CHANGE_SELECTED_SOURCE,
   RECEIVE_OVERVIEW_DATA,
   RECEIVE_SELECTED_DATA,
-  RECEIVE_SELECTED_DATA_ANNOTATIONS
+  RECEIVE_SELECTED_DATA_ANNOTATIONS,
+  CHANGE_ACTIVE_ANNOTATION
 } from './actions'
 
 const INITIAL_VIEW_STATE = {
@@ -29,7 +30,8 @@ const INITIAL_SELECTED_STATE = {
     end: moment().toDate(),
     source: "serial",
     data: [],
-    annotations: []
+    annotations: [],
+    activeAnnotation: ""
 }
 
 function view(state = INITIAL_VIEW_STATE, action) {
@@ -71,6 +73,10 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
     case RECEIVE_SELECTED_DATA_ANNOTATIONS:
       return Object.assign({}, state, {
         annotations: action.data
+      })
+    case CHANGE_ACTIVE_ANNOTATION:
+      return Object.assign({}, state, {
+        activeAnnotation: action.active_annotation
       })
     default:
       return state
