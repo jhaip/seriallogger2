@@ -4,9 +4,11 @@ import DetailViewTextRowSubtext from  "./DetailViewTextRowSubtext"
 
 class DetailViewTextRow extends React.Component {
   render() {
+    let k = 0;
     const childrenn = this.props.childrenData.map((c) => {
       return (
         <DetailViewTextRowSubtext text={c.text}
+                                  key={k++}
                                   annotationGroups={c.annotationGroups} />
       )
     })

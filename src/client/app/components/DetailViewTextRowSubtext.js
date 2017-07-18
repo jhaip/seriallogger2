@@ -3,8 +3,11 @@ import PropTypes from 'prop-types'
 
 class DetailViewTextRowSubtext extends React.Component {
   render() {
-    let classes = "selected-text"
-    for (var g in this.props.annotationGroups) {
+    let classes = "";
+    if (this.props.annotationGroups.length) {
+      classes = "selected-text";
+    }
+    for (var g of this.props.annotationGroups) {
       classes += ` selected-text--${g}`;
     }
     return (
