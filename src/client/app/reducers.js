@@ -10,7 +10,7 @@ import {
 } from './actions'
 
 const INITIAL_VIEW_STATE = {
-    start: moment().subtract(20, 'days').toDate(),
+    start: moment().subtract(25, 'days').toDate(),
     end: moment().toDate(),
     sources: [
         "code",

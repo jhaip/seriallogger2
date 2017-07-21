@@ -4,7 +4,7 @@ import AnnotationListBase from '../components/AnnotationListBase'
 const mapStateToProps = state => {
   return {
     annotations: state.selected.annotations,
-    activeAnnotation: state.selected.activeAnnotation
+    activeAnnotation: String(state.selected.activeAnnotation)
   }
 }
 
