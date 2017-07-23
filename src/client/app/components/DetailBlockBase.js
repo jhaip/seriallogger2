@@ -5,6 +5,7 @@ import AnnotationView from "./AnnotationView"
 
 class DetailBlockBase extends React.Component {
   render() {
+    console.log(this.props.selectedData);
     return (
       <div>
         <h3>Selected View: <span className="selected-view__title">{this.props.selectedSource}</span></h3>
@@ -28,7 +29,7 @@ DetailBlockBase.propTypes = {
   selectedSource: PropTypes.string.isRequired,
   selectedData: PropTypes.array.isRequired,
   selectedAnnotations: PropTypes.array.isRequired,
-  activeAnnotation: PropTypes.string.isRequired
+  activeAnnotation: PropTypes.string.isRequired,
 };
 
 export default DetailBlockBase

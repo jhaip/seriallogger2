@@ -2,6 +2,7 @@ import { createSelector } from 'reselect'
 
 const getSelectedData = (state) => state.selected.data
 const getSelectedAnnotations = (state) => state.selected.annotations
+const getPotentialAnnotation = (state) =>  state.selected.potential_annotation
 
 function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
   let listRows = [];
@@ -81,9 +82,8 @@ function addAnnotationToRow(children, start, end, annotation_id) {
 }
 
 export const getAnnotatedSelectedDataTree = createSelector(
-  [ getSelectedData, getSelectedAnnotations ],
-// export const getAnnotatedSelectedDataTree =
-  (data, annotations) => {
+  [ getSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
+  (data, annotations, potential_annotation) => {
     let rows = [];
 
     // populate initial rows
@@ -100,7 +100,9 @@ export const getAnnotatedSelectedDataTree = createSelector(
     }
 
     // annotate rows
-    for (var annotation of annotations) {
+    const a = potential_annotation === null ? [] : potential_annotation;
+    for (var annotation of annotations.concat(a)) {
+      console.log(annotation);
       // check that data is loaded enough to match annotation
       if (rows.length > annotation.end.row) {
         if (annotation.start.row == annotation.end.row) {
