@@ -72,3 +72,6 @@
 .annotation-list__item--active {
     background-color: rgba(0, 255, 0, 0.5);
 }
+.c-detail-block-base {
+    margin-top: 20px;
+}

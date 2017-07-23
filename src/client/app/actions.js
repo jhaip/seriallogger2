@@ -26,7 +26,11 @@ export function changeSelectionRange(start, end) {
 }
 
 export function changeSelectedSource(source) {
-  return { type: CHANGE_SELECTED_SOURCE, source }
+  return (dispatch, getState) => {
+    dispatch({ type: CHANGE_SELECTED_SOURCE, source });
+    dispatch(fetchDetailData(source));
+    dispatch(fetchAnnotationsForDetailDataAction(source));
+  }
 }
 
 export function requestOverviewData(source) {
@@ -220,7 +224,7 @@ function fetchAnnotationsForDetailData(source, start, stop) {
   const url_stop = getUtcDateString(stop);
   const url = `/api/annotations`
     + `?source=${url_source}`
-    + `start=${url_start}`
+    + `&start=${url_start}`
     + `&stop=${url_stop}`;
   return new Promise((resolve, reject) => {
     fetch(url)

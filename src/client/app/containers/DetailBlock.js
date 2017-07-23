@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import DetailBlockBase from '../components/DetailBlockBase'
 import { getAnnotatedSelectedDataTree } from '../selectors'
+import { changeSelectedSource } from '../actions'
 
 const mapStateToProps = state => {
   return {
@@ -9,12 +10,17 @@ const mapStateToProps = state => {
     selectedSource: state.selected.source,
     selectedData: getAnnotatedSelectedDataTree(state),
     selectedAnnotations: state.selected.annotations,
-    activeAnnotation: String(state.selected.activeAnnotation)
+    activeAnnotation: String(state.selected.activeAnnotation),
+    availableSources: state.view.sources
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    onSelectedSourceChange: (source) => {
+      dispatch(changeSelectedSource(source))
+    }
+  }
 }
 
 const DetailBlock = connect(

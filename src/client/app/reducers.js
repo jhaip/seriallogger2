@@ -66,7 +66,11 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
       })
     case CHANGE_SELECTED_SOURCE:
       return Object.assign({}, state, {
-        source: action.source
+        source: action.source,
+        data: [],
+        annotations: [],
+        activeAnnotation: "",
+        potential_annotation: null
       })
     case RECEIVE_SELECTED_DATA:
       return Object.assign({}, state, {
