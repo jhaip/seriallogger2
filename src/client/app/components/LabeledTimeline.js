@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 import { VictoryScatter, VictoryChart, VictoryTheme, VictoryAxis, VictoryBrushContainer } from 'victory';
 
 class LabeledTimeline extends React.Component {

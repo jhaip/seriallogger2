@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import { changeSelectionRange } from '../actions'
 import LabeledTimelineList from '../components/LabeledTimelineList'
+import moment from 'moment'
 
 const mapStateToProps = state => {
   return {

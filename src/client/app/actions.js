@@ -1,5 +1,6 @@
 import { debounce } from 'lodash';
 import fetch from 'isomorphic-fetch'
+import moment from 'moment'
 
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const CHANGE_SELECTION_RANGE = 'CHANGE_SELECTION_RANGE'

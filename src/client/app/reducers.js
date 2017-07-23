@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import moment from 'moment'
 import {
   CHANGE_VIEW_RANGE,
   CHANGE_SELECTION_RANGE,
