@@ -267,23 +267,42 @@ export function saveNewAnnotation(annotation) {
     const currentSelectionDetails = getState().selected.potential_annotation;
     console.log(getState());
     console.log(currentSelectionDetails);
-    console.log(currentSelectionDetails.start);
-    console.log(currentSelectionDetails.start.data_source);
-    const data = {
-      "timestamp": moment().utc().toISOString(),
-      "annotation": annotation,
-      "source": currentSelectionDetails.start.data_source,
-      "source_type": currentSelectionDetails.start.data_type,
-      "value": "",
-      "start_id": currentSelectionDetails.start.data_id,
-      "start_timestamp": currentSelectionDetails.start.data_timestamp,
-      "start_line": currentSelectionDetails.start.row,
-      "start_char": currentSelectionDetails.start.character,
-      "end_id": currentSelectionDetails.end.data_id,
-      "end_timestamp": currentSelectionDetails.end.data_timestamp,
-      "end_line": currentSelectionDetails.end.row,
-      "end_char": currentSelectionDetails.end.character,
-    };
+    let data;
+    if (currentSelectionDetails === null) {
+      // If no text is highlighted, make a global annotation
+      // not related to any particular source
+      data = {
+        "timestamp": moment().utc().toISOString(),
+        "annotation": annotation,
+        "source": "global",
+        "source_type": "Global",
+        "value": "",
+        "start_id": 0,
+        "start_timestamp": 0,
+        "start_line": 0,
+        "start_char": 0,
+        "end_id": 0,
+        "end_timestamp": 0,
+        "end_line": 0,
+        "end_char": 0,
+      };
+    } else {
+      data = {
+        "timestamp": moment().utc().toISOString(),
+        "annotation": annotation,
+        "source": currentSelectionDetails.start.data_source,
+        "source_type": currentSelectionDetails.start.data_type,
+        "value": "",
+        "start_id": currentSelectionDetails.start.data_id,
+        "start_timestamp": currentSelectionDetails.start.data_timestamp,
+        "start_line": currentSelectionDetails.start.row,
+        "start_char": currentSelectionDetails.start.character,
+        "end_id": currentSelectionDetails.end.data_id,
+        "end_timestamp": currentSelectionDetails.end.data_timestamp,
+        "end_line": currentSelectionDetails.end.row,
+        "end_char": currentSelectionDetails.end.character,
+      };
+    }
     const url = `/api/annotations`;
     const options = {
       method: 'POST',
