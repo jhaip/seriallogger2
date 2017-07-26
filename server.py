@@ -40,6 +40,7 @@ def init_db():
 
 
 @app.route("/")
+@app.route("/notebook")
 def index():
     return render_template('index.html')
 

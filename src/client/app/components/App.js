@@ -1,15 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import OverviewBlock from "./OverviewBlock"
-import DetailBlock from "../containers/DetailBlock"
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom'
+import DataOverviewPage from './DataOverviewPage'
+import Notebook from './Notebook'
+
 
 class App extends React.Component {
   render() {
     return (
-      <div>
-        <OverviewBlock />
-        <DetailBlock />
-      </div>
+      <Router>
+        <div>
+          <ul>
+            <li><Link to="/">Data Overview</Link></li>
+            <li><Link to="/notebook">Notebook</Link></li>
+          </ul>
+          <hr/>
+          <div>
+            <Route exact path="/" component={DataOverviewPage}/>
+            <Route path="/notebook" component={Notebook}/>
+          </div>
+        </div>
+      </Router>
     );
   }
 }
