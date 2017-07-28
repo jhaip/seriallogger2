@@ -85,7 +85,7 @@ class Notebook extends React.Component {
         </div>
         <textarea
           style={{
-            width: 500,
+            width: "95%",
             height: 500,
             border: '1px dashed #DADADA',
             outline: 'none',
