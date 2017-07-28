@@ -174,5 +174,89 @@ def annotationsFetch():
         return jsonify(results)
 
 
+@app.route("/api/notebook/entries", methods=['GET', 'POST'])
+def entriesFetch():
+    if request.method == 'POST':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        print data
+        tdata = (
+            datetime.now(),
+            datetime.now(),
+            data["name"],
+            data["text"],
+        )
+        sql = ('INSERT INTO notebookentry ('
+               'created_at, '
+               'last_modified, '
+               'name, '
+               'text)'
+               'VALUES (?,?,?,?)')
+        commit_to_db(sql, tdata)
+        return ('', 204)
+    else:
+        results = {"results": []}
+        keys = [
+            "id",
+            "created_at",
+            "last_modified",
+            "name",
+            "text",
+        ]
+        filter_start = request.args.get('start')
+        filter_stop = request.args.get('stop')
+        query = 'select * from notebookentry'
+        query_args = ()
+        if filter_start and filter_stop:
+            query = 'select * from notebookentry where created_at > ? and created_at < ?'
+            query_args = (filter_start, filter_stop)
+            print query
+            print query_args
+        for r in query_db(query, query_args):
+            results["results"].append(dict(zip(keys, r)))
+        print results
+        return jsonify(results)
+
+
+@app.route("/api/notebook/entries/<int:entry_id>", methods=['GET', 'PUT'])
+def entryFetch(entry_id):
+    if request.method == 'PUT':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        print data
+        tdata = (
+            datetime.now(),
+            data["name"],
+            data["text"],
+            entry_id,
+        )
+        sql = ('UPDATE notebookentry SET '
+               'last_modified = ?, '
+               'name = ?, '
+               'text = ? '
+               'WHERE id = ?')
+        commit_to_db(sql, tdata)
+        return ('', 204)
+    else:
+        keys = [
+            "id",
+            "created_at",
+            "last_modified",
+            "name",
+            "text",
+        ]
+        query = 'select * from notebookentry where id = ?'
+        query_args = (entry_id,)
+        result = None
+        for r in query_db(query, query_args):
+            result = dict(zip(keys, r))
+        print result
+        if result is None:
+            return ('', 404)
+        return jsonify(result)
+
+
 if __name__ == "__main__":
     app.run()

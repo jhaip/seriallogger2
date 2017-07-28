@@ -21,3 +21,10 @@ CREATE TABLE IF NOT EXISTS data (
     value TEXT,
     type TEXT
 );
+CREATE TABLE IF NOT EXISTS notebookentry (
+    id integer primary key,
+    created_at TEXT,
+    last_modified TEXT,
+    name TEXT,
+    text TEXT
+);
