@@ -40,8 +40,9 @@ def init_db():
 
 
 @app.route("/")
-@app.route("/notebook")
-def index():
+@app.route("/notebook/")
+@app.route("/notebook/<entry_id>")
+def index(entry_id=None):
     return render_template('index.html')
 
 @app.route("/api/logs")
