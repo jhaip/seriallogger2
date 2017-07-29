@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { changeSelectionRange } from '../actions'
+import { changeSelectionRange } from '../actions/DetailActions'
 import LabeledTimelineList from '../components/LabeledTimelineList'
 import moment from 'moment'
 

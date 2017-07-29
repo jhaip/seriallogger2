@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { saveView } from '../actions'
+import { saveView } from '../actions/ViewActions'
 import OverviewBlock from "../components/OverviewBlock"
 import DetailBlock from "./DetailBlock"
 

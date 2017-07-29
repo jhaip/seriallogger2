@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { saveNewAnnotation } from '../actions'
 
 class AddAnnotationBlockBase extends React.Component {
   constructor(props) {

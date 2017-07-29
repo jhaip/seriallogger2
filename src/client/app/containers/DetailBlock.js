@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import DetailBlockBase from '../components/DetailBlockBase'
 import { getAnnotatedSelectedDataTree } from '../selectors'
-import { changeSelectedSource } from '../actions'
+import { changeSelectedSource } from '../actions/DetailActions'
 
 const mapStateToProps = state => {
   return {

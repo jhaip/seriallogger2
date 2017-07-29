@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import configureStore from './configureStore'
 import App from './components/App'
-import { fetchOverviewData } from './actions'
+import { fetchOverviewData } from './actions/OverviewActions'
 
 const store = configureStore()
 

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { changeViewRange } from '../actions'
+import { changeViewRange } from '../actions/OverviewActions'
 import RangeSelection from '../components/RangeSelection'
 
 const mapStateToProps = state => {

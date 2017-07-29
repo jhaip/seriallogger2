@@ -1,15 +1,20 @@
 import { combineReducers } from 'redux'
 import moment from 'moment'
 import {
-  CHANGE_VIEW_RANGE,
-  CHANGE_SELECTION_RANGE,
-  CHANGE_SELECTED_SOURCE,
-  RECEIVE_OVERVIEW_DATA,
-  RECEIVE_SELECTED_DATA,
   RECEIVE_SELECTED_DATA_ANNOTATIONS,
   CHANGE_ACTIVE_ANNOTATION,
   SET_POTENTIAL_ANNOTATION
-} from './actions'
+} from './actions/AnnotationActions'
+import {
+  CHANGE_SELECTION_RANGE,
+  CHANGE_SELECTED_SOURCE,
+  RECEIVE_SELECTED_DATA
+} from './actions/DetailActions'
+import {
+  CHANGE_VIEW_RANGE,
+  RECEIVE_OVERVIEW_DATA
+} from './actions/OverviewActions'
+
 
 const INITIAL_VIEW_STATE = {
     start: moment().subtract(25, 'days').toDate(),

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { changeActiveAnnotation } from '../actions'
+import { changeActiveAnnotation } from '../actions/AnnotationActions'
 import AnnotationListBase from '../components/AnnotationListBase'
 
 const mapStateToProps = state => {

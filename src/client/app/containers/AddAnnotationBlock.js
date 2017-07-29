@@ -1,6 +1,10 @@
 import { connect } from 'react-redux'
 import AddAnnotationBlockBase from '../components/AddAnnotationBlockBase'
-import { setPotentialAnnotation, clearPotentialAnnotation, saveNewAnnotation } from '../actions'
+import {
+  setPotentialAnnotation,
+  clearPotentialAnnotation,
+  saveNewAnnotation
+} from '../actions/AnnotationActions'
 
 const mapStateToProps = state => {
   return {}

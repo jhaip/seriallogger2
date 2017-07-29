@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import marksy from 'marksy/components'
 import { connect } from 'react-redux'
-import { saveView } from '../actions'
+import { saveView } from '../actions/ViewActions'
 
 const mapStateToProps = state => {
   return {}
