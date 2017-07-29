@@ -1,37 +1,15 @@
-import { combineReducers } from 'redux'
 import moment from 'moment'
 import {
   RECEIVE_SELECTED_DATA_ANNOTATIONS,
   CHANGE_ACTIVE_ANNOTATION,
   SET_POTENTIAL_ANNOTATION
-} from './actions/AnnotationActions'
+} from '../actions/AnnotationActions'
 import {
   CHANGE_SELECTION_RANGE,
   CHANGE_SELECTED_SOURCE,
   RECEIVE_SELECTED_DATA
-} from './actions/DetailActions'
-import {
-  CHANGE_VIEW_RANGE,
-  RECEIVE_OVERVIEW_DATA
-} from './actions/OverviewActions'
+} from '../actions/DetailActions'
 
-
-const INITIAL_VIEW_STATE = {
-    start: moment().subtract(25, 'days').toDate(),
-    end: moment().toDate(),
-    sources: [
-        "code",
-        "serial",
-        "annotations",
-        "view"
-    ],
-    data: {
-        "code": [],
-        "serial": [],
-        "annotations": [],
-        "view": []
-    }
-};
 const INITIAL_SELECTED_STATE = {
     start: moment().subtract(1, 'days').toDate(),
     end: moment().toDate(),
@@ -42,25 +20,7 @@ const INITIAL_SELECTED_STATE = {
     potential_annotation: null
 }
 
-function view(state = INITIAL_VIEW_STATE, action) {
-  switch (action.type) {
-    case CHANGE_VIEW_RANGE:
-      return Object.assign({}, state, {
-        start: action.start,
-        end: action.end
-      });
-    case RECEIVE_OVERVIEW_DATA:
-      return Object.assign({}, state, {
-        data: Object.assign({}, state.data, {
-            [action.source]: action.data
-        })
-      })
-    default:
-      return state
-  }
-}
-
-function selected(state = INITIAL_SELECTED_STATE, action) {
+export default function selected(state = INITIAL_SELECTED_STATE, action) {
   switch (action.type) {
     case CHANGE_SELECTION_RANGE:
       return Object.assign({}, state, {
@@ -98,10 +58,3 @@ function selected(state = INITIAL_SELECTED_STATE, action) {
       return state
   }
 }
-
-const rootReducer = combineReducers({
-  view,
-  selected
-})
-
-export default rootReducer
