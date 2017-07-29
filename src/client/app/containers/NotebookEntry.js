@@ -2,13 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import marksy from 'marksy/components'
 import { connect } from 'react-redux'
+import { fetchNotebookEntry } from '../actions/NotebookActions'
 
 const mapStateToProps = state => {
-  return {}
+  return {
+    entry: state.notebook.active_entry
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    fetchNotebookEntry: () => {
+      dispatch(fetchNotebookEntry())
+    }
+  }
 }
 
 const compile = marksy({
@@ -81,6 +88,11 @@ class NotebookEntryBase extends React.Component {
       value: event.target.value
     })
   }
+  componentWillMount() {
+    const found = window.location.pathname.match(/\/notebook\/(\d+)/);
+    const entry_id = found[1];
+    this.props.fetchNotebookEntry(entry_id);
+  }
   render() {
     return (
       <div>
@@ -107,6 +119,9 @@ class NotebookEntryBase extends React.Component {
     );
   }
 }
+NotebookListBase.propTypes = {
+  entry: PropTypes.any.isRequired,
+};
 
 const NotebookEntry = connect(
   mapStateToProps,
