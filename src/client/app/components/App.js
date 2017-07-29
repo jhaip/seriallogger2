@@ -21,7 +21,7 @@ class App extends React.Component {
           <hr/>
           <div>
             <Route exact path="/" component={DataOverviewPage}/>
-            <Route path="/notebook" component={Notebook}/>
+            <Route path="/notebook/" component={Notebook}/>
           </div>
         </div>
       </Router>

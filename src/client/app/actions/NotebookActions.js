@@ -21,22 +21,26 @@ export function receiveNotebookEntry(data) {
   return { type: RECEIVE_NOTEBOOK_ENTRY, data }
 }
 
-function fetchNotebookEntries() {
-  dispatch(requestNotebookEntries());
-  const url = `/api/notebook/entries`;
-  return fetch(url)
-    .then(response => response.json())
-    .then(json => {
-      dispatch(receiveNotebookEntries(json.results))
-    });
+export function fetchNotebookEntries() {
+  return (dispatch, getState) => {
+    dispatch(requestNotebookEntries());
+    const url = `/api/notebook/entries`;
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(receiveNotebookEntries(json.results))
+      });
+  }
 }
 
 function fetchNotebookEntry(entry_id) {
-  dispatch(requestNotebookEntry());
-  const url = `/api/notebook/entries/${entry_id}`;
-  return fetch(url)
-    .then(response => response.json())
-    .then(json => {
-      dispatch(receiveNotebookEntry(json))
-    });
+  return (dispatch, getState) => {
+    dispatch(requestNotebookEntry());
+    const url = `/api/notebook/entries/${entry_id}`;
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(receiveNotebookEntry(json))
+      });
+  }
 }
