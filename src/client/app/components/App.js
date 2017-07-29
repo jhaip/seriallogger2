@@ -5,8 +5,8 @@ import {
   Route,
   Link
 } from 'react-router-dom'
-import DataOverviewPage from './DataOverviewPage'
-import Notebook from './Notebook'
+import DataOverviewPage from '../containers/DataOverviewPage'
+import Notebook from '../containers/Notebook'
 
 
 class App extends React.Component {

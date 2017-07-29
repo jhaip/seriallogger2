@@ -1,6 +1,7 @@
 import { debounce } from 'lodash';
 import fetch from 'isomorphic-fetch'
 import moment from 'moment'
+import Cookies from 'js-cookie'
 
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const CHANGE_SELECTION_RANGE = 'CHANGE_SELECTION_RANGE'
@@ -22,6 +23,7 @@ export function changeSelectionRange(start, end) {
   return (dispatch, getState) => {
     dispatch({ type: CHANGE_SELECTION_RANGE, start, end });
     dispatch(debouncedFetchDetailDataAction());
+    dispatch(saveView());
   }
 }
 
@@ -30,6 +32,7 @@ export function changeSelectedSource(source) {
     dispatch({ type: CHANGE_SELECTED_SOURCE, source });
     dispatch(fetchDetailData(source));
     dispatch(fetchAnnotationsForDetailDataAction(source));
+    dispatch(saveView());
   }
 }
 
@@ -359,10 +362,10 @@ export function saveView() {
     }
     const data = {
       "source": "view",
-      "value": {
+      "value": JSON.stringify({
         "page": page,
         "details": page_details
-      },
+      }),
       "type": "View"
     };
     const url = `/api/data`;

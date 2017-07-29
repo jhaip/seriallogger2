@@ -17,7 +17,7 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-store.dispatch(fetchOverviewData("code"));
+// store.dispatch(fetchOverviewData("code"));
 store.dispatch(fetchOverviewData("serial"));
 store.dispatch(fetchOverviewData("annotations"));
 store.dispatch(fetchOverviewData("view"));

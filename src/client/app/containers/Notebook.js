@@ -1,6 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import marksy from 'marksy/components'
+import { connect } from 'react-redux'
+import { saveView } from '../actions'
+
+const mapStateToProps = state => {
+  return {}
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    saveView: () => {
+      dispatch(saveView());
+    }
+  }
+}
 
 const compile = marksy({
   createElement: React.createElement,
@@ -58,13 +72,16 @@ Look at this cool graph:
 nice
 `
 
-class Notebook extends React.Component {
+class NotebookBase extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       tree: compile(demo).tree,
       value: demo
     }
+  }
+  componentDidMount() {
+    this.props.saveView();
   }
   onTextareaChange(event) {
     this.setState({
@@ -98,5 +115,10 @@ class Notebook extends React.Component {
     );
   }
 }
+
+const Notebook = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NotebookBase)
 
 export default Notebook
