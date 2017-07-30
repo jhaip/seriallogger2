@@ -15,7 +15,6 @@ export function changeSelectionRange(start, end) {
   return (dispatch, getState) => {
     dispatch({ type: CHANGE_SELECTION_RANGE, start, end });
     dispatch(debouncedFetchDetailDataAction());
-    dispatch(saveView());
   }
 }
 
@@ -40,6 +39,7 @@ const debouncedFetchDetailData = debounce((dispatch, getState) => {
     const selectedSource = getState().selected.source;
     dispatch(fetchDetailData(selectedSource));
     dispatch(fetchAnnotationsForDetailDataAction(selectedSource));
+    dispatch(saveView());
   },
   1000
 );
