@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import fetch from 'isomorphic-fetch'
 
 export const REQUEST_NOTEBOOK_ENTRIES = 'REQUEST_NOTEBOOK_ENTRIES'
@@ -42,6 +43,7 @@ export function fetchNotebookEntry(entry_id) {
     return fetch(url)
       .then(response => response.json())
       .then(json => {
+        console.log(json);
         dispatch(receiveNotebookEntry(json))
       });
   }
@@ -68,9 +70,39 @@ export function createNotebookEntry() {
   }
 }
 
-export function updateNotebookEntry(new_entry_text) {
-  return {
-    type: UPDATE_NOTEBOOK_ENTRY,
-    text: new_entry_text
+export function saveNotebookEntry(entry) {
+  return (dispatch, getState) => {
+    const url = `/api/notebook/entries/${entry.id}`;
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(entry)
+    }
+    return fetch(url, options)
+      .then(response => {
+        console.log("saved entry");
+      });
   }
 }
+
+export function updateNotebookEntry(new_entry_text) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: UPDATE_NOTEBOOK_ENTRY,
+      text: new_entry_text
+    });
+    dispatch(debouncedSaveNotebookEntryAction());
+  }
+}
+
+const debouncedSaveNotebookEntry = debounce((dispatch, getState) => {
+    const entry = getState().notebook.active_entry;
+    if (entry !== null) {
+      dispatch(saveNotebookEntry(entry));
+    }
+  },
+  2000
+);
+const debouncedSaveNotebookEntryAction = () => debouncedSaveNotebookEntry;

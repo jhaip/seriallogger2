@@ -17,10 +17,7 @@ function NotebookReducer(state = INITIAL_NOTEBOOK_STATE, action) {
       })
     case RECEIVE_NOTEBOOK_ENTRY:
       return Object.assign({}, state, {
-        active_entry: {
-          id: action.data.id,
-          text: action.data.text
-        }
+        active_entry: action.data
       })
     case UPDATE_NOTEBOOK_ENTRY:
       return Object.assign({}, state, {
