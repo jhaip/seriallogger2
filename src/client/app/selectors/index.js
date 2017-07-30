@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect'
+import { getUtcDateString } from '../utils/time'
 
+const getSelected = (state) => state.selected
 const getSelectedData = (state) => state.selected.data
 const getSelectedAnnotations = (state) => state.selected.annotations
 const getPotentialAnnotation = (state) =>  state.selected.potential_annotation
@@ -147,5 +149,17 @@ export const getAnnotatedSelectedDataTree = createSelector(
     }
 
     return newRows;
+  }
+)
+
+export const getSelectedViewEmbedCode = createSelector(
+  [ getSelected ],
+  (selected) => {
+    return (
+      `<Embed source="${selected.source}" ` +
+      `start="${getUtcDateString(selected.start)}" ` +
+      `end="${getUtcDateString(selected.end)}" ` +
+      `></Embed>`
+    )
   }
 )

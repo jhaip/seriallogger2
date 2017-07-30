@@ -1,7 +1,13 @@
 import { connect } from 'react-redux'
 import DetailBlockBase from '../components/DetailBlockBase'
-import { getAnnotatedSelectedDataTree } from '../selectors'
-import { changeSelectedSource } from '../actions/DetailActions'
+import {
+  getAnnotatedSelectedDataTree,
+  getSelectedViewEmbedCode
+} from '../selectors'
+import {
+  changeSelectedSource,
+  copyEmbedForSelectedView
+} from '../actions/DetailActions'
 
 const mapStateToProps = state => {
   return {
@@ -11,7 +17,8 @@ const mapStateToProps = state => {
     selectedData: getAnnotatedSelectedDataTree(state),
     selectedAnnotations: state.selected.annotations,
     activeAnnotation: String(state.selected.activeAnnotation),
-    availableSources: state.view.sources
+    availableSources: state.view.sources,
+    selected_view_embed_code: getSelectedViewEmbedCode(state)
   }
 }
 
