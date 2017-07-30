@@ -1,6 +1,7 @@
 import {
   RECEIVE_NOTEBOOK_ENTRIES,
-  RECEIVE_NOTEBOOK_ENTRY
+  RECEIVE_NOTEBOOK_ENTRY,
+  UPDATE_NOTEBOOK_ENTRY
 } from '../actions/NotebookActions'
 
 const INITIAL_NOTEBOOK_STATE = {
@@ -20,6 +21,12 @@ function NotebookReducer(state = INITIAL_NOTEBOOK_STATE, action) {
           id: action.data.id,
           text: action.data.text
         }
+      })
+    case UPDATE_NOTEBOOK_ENTRY:
+      return Object.assign({}, state, {
+        active_entry: Object.assign({}, state.active_entry, {
+          text: action.text
+        })
       })
     default:
       return state

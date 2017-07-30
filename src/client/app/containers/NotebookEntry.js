@@ -2,7 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import marksy from 'marksy/components'
 import { connect } from 'react-redux'
-import { fetchNotebookEntry } from '../actions/NotebookActions'
+import {
+  fetchNotebookEntry,
+  updateNotebookEntry
+} from '../actions/NotebookActions'
 
 const mapStateToProps = state => {
   return {
@@ -12,8 +15,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchNotebookEntry: () => {
-      dispatch(fetchNotebookEntry())
+    fetchNotebookEntry: (entry_id) => {
+      dispatch(fetchNotebookEntry(entry_id))
+    },
+    updateNotebookEntry: (new_entry_text) => {
+      dispatch(updateNotebookEntry(new_entry_text))
     }
   }
 }
@@ -75,18 +81,9 @@ nice
 `
 
 class NotebookEntryBase extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      tree: compile(demo).tree,
-      value: demo
-    }
-  }
   onTextareaChange(event) {
-    this.setState({
-      tree: compile(event.target.value).tree,
-      value: event.target.value
-    })
+    const new_entry_value = event.target.value;
+    this.props.updateNotebookEntry(new_entry_value);
   }
   componentWillMount() {
     const found = window.location.pathname.match(/\/notebook\/(\d+)/);
@@ -102,25 +99,30 @@ class NotebookEntryBase extends React.Component {
             display: 'inline-block',
             padding: '0 20px'
           }}>
-            {this.state.tree}
+            {this.props.entry === null ?
+                null
+              : compile(this.props.entry.text).tree}
         </div>
         <textarea
           style={{
-            width: "95%",
+            width: "45%",
             height: 500,
             border: '1px dashed #DADADA',
             outline: 'none',
             padding: '10px'
           }}
           onChange={(event) => this.onTextareaChange(event)}
-          value={this.state.value}
+          value={this.props.entry === null ?
+              ""
+            : this.props.entry.text}
         ></textarea>
       </div>
     );
   }
 }
-NotebookListBase.propTypes = {
-  entry: PropTypes.any.isRequired,
+NotebookEntryBase.propTypes = {
+  entry: PropTypes.any,
+  fetchNotebookEntry: PropTypes.func.isRequired
 };
 
 const NotebookEntry = connect(
