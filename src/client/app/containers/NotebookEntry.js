@@ -33,9 +33,18 @@ const compile = marksy({
     Col ({children}) {
       return <div style={{flex: '1', padding: '10px', backgroundColor: '#DADADA', border: '1px solid #333'}}>{children}</div>
     },
-    Embed () {
+    Embed (props) {
+      const styles = {
+        height: "130px",
+        backgroundColor: "cyan",
+        padding: "10px",
+      }
       return (
-        <img src="http://d.stockcharts.com/school/data/media/chart_school/overview/images/charts-3sunw-c.png"></img>
+        <div style={styles}>
+          <div>{`Source: ${props.source}`}</div>
+          <div>{`Start: ${props.start}`}</div>
+          <div>{`End: ${props.end}`}</div>
+        </div>
       )
     },
     InlineEmbed() {
