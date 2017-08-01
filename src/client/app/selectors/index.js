@@ -83,73 +83,75 @@ function addAnnotationToRow(children, start, end, annotation_id) {
   return new_children;
 }
 
-export const getAnnotatedSelectedDataTree = createSelector(
-  [ getSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
-  (data, annotations, potential_annotation) => {
-    let rows = [];
+export function createAnnotatedSelectedDataTree(data, annotations, potential_annotation) {
+  let rows = [];
 
-    // populate initial rows
-    let rn = 0;
-    for (var datum of data) {
-      const newRow = getRowsFromValue(datum.value,
-                                     datum.id,
-                                     datum.source,
-                                     datum.type,
-                                     datum.timestamp,
-                                     rn);
-      rn += newRow.length;
-      rows = rows.concat(newRow);
-    }
+  // populate initial rows
+  let rn = 0;
+  for (var datum of data) {
+    const newRow = getRowsFromValue(datum.value,
+                                   datum.id,
+                                   datum.source,
+                                   datum.type,
+                                   datum.timestamp,
+                                   rn);
+    rn += newRow.length;
+    rows = rows.concat(newRow);
+  }
 
-    // annotate rows
-    const a = potential_annotation === null ? [] : potential_annotation;
-    for (var annotation of annotations.concat(a)) {
-      console.log(annotation);
-      // check that data is loaded enough to match annotation
-      if (rows.length > annotation.end.row) {
-        if (annotation.start.row == annotation.end.row) {
-          rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
-                                                                   annotation.start.character,
-                                                                   annotation.end.character,
-                                                                   annotation.id);
-        } else {
-          rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
-                                                                   annotation.start.character,
-                                                                   null,
-                                                                   annotation.id);
-          for (var i = annotation.start.row + 1; i < annotation.end.row; i += 1) {
-            rows[i].children = addAnnotationToRow(rows[i].children,
-                                                  null,
-                                                  null,
-                                                  annotation.id);
-          }
-          rows[annotation.end.row].children = addAnnotationToRow(rows[annotation.end.row].children,
-                                                                 null,
+  // annotate rows
+  const a = potential_annotation === null ? [] : potential_annotation;
+  for (var annotation of annotations.concat(a)) {
+    console.log(annotation);
+    // check that data is loaded enough to match annotation
+    if (rows.length > annotation.end.row) {
+      if (annotation.start.row == annotation.end.row) {
+        rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
+                                                                 annotation.start.character,
                                                                  annotation.end.character,
                                                                  annotation.id);
-        }
-      }
-    }
-
-    // Group consequtive rows that have the same timestamp
-    let newRows = [];
-    for (var row of rows) {
-      if ((newRows.length === 0) ||
-          (newRows[newRows.length-1].timestamp !== row.timestamp)) {
-        newRows.push({
-          id: row.id,
-          source: row.source,
-          type: row.type,
-          timestamp: row.timestamp,
-          rows: [row]
-        });
       } else {
-        newRows[newRows.length-1].rows.push(row);
+        rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
+                                                                 annotation.start.character,
+                                                                 null,
+                                                                 annotation.id);
+        for (var i = annotation.start.row + 1; i < annotation.end.row; i += 1) {
+          rows[i].children = addAnnotationToRow(rows[i].children,
+                                                null,
+                                                null,
+                                                annotation.id);
+        }
+        rows[annotation.end.row].children = addAnnotationToRow(rows[annotation.end.row].children,
+                                                               null,
+                                                               annotation.end.character,
+                                                               annotation.id);
       }
     }
-
-    return newRows;
   }
+
+  // Group consequtive rows that have the same timestamp
+  let newRows = [];
+  for (var row of rows) {
+    if ((newRows.length === 0) ||
+        (newRows[newRows.length-1].timestamp !== row.timestamp)) {
+      newRows.push({
+        id: row.id,
+        source: row.source,
+        type: row.type,
+        timestamp: row.timestamp,
+        rows: [row]
+      });
+    } else {
+      newRows[newRows.length-1].rows.push(row);
+    }
+  }
+
+  return newRows;
+}
+
+export const getAnnotatedSelectedDataTree = createSelector(
+  [ getSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
+  createAnnotatedSelectedDataTree
 )
 
 export const getSelectedViewEmbedCode = createSelector(

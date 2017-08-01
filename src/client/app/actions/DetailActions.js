@@ -137,24 +137,28 @@ export function fetchDetailDataForCode(source, start, stop) {
   });
 }
 
+export function fetchDetailDataPurely(source, start, end) {
+  let data_promise;
+  switch (source) {
+    case "serial":
+    case "view":
+      data_promise = fetchDetailDataForData(source, start, end);
+      break;
+    case "annotations":
+      data_promise = fetchDetailDataForAnnotations(source, start, end);
+      break;
+    case "code":
+      data_promise = fetchDetailDataForCode(source, start, end);
+      break;
+  }
+  return data_promise
+}
+
 export function fetchDetailData(source) {
   return (dispatch, getState) => {
     dispatch(requestDetailData(source))
     const { start, end } = getState().selected;
-    let data_promise;
-    switch (source) {
-      case "serial":
-      case "view":
-        data_promise = fetchDetailDataForData(source, start, end);
-        break;
-      case "annotations":
-        data_promise = fetchDetailDataForAnnotations(source, start, end);
-        break;
-      case "code":
-        data_promise = fetchDetailDataForCode(source, start, end);
-        break;
-    }
-    return data_promise
+    return fetchDetailDataPurely(source, start, end)
       .then(data => dispatch(receiveDetailData(source, data)))
   }
 }
