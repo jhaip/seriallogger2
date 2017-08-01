@@ -122,7 +122,6 @@ export function fetchDetailDataForCode(source, start, stop) {
     fetch(url, options)
       .then(response => response.json())
       .then(json => {
-        const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
         const clean_data = json.map(c => {
           const value = `${c.commit.message}\r\n${c.commit.url}`;
           return {
@@ -130,7 +129,7 @@ export function fetchDetailDataForCode(source, start, stop) {
               id: c.sha,
               source: source,
               type: "code",
-              timestamp: parseTime(c.commit.author.date),
+              timestamp: moment(c.commit.author.date).toDate(),
           };
         });
         resolve(clean_data);
