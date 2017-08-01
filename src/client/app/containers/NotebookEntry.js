@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import marksy from 'marksy/components'
+import moment from 'moment'
 import { connect } from 'react-redux'
 import {
   fetchNotebookEntry,
   updateNotebookEntry
 } from '../actions/NotebookActions'
+import NotebookEmbed from '../components/NotebookEmbed'
 
 const mapStateToProps = state => {
   return {
@@ -35,15 +37,16 @@ const compile = marksy({
     },
     Embed (props) {
       const styles = {
-        height: "130px",
-        backgroundColor: "cyan",
+        border: "1px dashed #88F",
         padding: "10px",
+        overflow: "scroll",
+        maxHeight: "200px"
       }
       return (
         <div style={styles}>
-          <div>{`Source: ${props.source}`}</div>
-          <div>{`Start: ${props.start}`}</div>
-          <div>{`End: ${props.end}`}</div>
+          <NotebookEmbed source={props.source}
+                         start={moment(props.start).toDate()}
+                         end={moment(props.end).toDate()} />
         </div>
       )
     },

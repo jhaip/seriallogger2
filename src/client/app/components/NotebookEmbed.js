@@ -1,0 +1,56 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+import DetailViewText from './DetailViewText'
+import moment from 'moment'
+import { fetchDetailDataPurely } from '../actions/DetailActions'
+import { createAnnotatedSelectedDataTree } from '../selectors/index'
+
+class NotebookEmbed extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {data: [], is_fetching: false}
+  }
+
+  update(props) {
+    console.log("UPDATING NOTEBOOK EMBED!");
+    this.setState({is_fetching: true});
+    fetchDetailDataPurely(
+      props.source,
+      props.start,
+      props.end
+    ).then(data => {
+      const data_tree = createAnnotatedSelectedDataTree(data, [], null);
+      this.setState({data: data_tree, is_fetching: false});
+    });
+  }
+
+  componentDidMount() {
+    this.update(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (new String(this.props.source).valueOf() !== new String(nextProps.source).valueOf() ||
+        !moment(this.props.start).isSame(moment(nextProps.start)) ||
+        !moment(this.props.end).isSame(moment(nextProps.end)) ) {
+      this.update(nextProps);
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.is_fetching ?
+            <i>Loading</i>
+          : this.state.data.length === 0 ? <i>No data</i> : null}
+        <DetailViewText data={this.state.data} activeAnnotation="" />
+      </div>
+    );
+  }
+}
+NotebookEmbed.propTypes = {
+  source: PropTypes.string.isRequired,
+  start: PropTypes.instanceOf(Date).isRequired,
+  end: PropTypes.instanceOf(Date).isRequired
+};
+
+export default NotebookEmbed
