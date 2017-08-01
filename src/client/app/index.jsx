@@ -17,31 +17,7 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-// store.dispatch(fetchOverviewData("code"));
+store.dispatch(fetchOverviewData("code"));
 store.dispatch(fetchOverviewData("serial"));
 store.dispatch(fetchOverviewData("annotations"));
 store.dispatch(fetchOverviewData("view"));
-
-// impurities: jQuery
-// category: data fetch
-function saveView(selectedSource, selectedRange) {
-    var viewDescription = {
-        "selectedSource": selectedSource,
-        "selectedRange": selectedRange
-    };
-    jQuery.ajax({
-        type: "POST",
-        url: "/api/data",
-        data: JSON.stringify({
-            "source": "view",
-            "value": JSON.stringify(viewDescription),
-            "type": "View"
-        }),
-        dataType: "json",
-        contentType: "application/json"
-    }).done(function() {
-        console.log("success saving view");
-    }).fail(function(e) {
-        console.error(e);
-    });
-}
