@@ -97,7 +97,7 @@ class NotebookEntryBase extends React.Component {
     const new_entry_value = event.target.value;
     this.props.updateNotebookEntry(new_entry_value);
   }
-  componentWillMount() {
+  componentDidMount() {
     const found = window.location.pathname.match(/\/notebook\/(\d+)/);
     const entry_id = found[1];
     this.props.fetchNotebookEntry(entry_id);

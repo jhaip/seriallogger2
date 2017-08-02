@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 class NotebookListBase extends React.Component {
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchNotebookEntries();
   }
   render() {
