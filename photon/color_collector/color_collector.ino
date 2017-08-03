@@ -42,8 +42,8 @@ const int COLOR_ORANGE_INDEX = 4;
 const int COLOR_RED_INDEX = 5;
 
 const int HALFTONE = 127;
-const int HALFTONE_DIM_LEVEL = 5;
-const int DIM_LEVEL = 10;
+const int HALFTONE_DIM_LEVEL = 2;
+const int DIM_LEVEL = 4;
 
 char color_levels[6] = {0, 0, 0, 0, 0, 0};
 
@@ -131,8 +131,38 @@ void setup() {
 }
 
 void loop() {
-  sense_colors();
-  delay(1000);
+    sense_colors();
+    delay(1000);
+    if (color_levels[COLOR_VIOLET_INDEX] > 0 &&
+        color_levels[COLOR_BLUE_INDEX] > 0 &&
+        color_levels[COLOR_GREEN_INDEX] > 0 &&
+        color_levels[COLOR_YELLOW_INDEX] > 0 &&
+        color_levels[COLOR_ORANGE_INDEX] > 0 &&
+        color_levels[COLOR_RED_INDEX] > 0)
+    {
+        // flash a few times to signal the game has been won
+        for (i=0; i < 7; i++) {
+            strip.setPixelColor(i, 100, 100, 100);
+        }
+        strip.show();
+        delay(500);
+        for (i=0; i < 7; i++) {
+            strip.setPixelColor(i, 0, 0, 0);
+        }
+        strip.show();
+        delay(500);
+        for (i=0; i < 7; i++) {
+            strip.setPixelColor(i, 100, 100, 100);
+        }
+        strip.show();
+        delay(500);
+        for (i=0; i < 7; i++) {
+            strip.setPixelColor(i, 0, 0, 0);
+        }
+        strip.show();
+        delay(500);
+        reset_colors();
+    }
 }
 
 void sense_colors() {
