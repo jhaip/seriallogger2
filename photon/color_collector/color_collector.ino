@@ -60,7 +60,7 @@ void setup() {
 }
 
 void loop() {
-  reset_colors()
+  reset_colors();
   update_colors();
   delay(1000);
   color_levels[COLOR_VIOLET_INDEX] = 1;
