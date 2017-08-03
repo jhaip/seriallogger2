@@ -158,12 +158,12 @@ void sense_colors() {
     r *= 255; g *= 255; b *= 255;
 
     struct RGB data = { (unsigned char)r, (unsigned char)g, (unsigned char)b };
-    struct HSV value = RGBToHSV(data);
+    struct HSV hsv_value = RGBToHSV(data);
 
     int h,s,v;
-    h = (int)HSV.H;
-    s = (int)(HSV.S*100);
-    v = (int)(HSV.V*100);
+    h = (int)hsv_value.H;
+    s = (int)(hsv_value.S*100);
+    v = (int)(hsv_value.V*100);
 
     sprintf(szInfo, "%d,%d,%d - %d,%d - %d,%d,%d", (int)r, (int)g, (int)b, (int)lux, (int)temperature, h, s, v);
 
