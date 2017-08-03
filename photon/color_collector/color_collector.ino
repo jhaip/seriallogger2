@@ -42,6 +42,8 @@ const int HALFTONE = 127;
 const int HALFTONE_DIM_LEVEL = 25;
 const int DIM_LEVEL = 50;
 
+char color_levels[6] = {0, 0, 0, 0, 0, 0};
+
 // Set the argument to the NUMBER of pixels.
 Adafruit_WS2801 strip = Adafruit_WS2801(numPixel);
 
@@ -55,21 +57,77 @@ Adafruit_WS2801 strip = Adafruit_WS2801(numPixel);
 
 void setup() {
     strip.begin();
-    delay(50);
-    reset_colors();
 }
 
 void loop() {
-
+  reset_colors()
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_VIOLET_INDEX] = 1;
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_BLUE_INDEX] = 1;
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_GREEN_INDEX] = 1;
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_YELLOW_INDEX] = 1;
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_ORANGE_INDEX] = 1;
+  update_colors();
+  delay(1000);
+  color_levels[COLOR_RED_INDEX] = 1;
+  update_colors();
+  delay(1000);
 }
 
 void reset_colors() {
-  strip.setPixelColor(COLOR_VIOLET_INDEX, HALFTONE_DIM_LEVEL, 0, DIM_LEVEL);
-  strip.setPixelColor(COLOR_BLUE_INDEX, 0, 0, DIM_LEVEL);
-  strip.setPixelColor(COLOR_GREEN_INDEX, 0, DIM_LEVEL, 0);
-  strip.setPixelColor(COLOR_YELLOW_INDEX, DIM_LEVEL, DIM_LEVEL, 0);
-  strip.setPixelColor(COLOR_ORANGE_INDEX, DIM_LEVEL, HALFTONE_DIM_LEVEL, 0);
-  strip.setPixelColor(COLOR_RED_INDEX, DIM_LEVEL, 0, 0);
+  color_levels[COLOR_VIOLET_INDEX] = 0;
+  color_levels[COLOR_BLUE_INDEX] = 0;
+  color_levels[COLOR_GREEN_INDEX] = 0;
+  color_levels[COLOR_YELLOW_INDEX] = 0;
+  color_levels[COLOR_ORANGE_INDEX] = 0;
+  color_levels[COLOR_RED_INDEX] = 0;
+}
+
+void update_colors() {
+  if (color_levels[COLOR_VIOLET_INDEX] == 0) {
+    strip.setPixelColor(COLOR_VIOLET_INDEX, HALFTONE_DIM_LEVEL, 0, DIM_LEVEL);
+  } else {
+    strip.setPixelColor(COLOR_VIOLET_INDEX, HALFTONE, 0, 255);
+  }
+
+  if (color_levels[COLOR_BLUE_INDEX] == 0) {
+    strip.setPixelColor(COLOR_BLUE_INDEX, 0, 0, DIM_LEVEL);
+  } else {
+    strip.setPixelColor(COLOR_BLUE_INDEX, 0, 0, 255);
+  }
+
+  if (color_levels[COLOR_GREEN_INDEX] == 0) {
+    strip.setPixelColor(COLOR_GREEN_INDEX, 0, DIM_LEVEL, 0);
+  } else {
+    strip.setPixelColor(COLOR_GREEN_INDEX, 0, 255, 0);
+  }
+
+  if (color_levels[COLOR_YELLOW_INDEX] == 0) {
+    strip.setPixelColor(COLOR_YELLOW_INDEX, DIM_LEVEL, DIM_LEVEL, 0);
+  } else {
+    strip.setPixelColor(COLOR_YELLOW_INDEX, 255, 255, 0);
+  }
+
+  if (color_levels[COLOR_ORANGE_INDEX] == 0) {
+    strip.setPixelColor(COLOR_ORANGE_INDEX, DIM_LEVEL, HALFTONE_DIM_LEVEL, 0);
+  } else {
+    strip.setPixelColor(COLOR_ORANGE_INDEX, 255, HALFTONE, 0);
+  }
+
+  if (color_levels[COLOR_RED_INDEX] == 0) {
+    strip.setPixelColor(COLOR_RED_INDEX, DIM_LEVEL, 0, 0);
+  } else {
+    strip.setPixelColor(COLOR_RED_INDEX, 255, 0, 0);
+  }
   strip.show();
   delay(50);
 }
