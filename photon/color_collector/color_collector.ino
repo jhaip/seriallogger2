@@ -57,14 +57,14 @@ void setup() {
     Spark.function("color", color);
     strip.begin();
     delay(50);
-    reset();
+    reset_colors();
 }
 
 void loop() {
 
 }
 
-void reset() {
+void reset_colors() {
   strip.setPixelColor(COLOR_VIOLET_INDEX, HALFTONE_DIM_LEVEL, 0, DIM_LEVEL);
   strip.setPixelColor(COLOR_BLUE_INDEX, 0, 0, DIM_LEVEL);
   strip.setPixelColor(COLOR_GREEN_INDEX, 0, DIM_LEVEL, 0);
