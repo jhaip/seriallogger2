@@ -84,8 +84,8 @@ void sense_colors() {
     tcs.getRawData(&red, &green, &blue, &clear);
     tcs.setInterrupt(true);  // turn off LED
 
-    uint16_t lux = calculateLux(red, green, blue);
-    uint16_t temperature = calculateColorTemperature(red, green, blue);
+    uint16_t lux = tcs.calculateLux(red, green, blue);
+    uint16_t temperature = tcs.calculateColorTemperature(red, green, blue);
 
     // Figure out some basic hex code for visualization
     uint32_t sum = clear;
