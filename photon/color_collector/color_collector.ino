@@ -39,8 +39,8 @@ const int COLOR_ORANGE_INDEX = 4;
 const int COLOR_RED_INDEX = 5;
 
 const int HALFTONE = 127;
-const int HALFTONE_DIM_LEVEL = 10;
-const int DIM_LEVEL = 20;
+const int HALFTONE_DIM_LEVEL = 5;
+const int DIM_LEVEL = 10;
 
 char color_levels[6] = {0, 0, 0, 0, 0, 0};
 
