@@ -23,14 +23,14 @@ export function changeActiveAnnotation(new_active_annotation) {
   }
 }
 
-function fetchAnnotationsForDetailData(source, start, stop) {
+function fetchAnnotationsForDetailData(source, start, end) {
   const url_source = encodeURIComponent(source);
   const url_start = getUtcDateString(start);
-  const url_stop = getUtcDateString(stop);
+  const url_end = getUtcDateString(end);
   const url = `/api/annotations`
     + `?source=${url_source}`
     + `&start=${url_start}`
-    + `&stop=${url_stop}`;
+    + `&stop=${url_end}`;
   return new Promise((resolve, reject) => {
     fetch(url)
       .then(response => response.json())
@@ -61,17 +61,14 @@ export function fetchAnnotationsForDetailDataAction(source) {
   return (dispatch, getState) => {
     dispatch(requestDetailDataAnnotations(source))
     const { start, end } = getState().selected;
-    return fetchAnnotationsForDetailData(source, start, stop)
+    return fetchAnnotationsForDetailData(source, start, end)
       .then(data => dispatch(receiveDetailDataAnnotations(source, data)))
   }
 }
 
 export function saveNewAnnotation(annotation) {
   return (dispatch, getState) => {
-    console.log("INSIDE SAVE ANNOATIONS");
     const currentSelectionDetails = getState().selected.potential_annotation;
-    console.log(getState());
-    console.log(currentSelectionDetails);
     let data;
     if (currentSelectionDetails === null) {
       // If no text is highlighted, make a global annotation
