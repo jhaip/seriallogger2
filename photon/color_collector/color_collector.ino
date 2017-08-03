@@ -213,7 +213,7 @@ void sense_colors() {
     } else if (h <= 270) {
       color_levels[COLOR_BLUE_INDEX] = 1;
     } else if (h <= 330) {
-      color_levels[COLOR_BLUE_INDEX] = 1;
+      color_levels[COLOR_VIOLET_INDEX] = 1;
     } else {
       color_levels[COLOR_RED_INDEX] = 1;
     }
