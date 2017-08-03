@@ -141,6 +141,7 @@ void loop() {
         color_levels[COLOR_RED_INDEX] > 0)
     {
         // flash a few times to signal the game has been won
+        int i;
         for (i=0; i < 7; i++) {
             strip.setPixelColor(i, 100, 100, 100);
         }
