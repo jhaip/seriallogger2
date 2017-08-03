@@ -54,7 +54,6 @@ Adafruit_WS2801 strip = Adafruit_WS2801(numPixel);
 //Adafruit_WS2801 strip = Adafruit_WS2801(25, WS2801_GRB);
 
 void setup() {
-    Spark.function("color", color);
     strip.begin();
     delay(50);
     reset_colors();
