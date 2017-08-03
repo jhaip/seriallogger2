@@ -33,7 +33,7 @@ export function getSelectionDetails() {
   const endOffset = s.endOffset;
   const endOffsetParent = $(s.endContainer.parentElement);
 
-  var rangeCopy, markerEl;
+  var rangeCopy, markerEl, markerEl2;
   rangeCopy = s.cloneRange();
   rangeCopy.collapse(true);  // collapse to start
   markerEl = document.createElement("span");
@@ -42,9 +42,9 @@ export function getSelectionDetails() {
 
   rangeCopy = s.cloneRange();
   rangeCopy.collapse(false);  // collapse to end
-  markerEl = document.createElement("span");
-  markerEl.appendChild( document.createTextNode(specialEndChar) );
-  rangeCopy.insertNode(markerEl);
+  markerEl2 = document.createElement("span");
+  markerEl2.appendChild( document.createTextNode(specialEndChar) );
+  rangeCopy.insertNode(markerEl2);
 
   const startRow = $(s.startContainer.parentElement).closest(".row");
   const endRow = $(s.endContainer.parentElement).closest(".row");
@@ -84,6 +84,9 @@ export function getSelectionDetails() {
   // endRow.html(endRow.html().replace("<span>"+specialEndChar+"</span>", ""));
 
   console.log(selectionDetails);
+
+  $(markerEl).remove();
+  $(markerEl2).remove();
 
   return selectionDetails;
 }
