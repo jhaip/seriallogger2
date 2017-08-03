@@ -171,22 +171,19 @@ void sense_colors() {
 
     Serial.println(szInfo);
 
-    if (r >= HALFTONE && g < HALFTONE && b >= HALFTONE) {
-      color_levels[COLOR_VIOLET_INDEX] = 1;
-    }
-    else if (r < HALFTONE && g < HALFTONE && b >= HALFTONE) {
-      color_levels[COLOR_BLUE_INDEX] = 1;
-    }
-    else if (r < HALFTONE && g >= HALFTONE && b < HALFTONE) {
-      color_levels[COLOR_GREEN_INDEX] = 1;
-    }
-    else if (r >= 200 && g >= HALFTONE && b < HALFTONE) {
-      color_levels[COLOR_YELLOW_INDEX] = 1;
-    }
-    else if (r >= HALFTONE && g >= HALFTONE && b < HALFTONE) {
+    if (h <= 10) {
+      color_levels[COLOR_RED_INDEX] = 1;
+    } else if (h <= 45) {
       color_levels[COLOR_ORANGE_INDEX] = 1;
-    }
-    else if (r >= HALFTONE && g < HALFTONE && b < HALFTONE) {
+    } else if (h <= 80) {
+      color_levels[COLOR_YELLOW_INDEX] = 1;
+    } else if (h <= 200) {
+      color_levels[COLOR_GREEN_INDEX] = 1;
+    } else if (h <= 270) {
+      color_levels[COLOR_BLUE_INDEX] = 1;
+    } else if (h <= 330) {
+      color_levels[COLOR_BLUE_INDEX] = 1;
+    } else {
       color_levels[COLOR_RED_INDEX] = 1;
     }
     update_colors();
