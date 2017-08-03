@@ -141,27 +141,38 @@ void loop() {
         color_levels[COLOR_RED_INDEX] > 0)
     {
         // flash a few times to signal the game has been won
+        delay(300);
         int i;
         for (i=0; i < 6; i++) {
             strip.setPixelColor(i, 100, 100, 100);
         }
         strip.show();
-        delay(200);
+        delay(100);
         for (i=0; i < 6; i++) {
             strip.setPixelColor(i, 0, 0, 0);
         }
         strip.show();
-        delay(200);
+        delay(100);
         for (i=0; i < 6; i++) {
             strip.setPixelColor(i, 100, 100, 100);
         }
         strip.show();
-        delay(200);
+        delay(100);
         for (i=0; i < 6; i++) {
             strip.setPixelColor(i, 0, 0, 0);
         }
         strip.show();
-        delay(200);
+        delay(100);
+        for (i=0; i < 6; i++) {
+            strip.setPixelColor(i, 100, 100, 100);
+        }
+        strip.show();
+        delay(100);
+        for (i=0; i < 6; i++) {
+            strip.setPixelColor(i, 0, 0, 0);
+        }
+        strip.show();
+        delay(100);
         reset_colors();
     }
 }
