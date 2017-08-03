@@ -54,6 +54,67 @@ boolean commonAnode = false;
 char szInfo[128];
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
+struct RGB
+{
+	unsigned char R;
+	unsigned char G;
+	unsigned char B;
+};
+
+struct HSV
+{
+	double H;
+	double S;
+	double V;
+};
+
+static double Min(double a, double b) {
+	return a <= b ? a : b;
+}
+
+static double Max(double a, double b) {
+	return a >= b ? a : b;
+}
+
+struct HSV RGBToHSV(struct RGB rgb) {
+	double delta, min;
+	double h = 0, s, v;
+
+	min = Min(Min(rgb.R, rgb.G), rgb.B);
+	v = Max(Max(rgb.R, rgb.G), rgb.B);
+	delta = v - min;
+
+	if (v == 0.0)
+		s = 0;
+	else
+		s = delta / v;
+
+	if (s == 0)
+		h = 0.0;
+
+	else
+	{
+		if (rgb.R == v)
+			h = (rgb.G - rgb.B) / delta;
+		else if (rgb.G == v)
+			h = 2 + (rgb.B - rgb.R) / delta;
+		else if (rgb.B == v)
+			h = 4 + (rgb.R - rgb.G) / delta;
+
+		h *= 60;
+
+		if (h < 0.0)
+			h = h + 360;
+	}
+
+	struct HSV hsv;
+	hsv.H = h;
+	hsv.S = s;
+	hsv.V = v / 255;
+
+	return hsv;
+}
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Color View Test!");
@@ -94,9 +155,17 @@ void sense_colors() {
     r = red; r /= sum;
     g = green; g /= sum;
     b = blue; b /= sum;
-    r *= 256; g *= 256; b *= 256;
+    r *= 255; g *= 255; b *= 255;
 
-    sprintf(szInfo, "%d,%d,%d - %d,%d", (int)r, (int)g, (int)b, (int)lux, (int)temperature);
+    struct RGB data = { (unsigned char)r, (unsigned char)g, (unsigned char)b };
+    struct HSV value = RGBToHSV(data);
+
+    int h,s,v;
+    h = (int)HSV.H;
+    s = (int)(HSV.S*100);
+    v = (int)(HSV.V*100);
+
+    sprintf(szInfo, "%d,%d,%d - %d,%d - %d,%d,%d", (int)r, (int)g, (int)b, (int)lux, (int)temperature, h, s, v);
 
     Spark.publish("colorinfo", szInfo);
 
