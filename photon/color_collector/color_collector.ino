@@ -84,6 +84,9 @@ void sense_colors() {
     tcs.getRawData(&red, &green, &blue, &clear);
     tcs.setInterrupt(true);  // turn off LED
 
+    uint16_t lux = calculateLux(red, green, blue);
+    uint16_t temperature = calculateColorTemperature(red, green, blue);
+
     // Figure out some basic hex code for visualization
     uint32_t sum = clear;
     float r, g, b;
@@ -93,7 +96,7 @@ void sense_colors() {
     b = blue; b /= sum;
     r *= 256; g *= 256; b *= 256;
 
-    sprintf(szInfo, "%d,%d,%d", (int)r, (int)g, (int)b);
+    sprintf(szInfo, "%d,%d,%d - %d,%d", (int)r, (int)g, (int)b, (int)lux, (int)temperature);
 
     Spark.publish("colorinfo", szInfo);
 
