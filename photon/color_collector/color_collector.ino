@@ -3,6 +3,9 @@
 #include "application.h"
 #include "WS2801.h"
 
+#include "Adafruit_TCS34725.h"
+#include <math.h>
+
 /*****************************************************************************
 Example sketch for driving Adafruit WS2801 pixels on the Spark Core!
   Designed specifically to work with the Adafruit RGB Pixels!
@@ -47,40 +50,74 @@ char color_levels[6] = {0, 0, 0, 0, 0, 0};
 // Set the argument to the NUMBER of pixels.
 Adafruit_WS2801 strip = Adafruit_WS2801(numPixel);
 
-// For 36mm LED pixels: these pixels internally represent color in a
-// different format.  Either of the above constructors can accept an
-// optional extra parameter: WS2801_RGB is 'conventional' RGB order
-// WS2801_GRB is the GRB order required by the 36mm pixels.  Other
-// than this parameter, your code does not need to do anything different;
-// the library will handle the format change.  Example:
-//Adafruit_WS2801 strip = Adafruit_WS2801(25, WS2801_GRB);
+boolean commonAnode = false;
+char szInfo[128];
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
 void setup() {
+    Serial.begin(9600);
+    Serial.println("Color View Test!");
+
+    if (tcs.begin()) {
+        Serial.println("Found sensor");
+    } else {
+        Serial.println("No TCS34725 found ... check your connections");
+        while (1); // halt!
+    }
+
     strip.begin();
+    update_colors();
 }
 
 void loop() {
-  reset_colors();
-  update_colors();
+  sense_colors();
   delay(1000);
-  color_levels[COLOR_VIOLET_INDEX] = 1;
-  update_colors();
-  delay(1000);
-  color_levels[COLOR_BLUE_INDEX] = 1;
-  update_colors();
-  delay(1000);
-  color_levels[COLOR_GREEN_INDEX] = 1;
-  update_colors();
-  delay(1000);
-  color_levels[COLOR_YELLOW_INDEX] = 1;
-  update_colors();
-  delay(1000);
-  color_levels[COLOR_ORANGE_INDEX] = 1;
-  update_colors();
-  delay(1000);
-  color_levels[COLOR_RED_INDEX] = 1;
-  update_colors();
-  delay(1000);
+}
+
+void sense_colors() {
+    uint16_t clear, red, green, blue;
+
+    tcs.setInterrupt(false);      // turn on LED
+
+    delay(60);  // takes 50ms to read
+
+    tcs.getRawData(&red, &green, &blue, &clear);
+    tcs.setInterrupt(true);  // turn off LED
+
+    // Figure out some basic hex code for visualization
+    uint32_t sum = clear;
+    float r, g, b;
+
+    r = red; r /= sum;
+    g = green; g /= sum;
+    b = blue; b /= sum;
+    r *= 256; g *= 256; b *= 256;
+
+    sprintf(szInfo, "%d,%d,%d", (int)r, (int)g, (int)b);
+
+    Spark.publish("colorinfo", szInfo);
+
+    Serial.println(szInfo);
+
+    if (r >= HALFTONE && g < HALFTONE && b >= HALFTONE) {
+      color_levels[COLOR_VIOLET_INDEX] = 1;
+    }
+    else if (r < HALFTONE && g < HALFTONE && b >= HALFTONE) {
+      color_levels[COLOR_BLUE_INDEX] = 1;
+    }
+    else if (r < HALFTONE && g >= HALFTONE && b < HALFTONE) {
+      color_levels[COLOR_GREEN_INDEX] = 1;
+    }
+    else if (r >= 200 && g >= HALFTONE && b < HALFTONE) {
+      color_levels[COLOR_YELLOW_INDEX] = 1;
+    }
+    else if (r >= HALFTONE && g >= HALFTONE && b < HALFTONE) {
+      color_levels[COLOR_ORANGE_INDEX] = 1;
+    }
+    else if (r >= HALFTONE && g < HALFTONE && b < HALFTONE) {
+      color_levels[COLOR_RED_INDEX] = 1;
+    }
+    update_colors();
 }
 
 void reset_colors() {
