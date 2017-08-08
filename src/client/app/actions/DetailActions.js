@@ -47,8 +47,8 @@ const debouncedFetchDetailDataAction = () => debouncedFetchDetailData;
 
 export function fetchDetailDataForData(source, start, stop) {
   const url_source = encodeURIComponent(source);
-  const url_start = getUtcDateString(start, true);
-  const url_stop = getUtcDateString(stop, true);
+  const url_start = getUtcDateString(start);
+  const url_stop = getUtcDateString(stop);
   const url = `/api/data`
             + `?source=${url_source}`
             + `&start=${url_start}`
@@ -102,8 +102,8 @@ export function fetchDetailDataForCode(source, start, stop) {
   if (!auth_token) {
       throw new Error('MISSING GITHUB AUTH TOKEN!');
   }
-  const url_start = getUtcDateString(start, true);
-  const url_stop = getUtcDateString(stop, true);
+  const url_start = getUtcDateString(start);
+  const url_stop = getUtcDateString(stop);
   const params = {
     sha: "master",
     path: "photon/",
@@ -129,7 +129,7 @@ export function fetchDetailDataForCode(source, start, stop) {
               id: c.sha,
               source: source,
               type: "code",
-              timestamp: moment(c.commit.author.date).toDate(),
+              timestamp: moment.utc(c.commit.author.date).toDate(),
           };
         });
         resolve(clean_data);

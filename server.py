@@ -1,7 +1,12 @@
 from flask import Flask, render_template, jsonify, g, request, abort
 from datetime import datetime
+import pytz
+import iso8601
 import glob
 import sqlite3
+
+def utcnow():
+    return datetime.now(tz=pytz.utc)
 
 app = Flask(__name__)
 
@@ -45,20 +50,20 @@ def init_db():
 def index(entry_id=None):
     return render_template('index.html')
 
-@app.route("/api/logs")
-def apiLogs():
-    logs = glob.glob('log-*.txt')
-    results = {"results": []}
-    for logFilename in logs:
-        timestamp = datetime.strptime(logFilename, 'log-%Y-%m-%d--%H-%M-%S.txt')
-        results["results"].append({"filename": logFilename, "timestamp": timestamp.isoformat()})
-    return jsonify(results)
-
-@app.route("/api/logs/<logname>")
-def apiLog(logname):
-    with open(logname) as f:
-        content = f.read()
-    return content
+# @app.route("/api/logs")
+# def apiLogs():
+#     logs = glob.glob('log-*.txt')
+#     results = {"results": []}
+#     for logFilename in logs:
+#         timestamp = datetime.strptime(logFilename, 'log-%Y-%m-%d--%H-%M-%S.txt')
+#         results["results"].append({"filename": logFilename, "timestamp": timestamp.isoformat()})
+#     return jsonify(results)
+#
+# @app.route("/api/logs/<logname>")
+# def apiLog(logname):
+#     with open(logname) as f:
+#         content = f.read()
+#     return content
 
 @app.route("/api/data", methods=['GET', 'POST'])
 def dataAccess():
@@ -69,7 +74,7 @@ def dataAccess():
         print data
         if "timestamp" not in data:
             print "assigning timestamp"
-            data["timestamp"] = datetime.now()
+            data["timestamp"] = utcnow()
         tdata = (data["source"], data["timestamp"], data["value"], data["type"])
         commit_to_db('INSERT INTO data (source, timestamp, value, type) VALUES (?,?,?,?)', tdata)
         return ('', 204)
@@ -83,8 +88,10 @@ def dataAccess():
         query_args = ()
         if filter_source:
             if filter_start and filter_stop:
+                filter_start_date = iso8601.parse_date(request.args.get('start'))
+                filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 query = 'select * from data where source = ? and timestamp > datetime(?) and timestamp < datetime(?)'
-                query_args = (filter_source, filter_start, filter_stop)
+                query_args = (filter_source, filter_start_date, filter_stop_date)
                 print query
                 print query_args
             else:
@@ -103,7 +110,7 @@ def annotationsFetch():
             abort(400)
         print data
         tdata = (
-            data["timestamp"],
+            utcnow(),
             data["annotation"],
             data["source"],
             data["source_type"],
@@ -158,15 +165,17 @@ def annotationsFetch():
         query = 'select * from annotations'
         query_args = ()
         if filter_start and filter_stop:
+            filter_start_date = iso8601.parse_date(request.args.get('start'))
+            filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             if filter_source:
                 query = ('select * from annotations '
                          'where end_timestamp > ? '
                          'and start_timestamp < ? '
                          'and source = ?')
-                query_args = (filter_start, filter_stop, filter_source)
+                query_args = (filter_start_date, filter_stop_date, filter_source)
             else:
                 query = 'select * from annotations where timestamp > ? and timestamp < ?'
-                query_args = (filter_start, filter_stop)
+                query_args = (filter_start_date, filter_stop_date)
             print query
             print query_args
         for r in query_db(query, query_args):
@@ -183,8 +192,8 @@ def entriesFetch():
             abort(400)
         print data
         tdata = (
-            datetime.now(),
-            datetime.now(),
+            utcnow(),
+            utcnow(),
             data["name"],
             data["text"],
         )
@@ -210,8 +219,10 @@ def entriesFetch():
         query = 'select * from notebookentry'
         query_args = ()
         if filter_start and filter_stop:
+            filter_start_date = iso8601.parse_date(request.args.get('start'))
+            filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             query = 'select * from notebookentry where created_at > ? and created_at < ?'
-            query_args = (filter_start, filter_stop)
+            query_args = (filter_start_date, filter_stop_date)
             print query
             print query_args
         for r in query_db(query, query_args):
@@ -228,7 +239,7 @@ def entryFetch(entry_id):
             abort(400)
         print data
         tdata = (
-            datetime.now(),
+            utcnow(),
             data["name"],
             data["text"],
             entry_id,

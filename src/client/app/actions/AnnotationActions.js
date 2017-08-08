@@ -74,7 +74,6 @@ export function saveNewAnnotation(annotation) {
       // If no text is highlighted, make a global annotation
       // not related to any particular source
       data = {
-        "timestamp": moment().utc().toISOString(),
         "annotation": annotation,
         "source": "global",
         "source_type": "Global",
@@ -90,7 +89,6 @@ export function saveNewAnnotation(annotation) {
       };
     } else {
       data = {
-        "timestamp": moment().utc().toISOString(),
         "annotation": annotation,
         "source": currentSelectionDetails.start.data_source,
         "source_type": currentSelectionDetails.start.data_type,
