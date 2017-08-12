@@ -8,8 +8,20 @@ export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
 export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 
+export function fetchAllNewOverviewData() {
+  return (dispatch, getState) => {
+    dispatch(fetchOverviewData("code"));
+    dispatch(fetchOverviewData("serial"));
+    dispatch(fetchOverviewData("annotations"));
+    dispatch(fetchOverviewData("view"));
+  }
+}
+
 export function changeViewRange(start, end) {
-  return { type: CHANGE_VIEW_RANGE, start, end }
+  return (dispatch, getState) => {
+    dispatch({ type: CHANGE_VIEW_RANGE, start, end });
+    dispatch(fetchAllNewOverviewData());
+  }
 }
 
 export function requestOverviewData(source) {
