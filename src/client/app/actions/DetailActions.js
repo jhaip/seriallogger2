@@ -49,14 +49,24 @@ export function fetchDetailDataForData(source, start, stop) {
   const url_source = encodeURIComponent(source);
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
-  const url = `/api/data`
+  const url = `${window.API_URL}/api/data`
             + `?source=${url_source}`
             + `&start=${url_start}`
             + `&stop=${url_stop}`;
   return new Promise((resolve, reject) => {
-    fetch(url)
-      .then(response => response.json())
+    console.log("about to fetch data "+source+" ---- "+url);
+
+    var myHeaders = new Headers();
+    myHeaders.append('pragma', 'no-cache');
+    myHeaders.append('cache-control', 'no-cache');
+    fetch(url, {headers: myHeaders})
+      .then(response => {
+        return response.json()
+      }, error => {
+        reject(error);
+      })
       .then(json => {
+        console.log("got response for fetch data "+source);
         const clean_data = json.results.map(d => {
           let datum = d.value;
           if (source === "serial" && datum.slice(-2) === "\r\n") {
@@ -72,13 +82,14 @@ export function fetchDetailDataForData(source, start, stop) {
         });
         resolve(clean_data);
       });
+    console.log("after fetch statement for "+source);
   });
 }
 
 export function fetchDetailDataForAnnotations(source, start, stop) {
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
-  const url = `/api/annotations?start=${url_start}&stop=${url_stop}`;
+  const url = `${window.API_URL}/api/annotations?start=${url_start}&stop=${url_stop}`;
   return new Promise((resolve, reject) => {
     fetch(url)
       .then(response => response.json())

@@ -27,7 +27,7 @@ export function receiveNotebookEntry(data) {
 export function fetchNotebookEntries() {
   return (dispatch, getState) => {
     dispatch(requestNotebookEntries());
-    const url = `/api/notebook/entries`;
+    const url = `${window.API_URL}/api/notebook/entries`;
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -39,7 +39,7 @@ export function fetchNotebookEntries() {
 export function fetchNotebookEntry(entry_id) {
   return (dispatch, getState) => {
     dispatch(requestNotebookEntry());
-    const url = `/api/notebook/entries/${entry_id}`;
+    const url = `${window.API_URL}/api/notebook/entries/${entry_id}`;
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -55,7 +55,7 @@ export function createNotebookEntry() {
       name: "",
       text: ""
     }
-    const url = `/api/notebook/entries`;
+    const url = `${window.API_URL}/api/notebook/entries`;
     const options = {
       method: 'POST',
       headers: {
@@ -72,7 +72,7 @@ export function createNotebookEntry() {
 
 export function saveNotebookEntry(entry) {
   return (dispatch, getState) => {
-    const url = `/api/notebook/entries/${entry.id}`;
+    const url = `${window.API_URL}/api/notebook/entries/${entry.id}`;
     const options = {
       method: 'PUT',
       headers: {

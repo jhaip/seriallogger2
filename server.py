@@ -1,14 +1,20 @@
 from flask import Flask, render_template, jsonify, g, request, abort
+from flask_cors import CORS, cross_origin
+
 from datetime import datetime
 import pytz
 import iso8601
 import glob
 import sqlite3
+import os
 
 def utcnow():
     return datetime.now(tz=pytz.utc)
 
-app = Flask(__name__)
+template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+template_dir = os.path.join(template_dir, 'static')
+app = Flask(__name__, template_folder=template_dir)
+CORS(app)
 
 DATABASE = 'log.db'
 
@@ -44,6 +50,19 @@ def init_db():
         db.commit()
 
 
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
+
+
 @app.route("/")
 @app.route("/notebook/")
 @app.route("/notebook/<entry_id>")
@@ -71,7 +90,7 @@ def dataAccess():
         data = request.get_json()
         if data is None:
             abort(400)
-        print data
+        # print data
         if "timestamp" not in data:
             print "assigning timestamp"
             data["timestamp"] = utcnow()
@@ -92,14 +111,14 @@ def dataAccess():
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 query = 'select * from data where source = ? and timestamp > datetime(?) and timestamp < datetime(?)'
                 query_args = (filter_source, filter_start_date, filter_stop_date)
-                print query
-                print query_args
+                # print query
+                # print query_args
             else:
                 query = 'select * from data where source = ?'
                 query_args = (filter_source,)
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        print results
+        # print results
         return jsonify(results)
 
 @app.route("/api/annotations", methods=['GET', 'POST'])
@@ -108,7 +127,7 @@ def annotationsFetch():
         data = request.get_json()
         if data is None:
             abort(400)
-        print data
+        # print data
         tdata = (
             utcnow(),
             data["annotation"],
@@ -176,11 +195,11 @@ def annotationsFetch():
             else:
                 query = 'select * from annotations where timestamp > ? and timestamp < ?'
                 query_args = (filter_start_date, filter_stop_date)
-            print query
-            print query_args
+            # print query
+            # print query_args
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        print results
+        # print results
         return jsonify(results)
 
 
@@ -190,7 +209,7 @@ def entriesFetch():
         data = request.get_json()
         if data is None:
             abort(400)
-        print data
+        # print data
         tdata = (
             utcnow(),
             utcnow(),
@@ -223,11 +242,11 @@ def entriesFetch():
             filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             query = 'select * from notebookentry where created_at > ? and created_at < ?'
             query_args = (filter_start_date, filter_stop_date)
-            print query
-            print query_args
+            # print query
+            # print query_args
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        print results
+        # print results
         return jsonify(results)
 
 
@@ -237,7 +256,7 @@ def entryFetch(entry_id):
         data = request.get_json()
         if data is None:
             abort(400)
-        print data
+        # print data
         tdata = (
             utcnow(),
             data["name"],
@@ -264,7 +283,7 @@ def entryFetch(entry_id):
         result = None
         for r in query_db(query, query_args):
             result = dict(zip(keys, r))
-        print result
+        # print result
         if result is None:
             return ('', 404)
         return jsonify(result)

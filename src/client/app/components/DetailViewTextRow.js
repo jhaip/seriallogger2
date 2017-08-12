@@ -16,6 +16,7 @@ class DetailViewTextRow extends React.Component {
     return (
       <pre className={"row row-rn-"+this.props.id}
            data-rn={this.props.rowNumber}
+           data-rowinvalue={this.props.rowInValue}
            data-dataid={this.props.id}
            data-datasource={this.props.source}
            data-datatype={this.props.type}

@@ -27,7 +27,7 @@ function fetchAnnotationsForDetailData(source, start, end) {
   const url_source = encodeURIComponent(source);
   const url_start = getUtcDateString(start);
   const url_end = getUtcDateString(end);
-  const url = `/api/annotations`
+  const url = `${window.API_URL}/api/annotations`
     + `?source=${url_source}`
     + `&start=${url_start}`
     + `&stop=${url_end}`;
@@ -103,7 +103,7 @@ export function saveNewAnnotation(annotation) {
         "end_char": currentSelectionDetails.end.character,
       };
     }
-    const url = `/api/annotations`;
+    const url = `${window.API_URL}/api/annotations`;
     const options = {
       method: 'POST',
       headers: {

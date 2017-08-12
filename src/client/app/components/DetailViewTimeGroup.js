@@ -8,9 +8,10 @@ class DetailViewTimeGroup extends React.Component {
   render() {
     const listRows = this.props.rows.map((r) => {
       return (
-        <DetailViewTextRow id={this.props.id}
+        <DetailViewTextRow id={r.id}
                            key={r.rowNumber}
                            rowNumber={r.rowNumber}
+                           rowInValue={r.rowInValue}
                            source={this.props.source}
                            type={this.props.type}
                            timestamp={this.props.timestamp}

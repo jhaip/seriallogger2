@@ -45,7 +45,7 @@ export function saveView() {
       }),
       "type": "View"
     };
-    const url = `/api/data`;
+    const url = `${window.API_URL}/api/data`;
     const options = {
       method: 'POST',
       headers: {

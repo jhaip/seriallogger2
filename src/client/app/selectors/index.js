@@ -15,7 +15,7 @@ function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
     for (let y = 0; y < subline.length; y+=1) {
       listRows.push({
         id: id,
-        rowNumber: rn,
+        rowNumber: listRows.length,
         source: source,
         type: type,
         timestamp: timestamp,
@@ -83,7 +83,23 @@ function addAnnotationToRow(children, start, end, annotation_id) {
   return new_children;
 }
 
+function getRowWithIdAndRowNumber(rows, id, row_number) {
+  for (var i=0; i<rows.length; i+=1) {
+    if (rows[i].id == id && rows[i].rowNumber == row_number) {
+      return i;
+    }
+  }
+  console.error("didn't find the row!");
+  console.error(rows);
+  console.error(id);
+  console.error(row_number);
+  return null;
+}
+
 export function createAnnotatedSelectedDataTree(data, annotations, potential_annotation) {
+  console.log("createAnnotatedSelectedDataTree");
+  console.log(annotations);
+  console.log(potential_annotation);
   let rows = [];
 
   // populate initial rows
@@ -105,26 +121,33 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
     console.log(annotation);
     // check that data is loaded enough to match annotation
     if (rows.length > annotation.end.row) {
-      if (annotation.start.row == annotation.end.row) {
-        rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
-                                                                 annotation.start.character,
-                                                                 annotation.end.character,
-                                                                 annotation.id);
+      if (annotation.start.data_id  == annotation.end.data_id &&
+          annotation.start.row == annotation.end.row) {
+        var row_index = getRowWithIdAndRowNumber(rows, annotation.start.id, annotation.start.row);
+        rows[row_index].children = addAnnotationToRow(rows[row_index].children,
+                                                           annotation.start.character,
+                                                           annotation.end.character,
+                                                           annotation.id);
       } else {
-        rows[annotation.start.row].children = addAnnotationToRow(rows[annotation.start.row].children,
-                                                                 annotation.start.character,
-                                                                 null,
-                                                                 annotation.id);
-        for (var i = annotation.start.row + 1; i < annotation.end.row; i += 1) {
+        console.log("looking for start");
+        console.log(annotation);
+        var start_row = getRowWithIdAndRowNumber(rows, annotation.start.data_id, annotation.start.row);
+        console.log("looking for end");
+        var end_row = getRowWithIdAndRowNumber(rows, annotation.end.data_id, annotation.end.row);
+        rows[start_row].children = addAnnotationToRow(rows[start_row].children,
+                                                           annotation.start.character,
+                                                           null,
+                                                           annotation.id);
+        for (var i = start_row + 1; i < end_row; i += 1) {
           rows[i].children = addAnnotationToRow(rows[i].children,
                                                 null,
                                                 null,
                                                 annotation.id);
         }
-        rows[annotation.end.row].children = addAnnotationToRow(rows[annotation.end.row].children,
-                                                               null,
-                                                               annotation.end.character,
-                                                               annotation.id);
+        rows[end_row].children = addAnnotationToRow(rows[annotation.end.row].children,
+                                                         null,
+                                                         annotation.end.character,
+                                                         annotation.id);
       }
     }
   }

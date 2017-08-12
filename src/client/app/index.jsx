@@ -9,6 +9,10 @@ import App from './components/App'
 import { fetchOverviewData } from './actions/OverviewActions'
 import { fetchDetailData } from './actions/DetailActions'
 import { fetchAnnotationsForDetailDataAction } from './actions/AnnotationActions'
+import { Promise } from 'es6-promise';
+window.Promise = Promise;
+
+window.API_URL = "http://localhost:5000";
 
 const store = configureStore()
 
