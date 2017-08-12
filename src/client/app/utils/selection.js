@@ -64,6 +64,7 @@ export function getSelectionDetails() {
       "start": {
           "row": startRowNumber,
           "character": startRow[0].innerText.indexOf(specialStartChar),
+          "id": startRowDataId, // todo shouldn't need two id's
           "data_id": startRowDataId,
           "data_source": startRowDataSource,
           "data_type": startRowDataType,
@@ -72,6 +73,7 @@ export function getSelectionDetails() {
       "end": {
           "row": endRowNumber,
           "character": endRow[0].innerText.replace(specialStartChar, "").indexOf(specialEndChar) - 1,
+          "id": endRowDataId, // todo shouldn't need two id's
           "data_id": endRowDataId,
           "data_source": endRowDataSource,
           "data_type": endRowDataType,

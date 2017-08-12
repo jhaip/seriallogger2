@@ -97,9 +97,6 @@ function getRowWithIdAndRowNumber(rows, id, row_number) {
 }
 
 export function createAnnotatedSelectedDataTree(data, annotations, potential_annotation) {
-  console.log("createAnnotatedSelectedDataTree");
-  console.log(annotations);
-  console.log(potential_annotation);
   let rows = [];
 
   // populate initial rows
@@ -118,10 +115,9 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   // annotate rows
   const a = potential_annotation === null ? [] : potential_annotation;
   for (var annotation of annotations.concat(a)) {
-    console.log(annotation);
     // check that data is loaded enough to match annotation
     if (rows.length > annotation.end.row) {
-      if (annotation.start.data_id  == annotation.end.data_id &&
+      if (annotation.start.id  == annotation.end.id &&
           annotation.start.row == annotation.end.row) {
         var row_index = getRowWithIdAndRowNumber(rows, annotation.start.id, annotation.start.row);
         rows[row_index].children = addAnnotationToRow(rows[row_index].children,
@@ -129,11 +125,8 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
                                                            annotation.end.character,
                                                            annotation.id);
       } else {
-        console.log("looking for start");
-        console.log(annotation);
-        var start_row = getRowWithIdAndRowNumber(rows, annotation.start.data_id, annotation.start.row);
-        console.log("looking for end");
-        var end_row = getRowWithIdAndRowNumber(rows, annotation.end.data_id, annotation.end.row);
+        var start_row = getRowWithIdAndRowNumber(rows, annotation.start.id, annotation.start.row);
+        var end_row = getRowWithIdAndRowNumber(rows, annotation.end.id, annotation.end.row);
         rows[start_row].children = addAnnotationToRow(rows[start_row].children,
                                                            annotation.start.character,
                                                            null,
@@ -144,7 +137,7 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
                                                 null,
                                                 annotation.id);
         }
-        rows[end_row].children = addAnnotationToRow(rows[annotation.end.row].children,
+        rows[end_row].children = addAnnotationToRow(rows[end_row].children,
                                                          null,
                                                          annotation.end.character,
                                                          annotation.id);
