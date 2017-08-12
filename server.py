@@ -109,7 +109,7 @@ def dataAccess():
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                query = 'select * from data where source = ? and timestamp > datetime(?) and timestamp < datetime(?)'
+                query = 'select * from data where source = ? and timestamp >= datetime(?) and timestamp <= datetime(?)'
                 query_args = (filter_source, filter_start_date, filter_stop_date)
                 # print query
                 # print query_args
@@ -188,12 +188,12 @@ def annotationsFetch():
             filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             if filter_source:
                 query = ('select * from annotations '
-                         'where end_timestamp > ? '
-                         'and start_timestamp < ? '
+                         'where end_timestamp >= ? '
+                         'and start_timestamp <= ? '
                          'and source = ?')
                 query_args = (filter_start_date, filter_stop_date, filter_source)
             else:
-                query = 'select * from annotations where timestamp > ? and timestamp < ?'
+                query = 'select * from annotations where timestamp >= ? and timestamp <= ?'
                 query_args = (filter_start_date, filter_stop_date)
             # print query
             # print query_args
@@ -240,7 +240,7 @@ def entriesFetch():
         if filter_start and filter_stop:
             filter_start_date = iso8601.parse_date(request.args.get('start'))
             filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-            query = 'select * from notebookentry where created_at > ? and created_at < ?'
+            query = 'select * from notebookentry where created_at >= ? and created_at <= ?'
             query_args = (filter_start_date, filter_stop_date)
             # print query
             # print query_args
