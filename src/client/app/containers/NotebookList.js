@@ -40,6 +40,7 @@ class NotebookListBase extends React.Component {
     }
     return (
       <div>
+        <h3>Welcome to the Notebook Page</h3>
         <ul>
           {list}
         </ul>

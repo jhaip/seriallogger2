@@ -53,37 +53,6 @@ const compile = marksy({
   }
 })
 
-const demo = `
-# Some blog title
-
-Just need to show you some code first:
-
-\`\`\`js
-const foo = "bar"
-\`\`\`
-
-<Row>
-  <Col>Need to tell you something over here</Col>
-  <Col>And over here</Col>
-</Row>
-
-This is a test of inline code:
-
-<p>
-Today I saw a blind women. The growth has been dramatic
-<InlineEmbed></InlineEmbed>
- and I'm happy about that.
-</p>
-
-More tests
-
-Look at this cool graph:
-
-<Embed></Embed>
-
-nice
-`
-
 class NotebookEntryBase extends React.Component {
   onTextareaChange(event) {
     const new_entry_value = event.target.value;
@@ -95,44 +64,58 @@ class NotebookEntryBase extends React.Component {
     this.props.fetchNotebookEntry(entry_id);
   }
   render() {
+    const entry_name = (this.props.entry && this.props.entry.name !== "") ? this.props.name : "Untitled";
     return (
-      <div style={{
-        height: "80vh",
-        borderBottom: '1px solid #DADADA',
-        borderTop: '1px solid #DADADA'
-      }}>
-        <div style={{
-          width: "50%",
-          float: "left"
-        }}>
-          <textarea
-            style={{
-              width: "100%",
-              border: "none",
-              borderRight: '1px solid #DADADA',
-              outline: 'none',
-              padding: "12px",
-              height: "100%"
-            }}
-            onChange={(event) => this.onTextareaChange(event)}
-            value={this.props.entry === null ?
-                ""
-              : this.props.entry.text}
-          ></textarea>
+      <div>
+        <div>
+          <h3>{entry_name}</h3>
+          { (this.props.entry && this.props.entry.created_at && this.props.entry.last_modified) ?
+              <p className="muted">
+                <i>Created {moment.utc(this.props.entry.created_at).fromNow()}</i>,
+                <i> editted {moment.utc(this.props.entry.last_modified).fromNow()}</i>
+              </p>
+            : null
+          }
         </div>
         <div style={{
-            width: '50%',
-            float: "left",
-            verticalAlign: 'top',
-            display: 'inline-block',
-            "overflow-y": "scroll",
-            height: "100%"
+          height: "80vh",
+          borderBottom: '1px solid #DADADA',
+          borderTop: '1px solid #DADADA'
+        }}>
+          <div style={{
+            width: "50%",
+            float: "left"
           }}>
-            <div style={{padding: "0 12px"}}>
-              {this.props.entry === null ?
-                  null
-                : compile(this.props.entry.text).tree}
-            </div>
+            <textarea
+              style={{
+                width: "100%",
+                border: "none",
+                borderRight: '1px solid #DADADA',
+                outline: 'none',
+                padding: "16px",
+                height: "100%",
+                fontFamily: "monospace"
+              }}
+              onChange={(event) => this.onTextareaChange(event)}
+              value={this.props.entry === null ?
+                  ""
+                : this.props.entry.text}
+            ></textarea>
+          </div>
+          <div style={{
+              width: '50%',
+              float: "left",
+              verticalAlign: 'top',
+              display: 'inline-block',
+              "overflow-y": "scroll",
+              height: "100%"
+            }}>
+              <div style={{padding: "16px"}}>
+                {this.props.entry === null ?
+                    null
+                  : compile(this.props.entry.text).tree}
+              </div>
+          </div>
         </div>
       </div>
     );
