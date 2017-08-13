@@ -8,8 +8,12 @@ class AnnotationView extends React.Component {
   render() {
     return (
       <div>
-        <FilterSelectViewToSelected />
-        <AddAnnotationBlock />
+        <div style={{marginBottom: "10px"}}>
+          <FilterSelectViewToSelected />
+        </div>
+        <div style={{marginBottom: "10px"}}>
+          <AddAnnotationBlock />
+        </div>
         <AnnotationList />
       </div>
     );
