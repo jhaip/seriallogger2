@@ -28,6 +28,13 @@ class RangeSelection extends React.Component {
     this.props.onChange(this.state.value0, date);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      value0: nextProps.startTime,
+      value1: nextProps.endTime
+    });
+  }
+
   render() {
     const date_time_styles = {
       maxWidth: "300px",

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import DetailViewText from "./DetailViewText"
 import AnnotationView from "./AnnotationView"
+import DetailViewRangeSelection from "../containers/DetailViewRangeSelection"
 import DropdownList from 'react-widgets/lib/DropdownList'
 import Clipboard from 'clipboard'
 
@@ -35,11 +36,9 @@ class DetailBlockBase extends React.Component {
           readOnly
         />
         </div>
-        <p className="selected-view__timestamp">
-          {moment(this.props.selectionStartTime).fromNow()}
-          to
-          {moment(this.props.selectionEndTime).fromNow()}
-        </p>
+        <div style={{padding: "10px 0px"}}>
+          <DetailViewRangeSelection />
+        </div>
         <div className="selected-view__data-container">
           <div id="selected-view__data">
             <DetailViewText data={this.props.selectedData}
