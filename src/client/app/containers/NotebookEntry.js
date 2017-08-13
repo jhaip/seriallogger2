@@ -48,8 +48,37 @@ const compile = marksy({
       )
     }
   },
-  h1 (props) {
-    return <h1 style={{textDecoration: 'underline'}}>{props.children}</h1>
+  elements: {
+    h1 (props) {
+      return <h1 style={{textDecoration: 'underline'}}>{props.children}</h1>
+    },
+    code (props) {
+      if (props.code) {
+        return (
+          <code style={{
+            backgroundColor: "#EEE",
+            display: "block",
+            padding: "10px",
+            width: "100%",
+            borderRadius: "3px"
+          }}>
+            {props.code}
+          </code>
+        )
+      } else {
+        // inline
+        return (
+          <code style={{
+            backgroundColor: "#EEE",
+            padding: "1px",
+            color: "#A2260A",
+            borderRadius: "2px"
+          }}>
+            {props.children}
+          </code>
+        )
+      }
+    }
   }
 })
 
@@ -107,7 +136,7 @@ class NotebookEntryBase extends React.Component {
               float: "left",
               verticalAlign: 'top',
               display: 'inline-block',
-              "overflow-y": "scroll",
+              overflowY: "scroll",
               height: "100%"
             }}>
               <div style={{padding: "16px"}}>
