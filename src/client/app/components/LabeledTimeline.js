@@ -13,7 +13,7 @@ class LabeledTimeline extends React.Component {
             padding={{top: 0, left: 20, right: 20, bottom: 30}}
             width={900}
             height={60}
-            domain={{y: [0,1]}}
+            domain={{x: [this.props.viewStartTime, this.props.viewEndTime], y: [0,1]}}
             domainPadding={{x: 30}}
             scale={{x: "time"}}
             containerComponent={
@@ -25,11 +25,9 @@ class LabeledTimeline extends React.Component {
             }
           >
             <VictoryAxis
-              tickFormat={(x) => moment(x).format('h:mm:ss')}
               style={{
                 ticks: {stroke: "grey", size: 5},
               }}
-              domain={{x: [this.props.viewStartTime, this.props.viewEndTime]}}
             />
             <VictoryScatter
               data={this.props.data}
