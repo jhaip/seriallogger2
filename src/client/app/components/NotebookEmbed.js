@@ -37,12 +37,28 @@ class NotebookEmbed extends React.Component {
   }
 
   render() {
+    const styles = {
+      border: "1px solid #88F",
+      padding: "10px",
+      overflow: "scroll",
+      maxHeight: "200px"
+    }
     return (
       <div>
-        {this.state.is_fetching ?
-            <i>Loading</i>
-          : this.state.data.length === 0 ? <i>No data</i> : null}
-        <DetailViewText data={this.state.data} activeAnnotation="" />
+        <div style={{
+            backgroundColor: "#88F",
+            fontSize: "11px",
+            color: "white",
+            padding: "3px 10px"
+          }}>
+          <strong>{this.props.source}</strong> from <strong>{moment(this.props.start).fromNow()}</strong> to <strong>{moment(this.props.end).fromNow()}</strong>
+        </div>
+        <div style={styles}>
+          {this.state.is_fetching ?
+              <i>Loading</i>
+            : this.state.data.length === 0 ? <i>No data</i> : null}
+          <DetailViewText data={this.state.data} activeAnnotation="" />
+        </div>
       </div>
     );
   }

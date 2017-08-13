@@ -36,18 +36,10 @@ const compile = marksy({
       return <div style={{flex: '1', padding: '10px', backgroundColor: '#DADADA', border: '1px solid #333'}}>{children}</div>
     },
     Embed (props) {
-      const styles = {
-        border: "1px dashed #88F",
-        padding: "10px",
-        overflow: "scroll",
-        maxHeight: "200px"
-      }
       return (
-        <div style={styles}>
-          <NotebookEmbed source={props.source}
-                         start={moment(props.start).toDate()}
-                         end={moment(props.end).toDate()} />
-        </div>
+        <NotebookEmbed source={props.source}
+                       start={moment(props.start).toDate()}
+                       end={moment(props.end).toDate()} />
       )
     },
     InlineEmbed() {
@@ -104,27 +96,20 @@ class NotebookEntryBase extends React.Component {
   }
   render() {
     return (
-      <div style={{height: "80vh"}}>
+      <div style={{
+        height: "80vh",
+        borderBottom: '1px solid #DADADA',
+        borderTop: '1px solid #DADADA'
+      }}>
         <div style={{
-            width: '50%',
-            float: "left",
-            verticalAlign: 'top',
-            display: 'inline-block',
-            "overflow-y": "scroll",
-            height: "100%"
-          }}>
-            <div style={{padding: "0 10px"}}>
-              {this.props.entry === null ?
-                  null
-                : compile(this.props.entry.text).tree}
-            </div>
-        </div>
-        <div style={{padding: "0 10px"}}>
+          width: "50%",
+          float: "left"
+        }}>
           <textarea
             style={{
-              width: "50%",
-              float: "left",
-              border: '1px dashed #DADADA',
+              width: "100%",
+              border: "none",
+              borderRight: '1px solid #DADADA',
               outline: 'none',
               padding: "12px",
               height: "100%"
@@ -134,6 +119,20 @@ class NotebookEntryBase extends React.Component {
                 ""
               : this.props.entry.text}
           ></textarea>
+        </div>
+        <div style={{
+            width: '50%',
+            float: "left",
+            verticalAlign: 'top',
+            display: 'inline-block',
+            "overflow-y": "scroll",
+            height: "100%"
+          }}>
+            <div style={{padding: "0 12px"}}>
+              {this.props.entry === null ?
+                  null
+                : compile(this.props.entry.text).tree}
+            </div>
         </div>
       </div>
     );
