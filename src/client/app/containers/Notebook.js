@@ -24,7 +24,7 @@ class NotebookBase extends React.Component {
   render() {
     console.log(this.props);
     return (
-      <div>
+      <div className="notebook">
         <h3>Welcome to the Notebook Page</h3>
         <Route path={`${this.props.match.url}/:entryId`} component={NotebookEntry}/>
         <Route exact path={this.props.match.url} component={NotebookList}/>

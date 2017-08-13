@@ -104,30 +104,37 @@ class NotebookEntryBase extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div style={{height: "80vh"}}>
         <div style={{
             width: '50%',
+            float: "left",
             verticalAlign: 'top',
             display: 'inline-block',
-            padding: '0 20px'
+            "overflow-y": "scroll",
+            height: "100%"
           }}>
-            {this.props.entry === null ?
-                null
-              : compile(this.props.entry.text).tree}
+            <div style={{padding: "0 10px"}}>
+              {this.props.entry === null ?
+                  null
+                : compile(this.props.entry.text).tree}
+            </div>
         </div>
-        <textarea
-          style={{
-            width: "45%",
-            height: 500,
-            border: '1px dashed #DADADA',
-            outline: 'none',
-            padding: '10px'
-          }}
-          onChange={(event) => this.onTextareaChange(event)}
-          value={this.props.entry === null ?
-              ""
-            : this.props.entry.text}
-        ></textarea>
+        <div style={{padding: "0 10px"}}>
+          <textarea
+            style={{
+              width: "50%",
+              float: "left",
+              border: '1px dashed #DADADA',
+              outline: 'none',
+              padding: "12px",
+              height: "100%"
+            }}
+            onChange={(event) => this.onTextareaChange(event)}
+            value={this.props.entry === null ?
+                ""
+              : this.props.entry.text}
+          ></textarea>
+        </div>
       </div>
     );
   }

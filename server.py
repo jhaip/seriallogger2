@@ -11,9 +11,13 @@ import os
 def utcnow():
     return datetime.now(tz=pytz.utc)
 
-template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-template_dir = os.path.join(template_dir, 'static')
-app = Flask(__name__, template_folder=template_dir)
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR = os.path.dirname(PROJECT_ROOT)
+# template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+template_dir = os.path.join(PROJECT_ROOT, 'static')
+print template_dir
+# app = Flask(__name__)
+app = Flask(__name__, template_folder=PROJECT_ROOT)
 CORS(app)
 
 DATABASE = 'log.db'
@@ -67,7 +71,8 @@ def add_header(r):
 @app.route("/notebook/")
 @app.route("/notebook/<entry_id>")
 def index(entry_id=None):
-    return render_template('index.html')
+    template_dir = os.path.join(PROJECT_ROOT, 'static')
+    return render_template("index.html")
 
 # @app.route("/api/logs")
 # def apiLogs():
