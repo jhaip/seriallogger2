@@ -95,8 +95,9 @@ export function fetchDetailDataForAnnotations(source, start, stop) {
       .then(response => response.json())
       .then(json => {
         const clean_data = json.results.map(d => {
+          const value = `${d.annotation}\r\nSource: ${d.source}\r\nStart: ${d.start_timestamp}\r\nEnd: ${d.end_timestamp}`;
           return {
-            value: d.annotation,
+            value: value,
             id: d.id,
             source: source,
             type: "Annotation",

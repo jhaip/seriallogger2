@@ -63,7 +63,7 @@
     font-size: 12px;
 }
 .annotation-list__item {
-    padding: 10px;
+    padding: 5px;
 }
 .annotation-list__item:hover {
     background-color: rgba(0, 255, 0, 0.1);

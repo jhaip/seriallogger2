@@ -49,7 +49,8 @@ function fetchAnnotationsForDetailData(source, start, end) {
               "row": d.end_line,
               "character": d.end_char,
             },
-            "id": d.id
+            "id": d.id,
+            "annotation": d.annotation
           };
         });
         resolve(clean_data);

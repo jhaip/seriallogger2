@@ -19,7 +19,10 @@ class AnnotationListBase extends React.Component {
         </div>
         {(this.props.activeAnnotation === "") ?
           null :
-          <button onClick={this.props.clearActiveAnnotation} >Clear Selection</button>}
+          <button onClick={this.props.clearActiveAnnotation}
+                  style={{marginTop: "10px"}}>
+            Clear Selection
+          </button>}
       </div>
     );
   }

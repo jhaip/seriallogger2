@@ -10,7 +10,7 @@ class AnnotationListItem extends React.Component {
     }
     return (
       <div className={className} onClick={() => this.props.handleClick(this.props.annotation.id)}>
-        Annotation #{this.props.annotation.id}
+        ({this.props.annotation.id}) {this.props.annotation.annotation}
       </div>
     );
   }
