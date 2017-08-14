@@ -37,9 +37,12 @@ class NotebookListBase extends React.Component {
     }
     return (
       <div>
-        <h3>Welcome to the Notebook Page</h3>
         {list}
-        <input type="Submit" onClick={this.props.onCreateEntry} value="New Entry" readOnly/>
+        <input type="Submit"
+               onClick={this.props.onCreateEntry}
+               value="New Entry"
+               readOnly
+               style={{marginTop: "10px"}}/>
       </div>
     );
   }
