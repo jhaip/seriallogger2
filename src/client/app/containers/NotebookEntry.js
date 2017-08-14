@@ -20,8 +20,8 @@ const mapDispatchToProps = dispatch => {
     fetchNotebookEntry: (entry_id) => {
       dispatch(fetchNotebookEntry(entry_id))
     },
-    updateNotebookEntry: (new_entry_text) => {
-      dispatch(updateNotebookEntry(new_entry_text))
+    updateNotebookEntry: (new_entry_text, new_entry_title) => {
+      dispatch(updateNotebookEntry(new_entry_text, new_entry_title))
     }
   }
 }
@@ -83,21 +83,41 @@ const compile = marksy({
 })
 
 class NotebookEntryBase extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {text: '', title: ''};
+    this.handleTitleChange = this.handleTitleChange.bind(this);
+    this.onTextareaChange = this.onTextareaChange.bind(this);
+  }
+
+  handleTitleChange(event) {
+    this.setState({title: event.target.value});
+    this.props.updateNotebookEntry(this.state.text, event.target.value);
+  }
+
   onTextareaChange(event) {
     const new_entry_value = event.target.value;
-    this.props.updateNotebookEntry(new_entry_value);
+    this.setState({text: new_entry_value});
+    this.props.updateNotebookEntry(new_entry_value, this.state.title);
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.entry) {
+      this.setState({text: nextProps.entry.text, title: nextProps.entry.name});
+    }
+  }
+
   componentDidMount() {
     const found = window.location.pathname.match(/\/notebook\/(\d+)/);
     const entry_id = found[1];
     this.props.fetchNotebookEntry(entry_id);
   }
+
   render() {
-    const entry_name = (this.props.entry && this.props.entry.name !== "") ? this.props.name : "Untitled";
     return (
       <div>
         <div>
-          <h3>{entry_name}</h3>
+          <input type="text" value={this.state.title} placeholder="Untitled" onChange={this.handleTitleChange} />
           { (this.props.entry && this.props.entry.created_at && this.props.entry.last_modified) ?
               <p className="muted">
                 <i>Created {moment.utc(this.props.entry.created_at).fromNow()}</i>,

@@ -87,11 +87,12 @@ export function saveNotebookEntry(entry) {
   }
 }
 
-export function updateNotebookEntry(new_entry_text) {
+export function updateNotebookEntry(new_entry_text, new_entry_title) {
   return (dispatch, getState) => {
     dispatch({
       type: UPDATE_NOTEBOOK_ENTRY,
-      text: new_entry_text
+      text: new_entry_text,
+      title: new_entry_title
     });
     dispatch(debouncedSaveNotebookEntryAction());
   }

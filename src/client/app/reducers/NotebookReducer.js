@@ -22,7 +22,8 @@ function NotebookReducer(state = INITIAL_NOTEBOOK_STATE, action) {
     case UPDATE_NOTEBOOK_ENTRY:
       return Object.assign({}, state, {
         active_entry: Object.assign({}, state.active_entry, {
-          text: action.text
+          text: action.text,
+          name: action.title
         })
       })
     default:
