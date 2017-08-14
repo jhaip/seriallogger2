@@ -83,6 +83,21 @@ body, .notebook, .notebook textarea {
     color: #333;
 }
 
+h3 {
+    font-size: 24px;
+}
+
 .muted {
     color: #AAA;
+}
+
+.notebook-entry-summary-item {
+    padding: 10px;
+}
+.notebook-entry-summary-item a {
+    text-decoration: none !important;
+}
+
+.notebook-entry-summary-item:hover {
+    background-color: #EEE;
 }

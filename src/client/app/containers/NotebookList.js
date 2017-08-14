@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchNotebookEntries, createNotebookEntry } from '../actions/NotebookActions'
+import NotebookEntryListItem from '../components/NotebookEntryListItem'
 
 const mapStateToProps = state => {
   return {
@@ -30,20 +31,14 @@ class NotebookListBase extends React.Component {
     if (this.props.entries) {
       list = this.props.entries.map((entry) => {
         return (
-          <li key={entry.id}>
-            <Link to={`./${entry.id}`}>
-              {`Entry "${entry.name}" - ${entry.id}`}
-            </Link>
-          </li>
+          <NotebookEntryListItem key={entry.id} entry={entry} />
         )
       });
     }
     return (
       <div>
         <h3>Welcome to the Notebook Page</h3>
-        <ul>
-          {list}
-        </ul>
+        {list}
         <input type="Submit" onClick={this.props.onCreateEntry} value="New Entry" readOnly/>
       </div>
     );

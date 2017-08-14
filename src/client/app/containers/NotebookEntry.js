@@ -101,7 +101,7 @@ class NotebookEntryBase extends React.Component {
           { (this.props.entry && this.props.entry.created_at && this.props.entry.last_modified) ?
               <p className="muted">
                 <i>Created {moment.utc(this.props.entry.created_at).fromNow()}</i>,
-                <i> editted {moment.utc(this.props.entry.last_modified).fromNow()}</i>
+                <i> edited {moment.utc(this.props.entry.last_modified).fromNow()}</i>
               </p>
             : null
           }
