@@ -25,3 +25,9 @@ def clear_notebook():
     db.cursor().execute("DELETE FROM notebookentry")
     db.commit()
     db.close()
+
+def clear_all():
+    clear_views()
+    clear_serial_data()
+    clear_annotations()
+    clear_notebook()
