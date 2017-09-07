@@ -6,7 +6,8 @@ import {
 } from '../selectors'
 import {
   changeSelectedSource,
-  copyEmbedForSelectedView
+  copyEmbedForSelectedView,
+  changeSelectedVisualType
 } from '../actions/DetailActions'
 
 const mapStateToProps = state => {
@@ -18,7 +19,8 @@ const mapStateToProps = state => {
     selectedAnnotations: state.selected.annotations,
     activeAnnotation: String(state.selected.activeAnnotation),
     availableSources: state.view.sources,
-    selected_view_embed_code: getSelectedViewEmbedCode(state)
+    selected_view_embed_code: getSelectedViewEmbedCode(state),
+    selectedVisualType: state.selected.visualType
   }
 }
 
@@ -26,6 +28,9 @@ const mapDispatchToProps = dispatch => {
   return {
     onSelectedSourceChange: (source) => {
       dispatch(changeSelectedSource(source))
+    },
+    onSelectedVisualTypeChange: (visualType) => {
+      dispatch(changeSelectedVisualType(visualType))
     }
   }
 }

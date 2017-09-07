@@ -10,6 +10,7 @@ export const CHANGE_SELECTION_RANGE = 'CHANGE_SELECTION_RANGE'
 export const CHANGE_SELECTED_SOURCE = 'CHANGE_SELECTED_SOURCE'
 export const REQUEST_SELECTED_DATA = 'REQUEST_SELECTED_DATA'
 export const RECEIVE_SELECTED_DATA = 'RECEIVE_SELECTED_DATA'
+export const CHANGE_SELECTED_VISUAL_TYPE = 'CHANGE_SELECTED_VISUAL_TYPE'
 
 export function changeSelectionRange(start, end) {
   return (dispatch, getState) => {
@@ -23,6 +24,13 @@ export function changeSelectedSource(source) {
     dispatch({ type: CHANGE_SELECTED_SOURCE, source });
     dispatch(fetchDetailData(source));
     dispatch(fetchAnnotationsForDetailDataAction(source));
+    dispatch(saveView());
+  }
+}
+
+export function changeSelectedVisualType(visualType) {
+  return (dispatch, getState) => {
+    dispatch({ type: CHANGE_SELECTED_VISUAL_TYPE, visualType });
     dispatch(saveView());
   }
 }

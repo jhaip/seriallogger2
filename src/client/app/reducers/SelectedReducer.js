@@ -7,7 +7,8 @@ import {
 import {
   CHANGE_SELECTION_RANGE,
   CHANGE_SELECTED_SOURCE,
-  RECEIVE_SELECTED_DATA
+  RECEIVE_SELECTED_DATA,
+  CHANGE_SELECTED_VISUAL_TYPE
 } from '../actions/DetailActions'
 
 const INITIAL_SELECTED_STATE = {
@@ -17,7 +18,8 @@ const INITIAL_SELECTED_STATE = {
     data: [],
     annotations: [],
     activeAnnotation: "",
-    potential_annotation: null
+    potential_annotation: null,
+    visualType: "raw"
 }
 
 export default function selected(state = INITIAL_SELECTED_STATE, action) {
@@ -53,6 +55,10 @@ export default function selected(state = INITIAL_SELECTED_STATE, action) {
     case SET_POTENTIAL_ANNOTATION:
       return Object.assign({}, state, {
         potential_annotation: action.potential_annotation
+      })
+    case CHANGE_SELECTED_VISUAL_TYPE:
+      return Object.assign({}, state, {
+        visualType: action.visualType
       })
     default:
       return state

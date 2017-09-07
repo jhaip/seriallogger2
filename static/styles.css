@@ -1,7 +1,7 @@
 .mark:hover {
     fill: red;
 }
-#selected-view__data {
+#selected-view__data, #selected-view__data-line-graph {
     width: 600px;
     height: 300px;
     overflow: scroll;

@@ -2,17 +2,34 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import DetailViewText from "./DetailViewText"
+import DetailViewLineGraph from "../containers/DetailViewLineGraph"
 import AnnotationView from "./AnnotationView"
 import DetailViewRangeSelection from "../containers/DetailViewRangeSelection"
 import DropdownList from 'react-widgets/lib/DropdownList'
 import Clipboard from 'clipboard'
 
 class DetailBlockBase extends React.Component {
-   componentDidMount() {
+  componentDidMount() {
     var clipboard = new Clipboard('#copy-selected-view-embed-button');
   }
+  renderVisual() {
+    switch (this.props.selectedVisualType) {
+      case "line graph":
+        return (
+          <DetailViewLineGraph
+            data={this.props.selectedData}
+            activeAnnotation={this.props.activeAnnotation} />
+        );
+        break;
+      case "raw":
+      default:
+        return (
+          <DetailViewText data={this.props.selectedData}
+                          activeAnnotation={this.props.activeAnnotation} />
+        );
+    }
+  }
   render() {
-    console.log(this.props.selectedData);
     const source_dropdown_styles = {
       width: "150px",
       display: "inline-block",
@@ -21,29 +38,33 @@ class DetailBlockBase extends React.Component {
     }
     return (
       <div className="c-detail-block-base">
-        <div><strong>Selected View:</strong>
+        <div>
+          <strong>Selected View:</strong>
           <DropdownList
             data={this.props.availableSources}
             value={this.props.selectedSource}
             onChange={this.props.onSelectedSourceChange}
             style={source_dropdown_styles}
           />
-        <input
-          type="submit"
-          id="copy-selected-view-embed-button"
-          data-clipboard-text={this.props.selected_view_embed_code}
-          value="Copy Embed Code"
-          readOnly
-        />
+          <DropdownList
+            data={["raw", "line graph"]}
+            value={this.props.selectedVisualType}
+            onChange={this.props.onSelectedVisualTypeChange}
+            style={source_dropdown_styles}
+          />
+          <input
+            type="submit"
+            id="copy-selected-view-embed-button"
+            data-clipboard-text={this.props.selected_view_embed_code}
+            value="Copy Embed Code"
+            readOnly
+          />
         </div>
         <div style={{padding: "10px 0px"}}>
           <DetailViewRangeSelection />
         </div>
         <div className="selected-view__data-container">
-          <div id="selected-view__data">
-            <DetailViewText data={this.props.selectedData}
-                            activeAnnotation={this.props.activeAnnotation} />
-          </div>
+          { this.renderVisual() }
           <div className="selected-view__data-annotations-col">
             <AnnotationView />
           </div>
@@ -61,7 +82,9 @@ DetailBlockBase.propTypes = {
   activeAnnotation: PropTypes.string.isRequired,
   availableSources: PropTypes.array.isRequired,
   onSelectedSourceChange: PropTypes.func.isRequired,
-  selected_view_embed_code: PropTypes.string.isRequired
+  selected_view_embed_code: PropTypes.string.isRequired,
+  selectedVisualType: PropTypes.string.isRequired,
+  onSelectedVisualTypeChange: PropTypes.func.isRequired
 };
 
 export default DetailBlockBase
