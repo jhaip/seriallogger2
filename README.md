@@ -1,5 +1,13 @@
 # seriallogger2
 
+### Local Development
+
+The backend Flask app runs using Docker.  Install Docker on your computer and then run:
+
+```
+docker-compose up
+```
+
 ### Create DB
 First create the database in a python REPL.  This creates a SQLite database called log.db with the proper tables.
 ```
@@ -10,11 +18,6 @@ init_db()
 ### Compile with Webpack
 ```
 ./node_modules/.bin/webpack -d
-```
-
-### Run the server
-```
-python server.py
 ```
 
 ### Record data in serial monitor
