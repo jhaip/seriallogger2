@@ -12,7 +12,7 @@ import { fetchAnnotationsForDetailDataAction } from './actions/AnnotationActions
 import { Promise } from 'es6-promise';
 window.Promise = Promise;
 
-window.API_URL = "http://localhost:5000";
+window.API_URL = ""; // "http://localhost:5000";
 
 const store = configureStore()
 
