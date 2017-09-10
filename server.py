@@ -20,7 +20,7 @@ print template_dir
 app = Flask(__name__, template_folder=PROJECT_ROOT)
 CORS(app)
 
-DATABASE = 'log.db'
+DATABASE = 'db/log.db'
 
 def get_db():
     db = getattr(g, '_database', None)

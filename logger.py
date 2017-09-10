@@ -5,6 +5,9 @@ import requests
 
 # Modifed source from https://stackoverflow.com/questions/11109859/pipe-output-from-shell-command-to-a-python-script
 
+# API_BASE = 'http://localhost:5000'
+API_BASE = 'http://104.236.29.120'
+
 # use stdin if it's full
 if not sys.stdin.isatty():
     input_stream = sys.stdin
@@ -32,7 +35,7 @@ with open("hello.txt", "w") as f:
                 bufferSize += 1
                 inputEmptyCount = 0
                 if bufferSize > 2:
-                    r = requests.post('http://localhost:5000/api/data', json={"source": "serial", "value": bufferString, "type": "String"})
+                    r = requests.post(API_BASE+'/api/data', json={"source": "serial", "value": bufferString, "type": "String"})
                     print "SEND REQUEST", r.status_code
                     bufferString = ""
                     bufferSize = 0

@@ -3,5 +3,5 @@ web:
   ports:
    - "80:5000"
    - "5000:5000"
-  # volumes:
-  #  - .:/code
+  volumes:
+   - Database:/app/db

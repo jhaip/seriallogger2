@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = 'log.db'
+DATABASE = 'db/log.db'
 
 def clear_views():
     db = sqlite3.connect(DATABASE)
