@@ -65,6 +65,16 @@ docker-machine env --unset
 eval $(docker-machine env --unset
 ```
 
+##### Saving database backups from remote
+
+First, target the remote docker in docker-machine.  Then copy the database:
+
+```
+docker-machine scp seriallogger2:/var/lib/docker/volumes/Database/_data/log.db ./remote-log.db
+```
+
+You can use the remote-log.db as a replacement for the local `db/log.db`.
+
 ---
 ### Legacy:
 ```
