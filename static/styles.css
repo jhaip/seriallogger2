@@ -106,3 +106,19 @@ h3 {
 .notebook-entry-summary-item p {
     margin: 0;
 }
+
+.custom-source-block {
+    margin-top: 20px;
+}
+.custom-source-block__col {
+    float: left;
+    width: 400px;
+    height: 200px;
+    border: 1px solid #CCC;
+    margin: 0 10px 0 0;
+    padding: 10px;
+    overflow: scroll;
+    font-family: monospace;
+    font-size: 11px;
+    box-sizing: border-box;
+}

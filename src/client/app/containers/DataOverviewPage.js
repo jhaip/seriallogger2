@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { saveView } from '../actions/ViewActions'
 import OverviewBlock from "../components/OverviewBlock"
 import DetailBlock from "./DetailBlock"
+import CustomSourceBlock from "./CustomSourceBlock"
 
 const mapStateToProps = state => {
   return {}
@@ -25,6 +26,7 @@ class DataOverviewPageBase extends React.Component {
     return (
       <div>
         <OverviewBlock />
+        <CustomSourceBlock />
         <DetailBlock />
       </div>
     );
