@@ -1,7 +1,9 @@
 import moment from 'moment'
 import {
   CHANGE_VIEW_RANGE,
-  RECEIVE_OVERVIEW_DATA
+  RECEIVE_OVERVIEW_DATA,
+  ADD_DERIVATIVE_DATA_SOURCE,
+  computeDerivativeSource
 } from '../actions/OverviewActions'
 
 const INITIAL_VIEW_STATE = {
@@ -32,6 +34,13 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
       return Object.assign({}, state, {
         data: Object.assign({}, state.data, {
             [action.source]: action.data
+        })
+      })
+    case ADD_DERIVATIVE_DATA_SOURCE:
+      return Object.assign({}, state, {
+        sources: state.sources.slice(0).concat([action.sourceName]),
+        data: Object.assign({}, state.data, {
+            [action.sourceName]: computeDerivativeSource(state.data, action.derivativeFunc)
         })
       })
     default:

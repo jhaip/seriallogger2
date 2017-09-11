@@ -157,7 +157,18 @@ export function fetchDetailDataForCode(source, start, stop) {
   });
 }
 
-export function fetchDetailDataPurely(source, start, end) {
+export function fetchDetailDataForUnknown(source, start, stop, getState) {
+  return new Promise((resolve, reject) => {
+    console.log(getState());
+    console.log(getState().view.data);
+    console.log(getState().view.data[source]);
+    const data = getState().view.data[source];
+    // TODO: filter by start and stop times
+    resolve(data);
+  });
+}
+
+export function fetchDetailDataPurely(source, start, end, getState) {
   let data_promise;
   switch (source) {
     case "serial":
@@ -170,6 +181,8 @@ export function fetchDetailDataPurely(source, start, end) {
     case "code":
       data_promise = fetchDetailDataForCode(source, start, end);
       break;
+    default:
+      data_promise = fetchDetailDataForUnknown(source, start, end, getState);
   }
   return data_promise
 }
@@ -178,7 +191,7 @@ export function fetchDetailData(source) {
   return (dispatch, getState) => {
     dispatch(requestDetailData(source))
     const { start, end } = getState().selected;
-    return fetchDetailDataPurely(source, start, end)
+    return fetchDetailDataPurely(source, start, end, getState)
       .then(data => dispatch(receiveDetailData(source, data)))
   }
 }

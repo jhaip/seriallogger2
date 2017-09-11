@@ -14,6 +14,8 @@ class NotebookEmbed extends React.Component {
   update(props) {
     console.log("UPDATING NOTEBOOK EMBED!");
     this.setState({is_fetching: true});
+    // TODO: don't call this function directly, dispatch an action like
+    // the overview does
     fetchDetailDataPurely(
       props.source,
       props.start,

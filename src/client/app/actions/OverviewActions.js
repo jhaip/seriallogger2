@@ -7,6 +7,7 @@ import {
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
 export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
+export const ADD_DERIVATIVE_DATA_SOURCE = 'ADD_DERIVATIVE_DATA_SOURCE'
 
 export function fetchAllNewOverviewData() {
   return (dispatch, getState) => {
@@ -52,4 +53,16 @@ export function fetchOverviewData(source) {
     return data_promise
       .then(data => dispatch(receiveOverviewData(source, data)))
   }
+}
+
+export function addDerivativeDataSource(sourceName, derivativeFunc) {
+  return { type: ADD_DERIVATIVE_DATA_SOURCE, sourceName, derivativeFunc }
+}
+
+export function computeDerivativeSource(sourceData, funcBody) {
+  const func = `(function (sourceData) { ${funcBody} })(sourceData)`;
+  console.log(func);
+  const result = eval(func);
+  console.log(result);
+  return result;
 }
