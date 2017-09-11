@@ -15,21 +15,9 @@ const mapDispatchToProps = null;
 
 class DetailViewLineGraph extends React.Component {
   render() {
-    const cleanData = this.props.data.reduce((acc, d) => {
-      // console.log(d);
-      const re = / (\d\d.\d\d)\*F/g;
-      var s = d.value.slice(0);
-      var m;
-      var matches = [];
-      do {
-          m = re.exec(s);
-          if (m) {
-            matches.push(+m[1]);
-          }
-      } while (m);
-
-      return acc.concat(matches);
-    }, []);
+    const cleanData = this.props.data.map(d => {
+      return d;
+    });
     console.log(cleanData);
     return (
       <div id="selected-view__data-line-graph">
@@ -40,6 +28,8 @@ class DetailViewLineGraph extends React.Component {
           >
           <VictoryLine
             data={cleanData}
+            x="timestamp"
+            y="value"
           />
         </VictoryChart>
       </div>

@@ -76,7 +76,7 @@ class CustomSourceBlock extends React.Component {
     //   do {
     //       m = re.exec(s);
     //       if (m) {
-    //         matches.push({"timestamp": d.timestamp, "value": +m[1]});
+    //         matches.push({"timestamp": d.timestamp, "value": m[1]});
     //       }
     //   } while (m);
     //
