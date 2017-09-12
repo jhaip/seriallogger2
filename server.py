@@ -15,7 +15,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # BASE_DIR = os.path.dirname(PROJECT_ROOT)
 # template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 template_dir = os.path.join(PROJECT_ROOT, 'static')
-print template_dir
+print(template_dir)
 # app = Flask(__name__)
 app = Flask(__name__, template_folder=PROJECT_ROOT)
 CORS(app)
@@ -95,9 +95,8 @@ def dataAccess():
         data = request.get_json()
         if data is None:
             abort(400)
-        # print data
         if "timestamp" not in data:
-            print "assigning timestamp"
+            print("assigning timestamp")
             data["timestamp"] = utcnow()
         tdata = (data["source"], data["timestamp"], data["value"], data["type"])
         commit_to_db('INSERT INTO data (source, timestamp, value, type) VALUES (?,?,?,?)', tdata)
@@ -116,14 +115,11 @@ def dataAccess():
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 query = 'select * from data where source = ? and timestamp >= datetime(?) and timestamp <= datetime(?)'
                 query_args = (filter_source, filter_start_date, filter_stop_date)
-                # print query
-                # print query_args
             else:
                 query = 'select * from data where source = ?'
                 query_args = (filter_source,)
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        # print results
         return jsonify(results)
 
 @app.route("/api/annotations", methods=['GET', 'POST'])
@@ -132,7 +128,6 @@ def annotationsFetch():
         data = request.get_json()
         if data is None:
             abort(400)
-        # print data
         tdata = (
             utcnow(),
             data["annotation"],
@@ -200,11 +195,8 @@ def annotationsFetch():
             else:
                 query = 'select * from annotations where timestamp >= ? and timestamp <= ?'
                 query_args = (filter_start_date, filter_stop_date)
-            # print query
-            # print query_args
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        # print results
         return jsonify(results)
 
 
@@ -247,7 +239,6 @@ def derivativeSources():
         query = 'select * from derivativesources'
         for r in query_db(query):
             results["results"].append(dict(zip(keys, r)))
-        # print results
         return jsonify(results)
 
 
@@ -257,7 +248,6 @@ def entriesFetch():
         data = request.get_json()
         if data is None:
             abort(400)
-        # print data
         tdata = (
             utcnow(),
             utcnow(),
@@ -290,11 +280,8 @@ def entriesFetch():
             filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             query = 'select * from notebookentry where created_at >= ? and created_at <= ?'
             query_args = (filter_start_date, filter_stop_date)
-            # print query
-            # print query_args
         for r in query_db(query, query_args):
             results["results"].append(dict(zip(keys, r)))
-        # print results
         return jsonify(results)
 
 
@@ -304,7 +291,6 @@ def entryFetch(entry_id):
         data = request.get_json()
         if data is None:
             abort(400)
-        # print data
         tdata = (
             utcnow(),
             data["name"],
@@ -331,7 +317,6 @@ def entryFetch(entry_id):
         result = None
         for r in query_db(query, query_args):
             result = dict(zip(keys, r))
-        # print result
         if result is None:
             return ('', 404)
         return jsonify(result)
