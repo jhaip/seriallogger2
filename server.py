@@ -208,6 +208,48 @@ def annotationsFetch():
         return jsonify(results)
 
 
+@app.route("/api/derivative_sources", methods=['GET', 'POST', 'DELETE'])
+def derivativeSources():
+    if request.method == 'POST':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        # TODO save to db
+        return ('', 204)
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        # TODO save to db
+        return ('', 204)
+    else:
+        results = {"results": {
+            "map code": """return sourceData.view.map(function(d) {
+  return {
+    "timestamp": d.timestamp,
+    "value": JSON.parse(d.value).page
+  };
+});""",
+            "get temperature": """var cleanData = sourceData.serial.reduce((acc, d) => {
+var re = / (\d\d.\d\d)\*F/g;
+var s = d.value.slice(0);
+var m;
+var matches = [];
+do {
+  m = re.exec(s);
+  if (m) {
+    matches.push({"timestamp": d.timestamp, "value": m[1]});
+  }
+} while (m);
+
+return acc.concat(matches);
+}, []);
+return cleanData;
+"""
+        }}
+        return jsonify(results)
+
+
 @app.route("/api/notebook/entries", methods=['GET', 'POST'])
 def entriesFetch():
     if request.method == 'POST':
