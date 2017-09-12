@@ -81,7 +81,11 @@ export function fetchDerivativeSources() {
         console.error(error);
       })
       .then(json => {
-        dispatch(receiveDerivativeSources(json.results))
+        const results = json.results.reduce((previousValue, currentValue) => {
+          previousValue[currentValue.name] = currentValue.source_code;
+          return previousValue;
+        }, {});
+        dispatch(receiveDerivativeSources(results));
       });
   }
 }
