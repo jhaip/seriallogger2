@@ -3,6 +3,7 @@ import {
   CHANGE_VIEW_RANGE,
   RECEIVE_OVERVIEW_DATA,
   ADD_DERIVATIVE_DATA_SOURCE,
+  RECEIVE_DERIVATIVE_SOURCES,
   computeDerivativeSource
 } from '../actions/OverviewActions'
 
@@ -20,7 +21,8 @@ const INITIAL_VIEW_STATE = {
         "serial": [],
         "annotations": [],
         "view": []
-    }
+    },
+    derivativeSources: {}
 };
 
 export default function view(state = INITIAL_VIEW_STATE, action) {
@@ -42,6 +44,10 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
         data: Object.assign({}, state.data, {
             [action.sourceName]: computeDerivativeSource(state.data, action.derivativeFunc)
         })
+      })
+    case RECEIVE_DERIVATIVE_SOURCES:
+      return Object.assign({}, state, {
+        derivativeSources: Object.assign({}, action.sources)
       })
     default:
       return state

@@ -8,6 +8,7 @@ export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
 export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 export const ADD_DERIVATIVE_DATA_SOURCE = 'ADD_DERIVATIVE_DATA_SOURCE'
+export const RECEIVE_DERIVATIVE_SOURCES = 'RECEIVE_DERIVATIVE_SOURCES'
 
 export function fetchAllNewOverviewData() {
   return (dispatch, getState) => {
@@ -65,4 +66,67 @@ export function computeDerivativeSource(sourceData, funcBody) {
   const result = eval(func);
   console.log(result);
   return result;
+}
+
+export function fetchDerivativeSources() {
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/derivative_sources`
+    let myHeaders = new Headers();
+    myHeaders.append('pragma', 'no-cache');
+    myHeaders.append('cache-control', 'no-cache');
+    fetch(url, {headers: myHeaders})
+      .then(response => {
+        return response.json()
+      }, error => {
+        console.error(error);
+      })
+      .then(json => {
+        dispatch(receiveDerivativeSources(json.results))
+      });
+  }
+}
+
+export function receiveDerivativeSources(sources) {
+  return { type: RECEIVE_DERIVATIVE_SOURCES, sources }
+}
+
+export function saveDerivativeSource(name, sourceCode) {
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/derivative_sources`
+    const data = {
+      name,
+      source_code: sourceCode
+    }
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(url, options)
+      .then(response => {
+        dispatch(fetchDerivativeSources())
+      });
+  }
+}
+
+export function deleteDerivativeSource(name) {
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/derivative_sources`
+    const data = {
+      name
+    }
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(url, options)
+      .then(response => {
+        dispatch(fetchDerivativeSources())
+      });
+  }
 }

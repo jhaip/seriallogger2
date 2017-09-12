@@ -1,14 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import DropdownList from 'react-widgets/lib/DropdownList'
 import {
   addDerivativeDataSource,
-  computeDerivativeSource
+  computeDerivativeSource,
+  fetchDerivativeSources,
+  saveDerivativeSource,
+  deleteDerivativeSource
 } from '../actions/OverviewActions'
 
 const mapStateToProps = state => {
   return {
-    sourceData: state.view.data
+    sourceData: state.view.data,
+    derivativeSources: state.view.derivativeSources
   }
 }
 
@@ -16,6 +21,15 @@ const mapDispatchToProps = dispatch => {
   return {
     addDerivativeDataSource: (sourceName, derivativeFunc) => {
       dispatch(addDerivativeDataSource(sourceName, derivativeFunc));
+    },
+    fetchDerivativeSources: () => {
+      dispatch(fetchDerivativeSources());
+    },
+    saveDerivativeSource: (name, sourceCode) => {
+      dispatch(saveDerivativeSource(name, sourceCode));
+    },
+    deleteDerivativeSource: (name) => {
+      dispatch(deleteDerivativeSource(name));
     }
   }
 }
@@ -32,7 +46,9 @@ class CustomSourceBlock extends React.Component {
 });`,
       output: '',
       error: '',
-      sourceName: ''
+      sourceName: '',
+      derivativeSourceBase: 'Blank'
+
     };
     this.getSampleOutput = this.getSampleOutput.bind(this);
     this.onChangeInput = this.onChangeInput.bind(this);
@@ -40,6 +56,9 @@ class CustomSourceBlock extends React.Component {
     this.delete = this.delete.bind(this);
     this.createSource = this.createSource.bind(this);
     this.handleSourceNameChange = this.handleSourceNameChange.bind(this);
+    this.onDerivativeSourceBaseChange = this.onDerivativeSourceBaseChange.bind(this);
+
+    props.fetchDerivativeSources();
   }
   onChangeInput(e) {
     e.preventDefault();
@@ -49,14 +68,22 @@ class CustomSourceBlock extends React.Component {
     e.preventDefault();
     const name = prompt("Enter your derivative source's name");
     if (name !== null) {
-      console.log(`TODO: save with name ${name}`);
+      this.props.saveDerivativeSource(name, this.state.input);
     }
   }
   delete(e) {
     e.preventDefault();
     if (confirm("Are you sure you want to delete this derivative source?")) {
-      console.log("TODO: delete");
+      this.props.deleteDerivativeSource(this.state.derivativeSourceBase);
     }
+  }
+  onDerivativeSourceBaseChange(source) {
+    const newInput = this.props.derivativeSources[source] || "";
+    this.setState({
+      derivativeSourceBase: source,
+      input: newInput,
+      output: ''
+    });
   }
   createSource(e) {
     e.preventDefault();
@@ -100,6 +127,12 @@ class CustomSourceBlock extends React.Component {
     this.setState({output: result.map(l => JSON.stringify(l)).join("\n---\n")});
   }
   render() {
+    const source_dropdown_styles = {
+      width: "150px",
+      display: "inline-block",
+      marginLeft: "5px",
+      marginRight: "5px"
+    }
     return (
       <div className="custom-source-block">
         <div><strong>Set up a derivative source</strong></div>
@@ -119,6 +152,14 @@ class CustomSourceBlock extends React.Component {
         <div>
           <button onClick={ this.getSampleOutput }>Run</button>
           <button onClick={ this.save }>Save</button>
+        </div>
+        <div>
+          <DropdownList
+            data={["Blank"].concat(Object.keys(this.props.derivativeSources))}
+            value={this.state.derivativeSourceBase}
+            onChange={this.onDerivativeSourceBaseChange}
+            style={source_dropdown_styles}
+          />
           <button onClick={ this.delete }>Delete</button>
         </div>
         <div>
