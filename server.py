@@ -214,39 +214,40 @@ def derivativeSources():
         data = request.get_json()
         if data is None:
             abort(400)
-        # TODO save to db
+        tdata = (
+            utcnow(),
+            data["name"],
+            data["source_code"],
+        )
+        sql = ('INSERT INTO derivativesources ('
+               'created_at, '
+               'name, '
+               'source_code)'
+               'VALUES (?,?,?)')
+        commit_to_db(sql, tdata)
         return ('', 204)
     elif request.method == 'DELETE':
         data = request.get_json()
         if data is None:
             abort(400)
-        # TODO save to db
+        tdata = (
+            data["name"],
+        )
+        sql = ('DELETE FROM derivativesources'
+               'WHERE name = ?')
         return ('', 204)
     else:
-        results = {"results": {
-            "map code": """return sourceData.view.map(function(d) {
-  return {
-    "timestamp": d.timestamp,
-    "value": JSON.parse(d.value).page
-  };
-});""",
-            "get temperature": """var cleanData = sourceData.serial.reduce((acc, d) => {
-var re = / (\d\d.\d\d)\*F/g;
-var s = d.value.slice(0);
-var m;
-var matches = [];
-do {
-  m = re.exec(s);
-  if (m) {
-    matches.push({"timestamp": d.timestamp, "value": m[1]});
-  }
-} while (m);
-
-return acc.concat(matches);
-}, []);
-return cleanData;
-"""
-        }}
+        results = {"results": []}
+        keys = [
+            "id",
+            "created_at",
+            "name",
+            "source_code",
+        ]
+        query = 'select * from derivativesources'
+        for r in query_db(query):
+            results["results"].append(dict(zip(keys, r)))
+        # print results
         return jsonify(results)
 
 
