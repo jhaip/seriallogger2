@@ -55,7 +55,8 @@ void loop() {
 	Serial.print("Temp: ");
 	Serial.print(t);
 	Serial.print("*C ");
-	Particle.publish("log_temp", f, PRIVATE);
+	String temp = String(f);
+	Particle.publish("log_temp", temp);
 	Serial.print(f);
 	Serial.print("*F ");
 	Serial.print(k);
