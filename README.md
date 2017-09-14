@@ -75,6 +75,23 @@ docker-machine scp seriallogger2:/var/lib/docker/volumes/Database/_data/log.db .
 
 You can use the remote-log.db as a replacement for the local `db/log.db`.
 
+##### Database migration
+
+First, exec into the docker container.
+For remote migrations, make sure to target the remote with docker-machine.
+
+```
+docker exec -it CONTAINER_ID bash
+```
+
+Run the migration with python
+
+```
+python
+>>> from db_utils import init_db
+>>> init_db()
+```
+
 ---
 ### Legacy:
 ```
