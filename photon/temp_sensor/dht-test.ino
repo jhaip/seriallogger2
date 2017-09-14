@@ -26,7 +26,7 @@ void setup() {
 
 void loop() {
 // Wait a few seconds between measurements.
-	delay(2000);
+	delay(1000*60*5);
 
 // Reading temperature or humidity takes about 250 milliseconds!
 // Sensor readings may also be up to 2 seconds 'old' (its a
