@@ -31,3 +31,9 @@ def clear_all():
     clear_serial_data()
     clear_annotations()
     clear_notebook()
+
+def init_db():
+    db = sqlite3.connect(DATABASE)
+    with open('schema.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
