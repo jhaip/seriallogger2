@@ -7,10 +7,10 @@ const mapStateToProps = state => {
   return {
     viewStartTime: state.view.start,
     viewEndTime: state.view.end,
-    viewLabels: state.view.sources,
+    viewLabels: state.view.sources.concat(state.view.derivativeSources.sources),
     selectionStartTime: state.selected.start,
     selectionEndTime: state.selected.end,
-    data: state.view.data
+    data: Object.assign({}, state.view.data, state.view.derivativeSources.data)
   }
 }
 

@@ -160,9 +160,9 @@ export function fetchDetailDataForCode(source, start, stop) {
 export function fetchDetailDataForUnknown(source, start, stop, getState) {
   return new Promise((resolve, reject) => {
     console.log(getState());
-    console.log(getState().view.data);
-    console.log(getState().view.data[source]);
-    const data = getState().view.data[source];
+    console.log(getState().view.derivativeSources.data);
+    console.log(getState().view.derivativeSources.data[source]);
+    const data = getState().view.derivativeSources.data[source];
     // TODO: filter by start and stop times
     resolve(data);
   });
@@ -170,16 +170,20 @@ export function fetchDetailDataForUnknown(source, start, stop, getState) {
 
 export function fetchDetailDataPurely(source, start, end, getState) {
   let data_promise;
-  switch (source) {
-    case "annotations":
-      data_promise = fetchDetailDataForAnnotations(source, start, end);
-      break;
-    case "code":
-      data_promise = fetchDetailDataForCode(source, start, end);
-      break;
-    default:
-      data_promise = fetchDetailDataForData(source, start, end);
-      // data_promise = fetchDetailDataForUnknown(source, start, end, getState);
+  const isDerivativeSource = getState().view.derivativeSources.sources.find(s => s === source)
+  if (isDerivativeSource) {
+    data_promise = fetchDetailDataForUnknown(source, start, end, getState);
+  } else {
+    switch (source) {
+      case "annotations":
+        data_promise = fetchDetailDataForAnnotations(source, start, end);
+        break;
+      case "code":
+        data_promise = fetchDetailDataForCode(source, start, end);
+        break;
+      default:
+        data_promise = fetchDetailDataForData(source, start, end);
+    }
   }
   return data_promise
 }
