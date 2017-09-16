@@ -67,20 +67,16 @@ def index(entry_id=None):
     template_dir = os.path.join(PROJECT_ROOT, 'static')
     return render_template("index.html")
 
-# @app.route("/api/logs")
-# def apiLogs():
-#     logs = glob.glob('log-*.txt')
-#     results = {"results": []}
-#     for logFilename in logs:
-#         timestamp = datetime.strptime(logFilename, 'log-%Y-%m-%d--%H-%M-%S.txt')
-#         results["results"].append({"filename": logFilename, "timestamp": timestamp.isoformat()})
-#     return jsonify(results)
-#
-# @app.route("/api/logs/<logname>")
-# def apiLog(logname):
-#     with open(logname) as f:
-#         content = f.read()
-#     return content
+
+@app.route("/api/sources", methods=['GET'])
+def listSources():
+    if request.method == 'GET':
+        results = {"results": []}
+        query = 'SELECT DISTINCT source FROM data'
+        for r in query_db(query):
+            results["results"].append(r[0])
+        return jsonify(results)
+
 
 @app.route("/api/data", methods=['GET', 'POST'])
 def dataAccess():
