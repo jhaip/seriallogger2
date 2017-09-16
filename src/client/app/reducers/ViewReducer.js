@@ -4,24 +4,15 @@ import {
   RECEIVE_OVERVIEW_DATA,
   ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCES,
+  RECEIVE_SOURCES_LIST,
   computeDerivativeSource
 } from '../actions/OverviewActions'
 
 const INITIAL_VIEW_STATE = {
     start: moment().subtract(45, 'days').toDate(),
     end: moment().toDate(),
-    sources: [
-        "code",
-        "serial",
-        "annotations",
-        "view"
-    ],
-    data: {
-        "code": [],
-        "serial": [],
-        "annotations": [],
-        "view": []
-    },
+    sources: [],
+    data: {},
     derivativeSources: {}
 };
 
@@ -48,6 +39,13 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
     case RECEIVE_DERIVATIVE_SOURCES:
       return Object.assign({}, state, {
         derivativeSources: Object.assign({}, action.sources)
+      })
+    case RECEIVE_SOURCES_LIST:
+      return Object.assign({}, state, {
+        sources: action.sources.slice(0),
+        data: action.sources.slice(0).reduce((prev, source) => {
+          return prev[source] = [];
+        }, {})
       })
     default:
       return state

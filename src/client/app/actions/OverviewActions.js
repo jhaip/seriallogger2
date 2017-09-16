@@ -1,7 +1,8 @@
 import {
   fetchDetailDataForData,
   fetchDetailDataForAnnotations,
-  fetchDetailDataForCode
+  fetchDetailDataForCode,
+  changeSelectedSource
 } from './DetailActions'
 
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
@@ -9,13 +10,34 @@ export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
 export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 export const ADD_DERIVATIVE_DATA_SOURCE = 'ADD_DERIVATIVE_DATA_SOURCE'
 export const RECEIVE_DERIVATIVE_SOURCES = 'RECEIVE_DERIVATIVE_SOURCES'
+export const RECEIVE_SOURCES_LIST = 'RECEIVE_SOURCES_LIST'
+
+export function receiveSourcesList(sources) {
+  return { type: RECEIVE_SOURCES_LIST, sources }
+}
+
+export function fetchSourcesList() {
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/sources`
+    fetch(url)
+      .then(response => {
+        return response.json()
+      }, error => {
+        console.error(error);
+      })
+      .then(json => {
+        dispatch(receiveSourcesList(json.results.concat(["code", "annotations"])));
+        dispatch(changeSelectedSource("annotations"));
+        dispatch(fetchAllNewOverviewData());
+      });
+  }
+}
 
 export function fetchAllNewOverviewData() {
   return (dispatch, getState) => {
-    dispatch(fetchOverviewData("code"));
-    dispatch(fetchOverviewData("serial"));
-    dispatch(fetchOverviewData("annotations"));
-    dispatch(fetchOverviewData("view"));
+    getState().view.sources.forEach(source => {
+      dispatch(fetchOverviewData(source));
+    });
   }
 }
 
@@ -40,16 +62,14 @@ export function fetchOverviewData(source) {
     const { start, end } = getState().view;
     let data_promise;
     switch (source) {
-      case "serial":
-      case "view":
-        data_promise = fetchDetailDataForData(source, start, end);
-        break;
       case "annotations":
         data_promise = fetchDetailDataForAnnotations(source, start, end);
         break;
       case "code":
         data_promise = fetchDetailDataForCode(source, start, end);
         break;
+      default:
+        data_promise = fetchDetailDataForData(source, start, end);
     }
     return data_promise
       .then(data => dispatch(receiveOverviewData(source, data)))

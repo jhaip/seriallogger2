@@ -14,7 +14,7 @@ import {
 const INITIAL_SELECTED_STATE = {
     start: moment().subtract(1, 'days').toDate(),
     end: moment().toDate(),
-    source: "serial",
+    source: "",
     data: [],
     annotations: [],
     activeAnnotation: "",

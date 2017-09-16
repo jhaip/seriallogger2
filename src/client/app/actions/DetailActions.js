@@ -77,7 +77,7 @@ export function fetchDetailDataForData(source, start, stop) {
         console.log("got response for fetch data "+source);
         const clean_data = json.results.map(d => {
           let datum = d.value;
-          if (source === "serial" && datum.slice(-2) === "\r\n") {
+          if (datum.slice(-2) === "\r\n") {
             datum = datum.slice(0, -2);
           }
           return {
@@ -171,10 +171,6 @@ export function fetchDetailDataForUnknown(source, start, stop, getState) {
 export function fetchDetailDataPurely(source, start, end, getState) {
   let data_promise;
   switch (source) {
-    case "serial":
-    case "view":
-      data_promise = fetchDetailDataForData(source, start, end);
-      break;
     case "annotations":
       data_promise = fetchDetailDataForAnnotations(source, start, end);
       break;
@@ -182,7 +178,8 @@ export function fetchDetailDataPurely(source, start, end, getState) {
       data_promise = fetchDetailDataForCode(source, start, end);
       break;
     default:
-      data_promise = fetchDetailDataForUnknown(source, start, end, getState);
+      data_promise = fetchDetailDataForData(source, start, end);
+      // data_promise = fetchDetailDataForUnknown(source, start, end, getState);
   }
   return data_promise
 }
