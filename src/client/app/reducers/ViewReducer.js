@@ -13,7 +13,11 @@ const INITIAL_VIEW_STATE = {
     end: moment().toDate(),
     sources: [],
     data: {},
-    derivativeSources: {}
+    derivativeSources: {
+      definitions: {},
+      sources: [],
+      data: {}
+    }
 };
 
 export default function view(state = INITIAL_VIEW_STATE, action) {
@@ -31,14 +35,18 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
       })
     case ADD_DERIVATIVE_DATA_SOURCE:
       return Object.assign({}, state, {
-        sources: state.sources.slice(0).concat([action.sourceName]),
-        data: Object.assign({}, state.data, {
-            [action.sourceName]: computeDerivativeSource(state.data, action.derivativeFunc)
+        derivativeSources: Object.assign({}, state.derivativeSources, {
+          sources: state.derivativeSources.sources.slice(0).concat([action.sourceName]),
+          data: Object.assign({}, state.derivativeSources.data, {
+              [action.sourceName]: computeDerivativeSource(state.data, action.derivativeFunc)
+          })
         })
       })
     case RECEIVE_DERIVATIVE_SOURCES:
       return Object.assign({}, state, {
-        derivativeSources: Object.assign({}, action.sources)
+        derivativeSources: Object.assign({}, state.derivativeSources, {
+          definitions: Object.assign({}, action.sources)
+        })
       })
     case RECEIVE_SOURCES_LIST:
       return Object.assign({}, state, {

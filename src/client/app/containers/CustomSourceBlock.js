@@ -13,7 +13,7 @@ import {
 const mapStateToProps = state => {
   return {
     sourceData: state.view.data,
-    derivativeSources: state.view.derivativeSources
+    derivativeSources: state.view.derivativeSources.definitions
   }
 }
 
