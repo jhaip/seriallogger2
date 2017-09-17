@@ -1,9 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import DetailViewText from './DetailViewText'
 import moment from 'moment'
 import { fetchDetailDataPurely } from '../actions/DetailActions'
 import { createAnnotatedSelectedDataTree } from '../selectors/index'
+
+const mapStateToProps = state => {
+  return {
+    state
+  }
+}
+
+const mapDispatchToProps = null;
 
 class NotebookEmbed extends React.Component {
   constructor(props) {
@@ -19,7 +28,8 @@ class NotebookEmbed extends React.Component {
     fetchDetailDataPurely(
       props.source,
       props.start,
-      props.end
+      props.end,
+      this.props.state
     ).then(data => {
       const data_tree = createAnnotatedSelectedDataTree(data, [], null);
       this.setState({data: data_tree, is_fetching: false});
@@ -68,7 +78,8 @@ class NotebookEmbed extends React.Component {
 NotebookEmbed.propTypes = {
   source: PropTypes.string.isRequired,
   start: PropTypes.instanceOf(Date).isRequired,
-  end: PropTypes.instanceOf(Date).isRequired
+  end: PropTypes.instanceOf(Date).isRequired,
+  state: PropTypes.object.isRequired
 };
 
-export default NotebookEmbed
+export default connect(mapStateToProps, mapDispatchToProps)(NotebookEmbed)

@@ -157,22 +157,21 @@ export function fetchDetailDataForCode(source, start, stop) {
   });
 }
 
-export function fetchDetailDataForUnknown(source, start, stop, getState) {
+export function fetchDetailDataForUnknown(source, start, stop, state) {
   return new Promise((resolve, reject) => {
-    console.log(getState());
-    console.log(getState().view.derivativeSources.data);
-    console.log(getState().view.derivativeSources.data[source]);
-    const data = getState().view.derivativeSources.data[source];
+    console.log(state.view.derivativeSources.data);
+    console.log(state.view.derivativeSources.data[source]);
+    const data = state.view.derivativeSources.data[source];
     // TODO: filter by start and stop times
     resolve(data);
   });
 }
 
-export function fetchDetailDataPurely(source, start, end, getState) {
+export function fetchDetailDataPurely(source, start, end, state) {
   let data_promise;
-  const isDerivativeSource = getState().view.derivativeSources.sources.find(s => s === source)
+  const isDerivativeSource = state.view.derivativeSources.sources.find(s => s === source)
   if (isDerivativeSource) {
-    data_promise = fetchDetailDataForUnknown(source, start, end, getState);
+    data_promise = fetchDetailDataForUnknown(source, start, end, state);
   } else {
     switch (source) {
       case "annotations":
@@ -192,7 +191,7 @@ export function fetchDetailData(source) {
   return (dispatch, getState) => {
     dispatch(requestDetailData(source))
     const { start, end } = getState().selected;
-    return fetchDetailDataPurely(source, start, end, getState)
+    return fetchDetailDataPurely(source, start, end, getState())
       .then(data => dispatch(receiveDetailData(source, data)))
   }
 }
