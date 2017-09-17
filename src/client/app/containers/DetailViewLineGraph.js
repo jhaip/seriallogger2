@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { VictoryChart, VictoryTheme, VictoryLine } from 'victory';
+import { VictoryChart, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
 
 const mapStateToProps = state => {
   return {
@@ -15,22 +15,68 @@ const mapDispatchToProps = null;
 
 class DetailViewLineGraph extends React.Component {
   render() {
-    const cleanData = this.props.data.map(d => {
-      return d;
+    let groups = {
+      "default": []
+    };
+    for (let d of this.props.data) {
+      const numberValue = parseFloat(d.value);
+      if (isNaN(numberValue)) {
+        try {
+          const jsonData = JSON.parse(d.value);
+          Object.keys(jsonData).forEach(key => {
+            groups[key] = groups[key] || [];
+            groups[key].push({
+              timestamp: d.timestamp,
+              value: jsonData[key]
+            });
+          })
+        } catch (e) {
+          console.log("error parsing JSON");
+          console.error(e);
+        }
+      } else {
+        groups["default"].push({
+          timestamp: d.timestamp,
+          value: numberValue
+        });
+      }
+    }
+    console.log("CHART DATA:");
+    console.log(groups);
+
+    const colors = ["red", "green", "blue", "orange", "black"];
+    const list = Object.keys(groups).map((groupKey, i) => {
+      if (groups[groupKey].length === 0) { return null; }
+      return (
+        <VictoryLine
+          data={groups[groupKey]}
+          x="timestamp"
+          y="value"
+          style={{
+            data: { stroke: colors[i] }
+          }}
+        />
+      )
     });
-    console.log(cleanData);
+    const legend = (Object.keys(groups).length > 1) && (
+      <VictoryLegend
+        centerTitle
+        orientation="horizontal"
+        colorScale={colors}
+        data={Object.keys(groups).map(key => {
+          return {'name': key}
+        })}
+      />
+    );
+
     return (
       <div id="selected-view__data-line-graph">
         <VictoryChart
-          theme={VictoryTheme.material}
           width={600}
           height={300}
           >
-          <VictoryLine
-            data={cleanData}
-            x="timestamp"
-            y="value"
-          />
+          { legend }
+          { list }
         </VictoryChart>
       </div>
     );
