@@ -51,7 +51,8 @@ void loop() {
 
 	Serial.print("Humid: ");
 	Serial.print(h);
-	Particle.publish("log_humidity", h);
+	String humid = String(h);
+	Particle.publish("log_humidity", humid);
 	Serial.print("% - ");
 	Serial.print("Temp: ");
 	Serial.print(t);
