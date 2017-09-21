@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS data (
     source TEXT,
     timestamp TEXT,
     value TEXT,
-    type TEXT
+    type TEXT,
+    overflow TEXT
 );
 CREATE TABLE IF NOT EXISTS notebookentry (
     id integer primary key,

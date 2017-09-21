@@ -1,11 +1,11 @@
 from flask import Flask, render_template, jsonify, g, request, abort
 from flask_cors import CORS, cross_origin
-
 from datetime import datetime
 import pytz
 import iso8601
 import glob
 import sqlite3
+import json
 import os
 
 def utcnow():
@@ -84,15 +84,24 @@ def dataAccess():
         data = request.get_json()
         if data is None:
             abort(400)
-        if "timestamp" not in data:
+        source = data.get("source")
+        timestamp = data.get("timestamp")
+        value = data.get("value")
+        _type = data.get("type")
+        data.pop('source', None)
+        data.pop('timestamp', None)
+        data.pop('value', None)
+        data.pop('type', None)
+        overflow = json.dumps(data)
+        if not timestamp:
             print("assigning timestamp")
-            data["timestamp"] = utcnow()
-        tdata = (data["source"], data["timestamp"], data["value"], data["type"])
-        commit_to_db('INSERT INTO data (source, timestamp, value, type) VALUES (?,?,?,?)', tdata)
+            timestamp = utcnow()
+        tdata = (source, timestamp, value, _type, overflow)
+        commit_to_db('INSERT INTO data (source, timestamp, value, type, overflow) VALUES (?,?,?,?,?)', tdata)
         return ('', 204)
     else:
         results = {"results": []}
-        keys = ["id", "source", "timestamp", "value", "type"]
+        keys = ["id", "source", "timestamp", "value", "type", "overflow"]
         filter_source = request.args.get('source')
         filter_start = request.args.get('start')
         filter_stop = request.args.get('stop')

@@ -37,3 +37,12 @@ def init_db():
     with open('schema.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
+
+def migration__data__0001():
+    db = sqlite3.connect(DATABASE)
+    c = db.cursor()
+    try:
+        c.execute('ALTER TABLE data ADD COLUMN overflow TEXT;')
+    except:
+        print("Error: column has probably already been added")
+    c.close()
