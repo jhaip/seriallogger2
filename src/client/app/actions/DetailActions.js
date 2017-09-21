@@ -85,7 +85,8 @@ export function fetchDetailDataForData(source, start, stop) {
             id: d.id,
             source: source,
             type: d.type,
-            timestamp: d.timestamp
+            timestamp: d.timestamp,
+            overflow: d.overflow ? JSON.parse(d.overflow) : {}
           };
         });
         resolve(clean_data);
