@@ -3,7 +3,7 @@ import {
   CHANGE_VIEW_RANGE,
   RECEIVE_OVERVIEW_DATA,
   ADD_DERIVATIVE_DATA_SOURCE,
-  RECEIVE_DERIVATIVE_SOURCES,
+  RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
   RECEIVE_SOURCES_LIST,
   computeDerivativeSource
 } from '../actions/OverviewActions'
@@ -42,7 +42,7 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
           })
         })
       })
-    case RECEIVE_DERIVATIVE_SOURCES:
+    case RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS:
       return Object.assign({}, state, {
         derivativeSources: Object.assign({}, state.derivativeSources, {
           definitions: Object.assign({}, action.sources)

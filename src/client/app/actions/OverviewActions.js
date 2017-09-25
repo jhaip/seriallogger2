@@ -9,7 +9,7 @@ export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
 export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
 export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 export const ADD_DERIVATIVE_DATA_SOURCE = 'ADD_DERIVATIVE_DATA_SOURCE'
-export const RECEIVE_DERIVATIVE_SOURCES = 'RECEIVE_DERIVATIVE_SOURCES'
+export const RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS = 'RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS'
 export const RECEIVE_SOURCES_LIST = 'RECEIVE_SOURCES_LIST'
 
 export function receiveSourcesList(sources) {
@@ -90,7 +90,7 @@ export function computeDerivativeSource(sourceData, funcBody) {
 
 export function fetchDerivativeSources() {
   return (dispatch, getState) => {
-    const url = `${window.API_URL}/api/derivative_sources`
+    const url = `${window.API_URL}/api/derivative_source_definitions`
     let myHeaders = new Headers();
     myHeaders.append('pragma', 'no-cache');
     myHeaders.append('cache-control', 'no-cache');
@@ -111,12 +111,12 @@ export function fetchDerivativeSources() {
 }
 
 export function receiveDerivativeSources(sources) {
-  return { type: RECEIVE_DERIVATIVE_SOURCES, sources }
+  return { type: RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS, sources }
 }
 
 export function saveDerivativeSource(name, sourceCode) {
   return (dispatch, getState) => {
-    const url = `${window.API_URL}/api/derivative_sources`
+    const url = `${window.API_URL}/api/derivative_source_definitions`
     const data = {
       name,
       source_code: sourceCode
@@ -137,7 +137,7 @@ export function saveDerivativeSource(name, sourceCode) {
 
 export function deleteDerivativeSource(name) {
   return (dispatch, getState) => {
-    const url = `${window.API_URL}/api/derivative_sources`
+    const url = `${window.API_URL}/api/derivative_source_definitions`
     const data = {
       name
     }

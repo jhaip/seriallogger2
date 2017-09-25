@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS notebookentry (
     name TEXT,
     text TEXT
 );
-CREATE TABLE IF NOT EXISTS derivativesources (
+CREATE TABLE IF NOT EXISTS derivativesourcedefinitions (
     id integer primary key,
     created_at TEXT,
     name TEXT,

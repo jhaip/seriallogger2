@@ -46,3 +46,12 @@ def migration__data__0001():
     except:
         print("Error: column has probably already been added")
     c.close()
+
+def migration__data__0002():
+    db = sqlite3.connect(DATABASE)
+    c = db.cursor()
+    try:
+        c.execute('ALTER TABLE derivativesources RENAME TO derivativesourcedefinitions;')
+    except:
+        print("Error: column has probably already been added")
+    c.close()

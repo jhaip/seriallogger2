@@ -198,8 +198,8 @@ def annotationsFetch():
         return jsonify(results)
 
 
-@app.route("/api/derivative_sources", methods=['GET', 'POST', 'DELETE'])
-def derivativeSources():
+@app.route("/api/derivative_source_definitions", methods=['GET', 'POST', 'DELETE'])
+def derivativeSourceDefinitions():
     if request.method == 'POST':
         data = request.get_json()
         if data is None:
@@ -209,7 +209,7 @@ def derivativeSources():
             data["name"],
             data["source_code"],
         )
-        sql = ('INSERT INTO derivativesources ('
+        sql = ('INSERT INTO derivativesourcedefinitions ('
                'created_at, '
                'name, '
                'source_code)'
@@ -223,7 +223,7 @@ def derivativeSources():
         tdata = (
             data["name"],
         )
-        sql = ('DELETE FROM derivativesources'
+        sql = ('DELETE FROM derivativesourcedefinitions'
                'WHERE name = ?')
         return ('', 204)
     else:
@@ -234,7 +234,7 @@ def derivativeSources():
             "name",
             "source_code",
         ]
-        query = 'select * from derivativesources'
+        query = 'select * from derivativesourcedefinitions'
         for r in query_db(query):
             results["results"].append(dict(zip(keys, r)))
         return jsonify(results)
