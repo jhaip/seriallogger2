@@ -1,16 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
 import { VictoryChart, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
-
-const mapStateToProps = state => {
-  return {
-    data: state.selected.data,
-    activeAnnotation: state.selected.activeAnnotation
-  }
-}
-
-const mapDispatchToProps = null;
 
 
 class DetailViewLineGraph extends React.Component {
@@ -70,10 +60,8 @@ class DetailViewLineGraph extends React.Component {
     );
 
     return (
-      <div id="selected-view__data-line-graph">
+      <div className="selected-view__data-line-graph">
         <VictoryChart
-          width={600}
-          height={300}
           >
           { legend }
           { list }
@@ -87,7 +75,4 @@ DetailViewLineGraph.propTypes = {
   activeAnnotation: PropTypes.string.isRequired,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DetailViewLineGraph)
+export default DetailViewLineGraph

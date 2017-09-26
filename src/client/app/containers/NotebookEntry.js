@@ -39,7 +39,8 @@ const compile = marksy({
       return (
         <NotebookEmbed source={props.source}
                        start={moment(props.start).toDate()}
-                       end={moment(props.end).toDate()} />
+                       end={moment(props.end).toDate()}
+                       visualType={props.visualType} />
       )
     },
     InlineEmbed() {

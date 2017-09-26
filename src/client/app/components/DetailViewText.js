@@ -10,7 +10,7 @@ class DetailViewText extends React.Component {
                            activeAnnotation={this.props.activeAnnotation}/>
     );
     return (
-      <div id="selected-view__data">
+      <div className="selected-view__data">
         {listRows}
       </div>
     );

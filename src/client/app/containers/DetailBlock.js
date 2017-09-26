@@ -16,6 +16,7 @@ const mapStateToProps = state => {
     selectionEndTime: state.selected.end,
     selectedSource: state.selected.source,
     selectedData: getAnnotatedSelectedDataTree(state),
+    selectedDataRaw: state.selected.data,
     selectedAnnotations: state.selected.annotations,
     activeAnnotation: String(state.selected.activeAnnotation),
     availableSources: state.view.sources.concat(state.view.derivativeSources.map(ds => ds.name)),

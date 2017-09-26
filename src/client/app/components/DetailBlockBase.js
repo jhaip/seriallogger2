@@ -17,7 +17,7 @@ class DetailBlockBase extends React.Component {
       case "line graph":
         return (
           <DetailViewLineGraph
-            data={this.props.selectedData}
+            data={this.props.selectedDataRaw}
             activeAnnotation={this.props.activeAnnotation} />
         );
         break;
@@ -78,6 +78,7 @@ DetailBlockBase.propTypes = {
   selectionEndTime: PropTypes.instanceOf(Date).isRequired,
   selectedSource: PropTypes.string.isRequired,
   selectedData: PropTypes.array.isRequired,
+  selectedDataRaw: PropTypes.array.isRequired,
   selectedAnnotations: PropTypes.array.isRequired,
   activeAnnotation: PropTypes.string.isRequired,
   availableSources: PropTypes.array.isRequired,

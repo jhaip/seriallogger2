@@ -1,12 +1,17 @@
 .mark:hover {
     fill: red;
 }
-#selected-view__data, #selected-view__data-line-graph {
+.selected-view__data, .selected-view__data-line-graph {
     width: 600px;
     height: 300px;
     overflow: scroll;
     border: 1px solid #CCC;
     padding: 10px;
+}
+.notebook-embed .selected-view__data, .notebook-embed .selected-view__data-line-graph {
+    width: auto;
+    height: auto;
+    min-height: 100px;
 }
 .selected-view__data-annotations-col {
     padding-left: 10px;
