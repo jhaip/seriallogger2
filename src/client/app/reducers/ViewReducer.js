@@ -30,9 +30,15 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
         end: action.end
       });
     case RECEIVE_OVERVIEW_DATA:
+      const newdata = Object.assign({}, state.data, {
+          [action.source]: action.data
+      });
       return Object.assign({}, state, {
-        data: Object.assign({}, state.data, {
-            [action.source]: action.data
+        data: newdata,
+        derivativeSources: state.derivativeSources.map(ds => {
+          return Object.assign({}, ds, {
+            data: computeDerivativeSource(newdata, ds.source_code)
+          })
         })
       })
     case ADD_DERIVATIVE_DATA_SOURCE:
@@ -59,7 +65,11 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
       })
     case RECEIVE_DERIVATIVE_SOURCES:
       return Object.assign({}, state, {
-        derivativeSources: action.data.slice(0)
+        derivativeSources: action.data.map(ds => {
+          return Object.assign({}, ds, {
+            data: computeDerivativeSource(state.data, ds.source_code)
+          })
+        })
       })
     default:
       return state

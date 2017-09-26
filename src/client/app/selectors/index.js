@@ -181,3 +181,16 @@ export const getSelectedViewEmbedCode = createSelector(
     )
   }
 )
+
+const getViewData = (state) => state.view.data
+const getViewDerivativeSources = (state) => state.view.derivativeSources
+
+export const getDataWithDerivativeSources = createSelector(
+  [ getViewData, getViewDerivativeSources ],
+  (data, derivativeSources) => {
+    return Object.assign({}, data, derivativeSources.reduce((acc, ds) => {
+      acc[ds.name] = ds.data;
+      return acc;
+    }, {}));
+  }
+)

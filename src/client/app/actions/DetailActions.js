@@ -160,9 +160,7 @@ export function fetchDetailDataForCode(source, start, stop) {
 
 export function fetchDetailDataForUnknown(source, start, stop, state) {
   return new Promise((resolve, reject) => {
-    console.log(state.view.derivativeSourceDefinitions.data);
-    console.log(state.view.derivativeSourceDefinitions.data[source]);
-    const data = state.view.derivativeSourceDefinitions.data[source];
+    const data = state.view.derivativeSources.find(ds => ds.name === source).data;
     // TODO: filter by start and stop times
     resolve(data);
   });
@@ -170,7 +168,7 @@ export function fetchDetailDataForUnknown(source, start, stop, state) {
 
 export function fetchDetailDataPurely(source, start, end, state) {
   let data_promise;
-  const isDerivativeSource = state.view.derivativeSourceDefinitions.sources.find(s => s === source)
+  const isDerivativeSource = state.view.derivativeSources.find(ds => ds.name === source)
   if (isDerivativeSource) {
     data_promise = fetchDetailDataForUnknown(source, start, end, state);
   } else {

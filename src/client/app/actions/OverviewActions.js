@@ -120,11 +120,18 @@ export function addDerivativeDataSource(sourceName, derivativeFunc) {
 }
 
 export function computeDerivativeSource(sourceData, funcBody) {
-  const func = `(function (sourceData) { ${funcBody} })(sourceData)`;
-  console.log(func);
-  const result = eval(func);
-  console.log(result);
-  return result;
+  try {
+    console.log(sourceData);
+    const func = `(function (sourceData) { ${funcBody} })(sourceData)`;
+    console.log(func);
+    const result = eval(func);
+    console.log(result);
+    return result;
+  } catch (e) {
+    console.error("error computing derivative source");
+    console.error(e);
+    return [];
+  }
 }
 
 export function fetchDerivativeSourceDefinitions() {
