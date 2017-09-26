@@ -162,6 +162,7 @@ export function fetchDetailDataForUnknown(source, start, stop, state) {
   return new Promise((resolve, reject) => {
     const data = state.view.derivativeSources.find(ds => ds.name === source).data;
     // TODO: filter by start and stop times
+    // TODO: fetch data dependencies
     resolve(data);
   });
 }
