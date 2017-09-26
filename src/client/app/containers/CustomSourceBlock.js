@@ -13,7 +13,7 @@ import {
 const mapStateToProps = state => {
   return {
     sourceData: state.view.data,
-    derivativeSources: state.view.derivativeSources.definitions
+    derivativeSourceDefinitions: state.view.derivativeSourceDefinitions.definitions
   }
 }
 
@@ -78,7 +78,7 @@ class CustomSourceBlock extends React.Component {
     }
   }
   onDerivativeSourceBaseChange(source) {
-    const newInput = this.props.derivativeSources[source] || "";
+    const newInput = this.props.derivativeSourceDefinitions[source] || "";
     this.setState({
       derivativeSourceBase: source,
       input: newInput,
@@ -155,7 +155,7 @@ class CustomSourceBlock extends React.Component {
         </div>
         <div>
           <DropdownList
-            data={["Blank"].concat(Object.keys(this.props.derivativeSources))}
+            data={["Blank"].concat(Object.keys(this.props.derivativeSourceDefinitions))}
             value={this.state.derivativeSourceBase}
             onChange={this.onDerivativeSourceBaseChange}
             style={source_dropdown_styles}

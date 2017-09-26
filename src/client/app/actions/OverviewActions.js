@@ -114,7 +114,7 @@ export function receiveDerivativeSourceDefinitions(sources) {
   return { type: RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS, sources }
 }
 
-export function saveDerivativeSourceDefinition(name, sourceCode) {
+export function saveDerivativeSourceDefinitions(name, sourceCode) {
   return (dispatch, getState) => {
     const url = `${window.API_URL}/api/derivative_source_definitions`
     const data = {
