@@ -7,7 +7,7 @@ const mapStateToProps = state => {
   return {
     viewStartTime: state.view.start,
     viewEndTime: state.view.end,
-    viewLabels: state.view.sources.concat(state.view.derivativeSourceDefinitions.sources),
+    viewLabels: state.view.sources.concat(state.view.derivativeSources.map(ds => ds.name)),
     selectionStartTime: state.selected.start,
     selectionEndTime: state.selected.end,
     data: Object.assign({}, state.view.data, state.view.derivativeSourceDefinitions.data)

@@ -18,7 +18,8 @@ const mapStateToProps = state => {
     selectedData: getAnnotatedSelectedDataTree(state),
     selectedAnnotations: state.selected.annotations,
     activeAnnotation: String(state.selected.activeAnnotation),
-    availableSources: state.view.sources.concat(state.view.derivativeSourceDefinitions.sources),
+    // availableSources: state.view.sources.concat(state.view.derivativeSourceDefinitions.sources),
+    availableSources: state.view.sources.concat(state.view.derivativeSources.map(ds => ds.name)),
     selected_view_embed_code: getSelectedViewEmbedCode(state),
     selectedVisualType: state.selected.visualType
   }

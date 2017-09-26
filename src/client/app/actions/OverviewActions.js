@@ -11,6 +11,7 @@ export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 export const ADD_DERIVATIVE_DATA_SOURCE = 'ADD_DERIVATIVE_DATA_SOURCE'
 export const RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS = 'RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS'
 export const RECEIVE_SOURCES_LIST = 'RECEIVE_SOURCES_LIST'
+export const RECEIVE_DERIVATIVE_SOURCES = 'RECEIVE_DERIVATIVE_SOURCES'
 
 export function receiveSourcesList(sources) {
   return { type: RECEIVE_SOURCES_LIST, sources }
@@ -29,8 +30,29 @@ export function fetchSourcesList() {
         dispatch(receiveSourcesList(json.results.concat(["code", "annotations"])));
         dispatch(changeSelectedSource("annotations"));
         dispatch(fetchAllNewOverviewData());
+        dispatch(fetchDerivativeSources());
       });
   }
+}
+
+
+export function fetchDerivativeSources() {
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/derivative_sources`
+    fetch(url)
+      .then(response => {
+        return response.json()
+      }, error => {
+        console.error(error);
+      })
+      .then(json => {
+        dispatch(receiveDerivativeSources(json.results));
+      });
+  }
+}
+
+export function receiveDerivativeSources(data) {
+  return { type: RECEIVE_DERIVATIVE_SOURCES, data }
 }
 
 export function fetchAllNewOverviewData() {
@@ -77,7 +99,24 @@ export function fetchOverviewData(source) {
 }
 
 export function addDerivativeDataSource(sourceName, derivativeFunc) {
-  return { type: ADD_DERIVATIVE_DATA_SOURCE, sourceName, derivativeFunc }
+  return (dispatch, getState) => {
+    const url = `${window.API_URL}/api/derivative_sources`
+    const data = {
+      name: sourceName,
+      source_code: derivativeFunc
+    }
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(url, options)
+      .then(response => {
+        dispatch(fetchDerivativeSources())
+      });
+  }
 }
 
 export function computeDerivativeSource(sourceData, funcBody) {

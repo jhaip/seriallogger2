@@ -175,7 +175,7 @@ class CustomSourceBlock extends React.Component {
   }
 }
 CustomSourceBlock.propTypes = {
-  sourceData: PropTypes.obj,
+  sourceData: PropTypes.object,
   addDerivativeDataSource: PropTypes.func.isRequired
 };
 
