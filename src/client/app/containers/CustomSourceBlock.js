@@ -5,9 +5,9 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import {
   addDerivativeDataSource,
   computeDerivativeSource,
-  fetchDerivativeSources,
-  saveDerivativeSource,
-  deleteDerivativeSource
+  fetchDerivativeSourceDefinitions,
+  saveDerivativeSourceDefinition,
+  deleteDerivativeSourceDefinition
 } from '../actions/OverviewActions'
 
 const mapStateToProps = state => {
@@ -22,14 +22,14 @@ const mapDispatchToProps = dispatch => {
     addDerivativeDataSource: (sourceName, derivativeFunc) => {
       dispatch(addDerivativeDataSource(sourceName, derivativeFunc));
     },
-    fetchDerivativeSources: () => {
-      dispatch(fetchDerivativeSources());
+    fetchDerivativeSourceDefinitions: () => {
+      dispatch(fetchDerivativeSourceDefinitions());
     },
-    saveDerivativeSource: (name, sourceCode) => {
-      dispatch(saveDerivativeSource(name, sourceCode));
+    saveDerivativeSourceDefinition: (name, sourceCode) => {
+      dispatch(saveDerivativeSourceDefinition(name, sourceCode));
     },
-    deleteDerivativeSource: (name) => {
-      dispatch(deleteDerivativeSource(name));
+    deleteDerivativeSourceDefinition: (name) => {
+      dispatch(deleteDerivativeSourceDefinition(name));
     }
   }
 }
@@ -58,7 +58,7 @@ class CustomSourceBlock extends React.Component {
     this.handleSourceNameChange = this.handleSourceNameChange.bind(this);
     this.onDerivativeSourceBaseChange = this.onDerivativeSourceBaseChange.bind(this);
 
-    props.fetchDerivativeSources();
+    props.fetchDerivativeSourceDefinitions();
   }
   onChangeInput(e) {
     e.preventDefault();
@@ -68,13 +68,13 @@ class CustomSourceBlock extends React.Component {
     e.preventDefault();
     const name = prompt("Enter your derivative source's name");
     if (name !== null) {
-      this.props.saveDerivativeSource(name, this.state.input);
+      this.props.saveDerivativeSourceDefinition(name, this.state.input);
     }
   }
   delete(e) {
     e.preventDefault();
     if (confirm("Are you sure you want to delete this derivative source?")) {
-      this.props.deleteDerivativeSource(this.state.derivativeSourceBase);
+      this.props.deleteDerivativeSourceDefinition(this.state.derivativeSourceBase);
     }
   }
   onDerivativeSourceBaseChange(source) {

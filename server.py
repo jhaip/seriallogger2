@@ -240,6 +240,48 @@ def derivativeSourceDefinitions():
         return jsonify(results)
 
 
+@app.route("/api/derivative_sources", methods=['GET', 'POST', 'DELETE'])
+def derivativeSources():
+    if request.method == 'POST':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        tdata = (
+            utcnow(),
+            data["name"],
+            data["source_code"],
+        )
+        sql = ('INSERT INTO derivativesources ('
+               'created_at, '
+               'name, '
+               'source_code)'
+               'VALUES (?,?,?)')
+        commit_to_db(sql, tdata)
+        return ('', 204)
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        if data is None:
+            abort(400)
+        tdata = (
+            data["name"],
+        )
+        sql = ('DELETE FROM derivativesources'
+               'WHERE name = ?')
+        return ('', 204)
+    else:
+        results = {"results": []}
+        keys = [
+            "id",
+            "created_at",
+            "name",
+            "source_code",
+        ]
+        query = 'select * from derivativesources'
+        for r in query_db(query):
+            results["results"].append(dict(zip(keys, r)))
+        return jsonify(results)
+
+
 @app.route("/api/notebook/entries", methods=['GET', 'POST'])
 def entriesFetch():
     if request.method == 'POST':

@@ -88,7 +88,7 @@ export function computeDerivativeSource(sourceData, funcBody) {
   return result;
 }
 
-export function fetchDerivativeSources() {
+export function fetchDerivativeSourceDefinitions() {
   return (dispatch, getState) => {
     const url = `${window.API_URL}/api/derivative_source_definitions`
     let myHeaders = new Headers();
@@ -105,16 +105,16 @@ export function fetchDerivativeSources() {
           previousValue[currentValue.name] = currentValue.source_code;
           return previousValue;
         }, {});
-        dispatch(receiveDerivativeSources(results));
+        dispatch(receiveDerivativeSourceDefinitions(results));
       });
   }
 }
 
-export function receiveDerivativeSources(sources) {
+export function receiveDerivativeSourceDefinitions(sources) {
   return { type: RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS, sources }
 }
 
-export function saveDerivativeSource(name, sourceCode) {
+export function saveDerivativeSourceDefinition(name, sourceCode) {
   return (dispatch, getState) => {
     const url = `${window.API_URL}/api/derivative_source_definitions`
     const data = {
@@ -130,12 +130,12 @@ export function saveDerivativeSource(name, sourceCode) {
     }
     fetch(url, options)
       .then(response => {
-        dispatch(fetchDerivativeSources())
+        dispatch(fetchDerivativeSourceDefinitions())
       });
   }
 }
 
-export function deleteDerivativeSource(name) {
+export function deleteDerivativeSourceDefinition(name) {
   return (dispatch, getState) => {
     const url = `${window.API_URL}/api/derivative_source_definitions`
     const data = {
@@ -150,7 +150,7 @@ export function deleteDerivativeSource(name) {
     }
     fetch(url, options)
       .then(response => {
-        dispatch(fetchDerivativeSources())
+        dispatch(fetchDerivativeSourceDefinitions())
       });
   }
 }

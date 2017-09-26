@@ -35,3 +35,9 @@ CREATE TABLE IF NOT EXISTS derivativesourcedefinitions (
     name TEXT,
     source_code TEXT
 );
+CREATE TABLE IF NOT EXISTS derivativesources (
+    id integer primary key,
+    created_at TEXT,
+    name TEXT,
+    source_code TEXT
+);

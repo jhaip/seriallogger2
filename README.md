@@ -17,7 +17,7 @@ init_db()
 
 ### Compile with Webpack
 ```
-./node_modules/.bin/webpack -d
+npx webpack -d --watch
 ```
 
 ### Record data in serial monitor

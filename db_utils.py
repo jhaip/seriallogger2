@@ -55,3 +55,19 @@ def migration__data__0002():
     except:
         print("Error: column has probably already been added")
     c.close()
+
+def migration__data__0003():
+    db = sqlite3.connect(DATABASE)
+    c = db.cursor()
+    try:
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS derivativesources (
+            id integer primary key,
+            created_at TEXT,
+            name TEXT,
+            source_code TEXT
+        );
+        """)
+    except:
+        print("Error: probably already been added")
+    c.close()
