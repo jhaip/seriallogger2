@@ -33,8 +33,16 @@ try:
             bufferSize += 1
             inputEmptyCount = 0
             if bufferSize > 2:
-                r = requests.post(API_BASE+'/api/data', json={"source": "serial", "value": bufferString, "type": "String"})
+                # r = requests.post(API_BASE+'/api/data', json={"source": "serial", "value": bufferString, "type": "String"})
+                r = requests.post(
+                    "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data",
+                    headers={
+                        "X-AIO-Key": "PUT_KEY_HERE"
+                    },
+                    json={"source": "serial", "value": bufferString, "type": "String"}
+                )
                 print "SEND REQUEST", r.status_code
+                print r
                 bufferString = ""
                 bufferSize = 0
         if not input_stream.isatty():
