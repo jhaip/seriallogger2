@@ -3,19 +3,17 @@ services:
     web:
         restart: always
         build: ./app
-        working_dir: /app
         volumes:
-            - Database:/app/db
+            - mydatabase:/usr/src/app/db
         expose:
             - "8000"
-        command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app --log-level=debug --log-file=-
+        command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
     nginx:
         restart: always
-        image: nginx
-        volumes:
-            - ./nginx/conf.d:/etc/nginx/conf.d
-            - ./static:/static
+        build: ./nginx
         links:
             - web:web
         ports:
             - "80:80"
+volumes:
+    mydatabase:

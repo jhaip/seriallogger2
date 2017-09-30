@@ -70,7 +70,7 @@ eval $(docker-machine env --unset
 First, target the remote docker in docker-machine.  Then copy the database:
 
 ```
-docker-machine scp seriallogger2:/var/lib/docker/volumes/Database/_data/log.db ./remote-log.db
+docker-machine scp seriallogger2:/var/lib/docker/volumes/seriallogger2_mydatabase/_data/log.db ./backup.db
 ```
 
 You can use the remote-log.db as a replacement for the local `db/log.db`.
