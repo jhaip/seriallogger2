@@ -1,7 +1,21 @@
-web:
-  build: .
-  ports:
-   - "80:5000"
-   - "5000:5000"
-  volumes:
-   - Database:/app/db
+version: '3'
+services:
+    web:
+        restart: always
+        build: ./app
+        working_dir: /app
+        volumes:
+            - Database:/app/db
+        expose:
+            - "8000"
+        command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app --log-level=debug --log-file=-
+    nginx:
+        restart: always
+        image: nginx
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./static:/static
+        links:
+            - web:web
+        ports:
+            - "80:80"
