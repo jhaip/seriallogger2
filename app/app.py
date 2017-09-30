@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, g, request, abort
 from flask_cors import CORS, cross_origin
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pytz
 import iso8601
@@ -12,40 +13,70 @@ def utcnow():
     return datetime.now(tz=pytz.utc)
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-# BASE_DIR = os.path.dirname(PROJECT_ROOT)
-# template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 template_dir = os.path.join(PROJECT_ROOT, 'static')
 print(template_dir)
-# app = Flask(__name__)
 app = Flask(__name__, template_folder=template_dir)
 CORS(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+PROJECT_ROOT+'/db/log.db'
+db = SQLAlchemy(app)
 
-DATABASE = 'db/log.db'
+class Annotations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.String(100), nullable=False)
+    annotation = db.Column(db.String(200), nullable=False)
+    source = db.Column(db.String(100), nullable=False)
+    source_type = db.Column(db.String(100), nullable=False)
+    value = db.Column(db.Text, nullable=False)
+    start_id = db.Column(db.String(100), nullable=False)
+    start_timestamp = db.Column(db.String(100), nullable=False)
+    start_line = db.Column(db.Integer, nullable=False)
+    start_char = db.Column(db.Integer, nullable=False)
+    end_id = db.Column(db.String(100), nullable=False)
+    end_timestamp = db.Column(db.String(100), nullable=False)
+    end_line = db.Column(db.Integer, nullable=False)
+    end_char = db.Column(db.Integer, nullable=False)
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    db.row_factory = sqlite3.Row
-    return db
+    def __repr__(self):
+        return '<Annotation %r>' % self.id
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+class Data(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.String(100), nullable=False)
+    value = db.Column(db.Text, nullable=False)
+    source_type = db.Column(db.String(100), nullable=False)
+    overflow = db.Column(db.Text, nullable=False)
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+    def __repr__(self):
+        return '<Data %r>' % self.id
 
-def commit_to_db(query, parameters):
-    db = get_db()
-    db.cursor().execute(query, parameters)
-    db.commit()
+class NotebookEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.String(100), nullable=False)
+    last_modified = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    text = db.Column(db.Text, nullable=False)
 
+    def __repr__(self):
+        return '<NotebookEntry %r>' % self.id
+
+class DerivativeSourceDefinitions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    source_code = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return '<DerivativeSourceDefinition %r>' % self.id
+
+class DerivativeSources(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    source_code = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return '<DerivativeSource %r>' % self.id
 
 @app.after_request
 def add_header(r):
