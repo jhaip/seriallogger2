@@ -7,15 +7,16 @@ services:
         volumes:
             - ./app:/app
         ports:
-            - "8000:8000"
-        command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
-    nginx:
-        restart: always
-        image: nginx
-        volumes:
-            - ./nginx/conf.d:/etc/nginx/conf.d
-            - ./static:/static
-        links:
-            - web:web
-        ports:
-            - "80:8000"
+            - "5000:5000"
+        # command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+        command: /usr/local/bin/python app.py
+    # nginx:
+    #     restart: always
+    #     image: nginx
+    #     volumes:
+    #         - ./nginx/conf.d:/etc/nginx/conf.d
+    #         - ./static:/static
+    #     links:
+    #         - web:web
+    #     ports:
+    #         - "80:8000"
