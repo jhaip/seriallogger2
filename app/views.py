@@ -13,9 +13,9 @@ import sys
 def utcnow():
     return datetime.now(tz=pytz.utc)
 
-class IndexView(View):
+class IndexView(MethodView):
 
-    def dispatch_request(self, entry_id):
+    def get(self, entry_id=None):
         return render_template("index.html")
 
 
@@ -30,24 +30,38 @@ class SourcesView(MethodView):
 class DataView(MethodView):
 
     def post(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        source = data.get("source")
-        timestamp = data.get("timestamp")
-        value = data.get("value")
-        _type = data.get("type")
-        data.pop('source', None)
-        data.pop('timestamp', None)
-        data.pop('value', None)
-        data.pop('type', None)
-        overflow = json.dumps(data)
-        if not timestamp:
-            print("assigning timestamp")
-            timestamp = utcnow()
-        tdata = (source, timestamp, value, _type, overflow)
-        commit_to_db('INSERT INTO data (source, timestamp, value, type, overflow) VALUES (?,?,?,?,?)', tdata)
-        return ('', 204)
+        # data = request.get_json()
+        # if data is None:
+        #     abort(400)
+        # source = data.get("source")
+        # timestamp = data.get("timestamp")
+        # value = data.get("value")
+        # _type = data.get("type")
+        # data.pop('source', None)
+        # data.pop('timestamp', None)
+        # data.pop('value', None)
+        # data.pop('type', None)
+        # overflow = json.dumps(data)
+        # if not timestamp:
+        #     print("assigning timestamp")
+        #     timestamp = utcnow()
+        # tdata = (source, timestamp, value, _type, overflow)
+        # commit_to_db('INSERT INTO data (source, timestamp, value, type, overflow) VALUES (?,?,?,?,?)', tdata)
+        # return ('', 204)
+
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'message': 'No input data provided'}), 400
+
+        data, errors = data_schema.load(json_data)
+        if errors:
+            return jsonify(errors), 422
+        print(data, file=sys.stderr)
+
+        # data.save()
+        db.session.commit()
+        result = data_schema.dump(data)
+        return jsonify(result.data)
 
     def get(self):
         filter_source = request.args.get('source')

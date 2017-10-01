@@ -1,4 +1,5 @@
 from database import db
+import sys
 
 class Annotations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,6 +27,14 @@ class Data(db.Model):
     value = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(100), nullable=False)
     overflow = db.Column(db.Text, nullable=False)
+
+    def __init__(self, **kwargs):
+        print(kwargs, file=sys.stderr)
+        self.source = kwargs["source"]
+        self.timestamp = kwargs["timestamp"]
+        self.value = kwargs["value"]
+        self.type = kwargs["type"]
+        self.overflow = kwargs.get("overflow", "")
 
     def __repr__(self):
         return '<Data %r>' % self.id
