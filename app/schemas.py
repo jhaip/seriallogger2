@@ -74,6 +74,11 @@ class NotebookEntrySchema(Schema):
     def process_last_modified(self, data):
         data['last_modified'] = utcnow()
 
+    @pre_load
+    def process_created_at(self, data):
+        # TODO: only assign this once
+        data['created_at'] = utcnow()
+
 class DerivativeSourceDefinitionsSchema(Schema):
     id = fields.Int(dump_only=True)
     created_at = fields.Str()  # auto assign time, make a DateTime(), dump_only=True

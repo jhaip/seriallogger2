@@ -97,21 +97,7 @@ class AnnotationView(MethodView):
 class DerivativeSourceDefinitionView(MethodView):
 
     def post(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            utcnow(),
-            data["name"],
-            data["source_code"],
-        )
-        sql = ('INSERT INTO derivativesourcedefinitions ('
-               'created_at, '
-               'name, '
-               'source_code)'
-               'VALUES (?,?,?)')
-        commit_to_db(sql, tdata)
-        return ('', 204)
+        return postHelper(request, derivativesourcedefinition_schema)
 
     def delete(self):
             data = request.get_json()
@@ -134,21 +120,7 @@ class DerivativeSourceDefinitionView(MethodView):
 class DerivativeSourceView(MethodView):
 
     def post(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            utcnow(),
-            data["name"],
-            data["source_code"],
-        )
-        sql = ('INSERT INTO derivativesources ('
-               'created_at, '
-               'name, '
-               'source_code)'
-               'VALUES (?,?,?)')
-        commit_to_db(sql, tdata)
-        return ('', 204)
+        return postHelper(request, derivativesource_schema)
 
     def delete(self):
         data = request.get_json()
@@ -170,23 +142,7 @@ class DerivativeSourceView(MethodView):
 class NotebookEntriesView(MethodView):
 
     def post(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            utcnow(),
-            utcnow(),
-            data["name"],
-            data["text"],
-        )
-        sql = ('INSERT INTO notebookentry ('
-               'created_at, '
-               'last_modified, '
-               'name, '
-               'text)'
-               'VALUES (?,?,?,?)')
-        commit_to_db(sql, tdata)
-        return ('', 204)
+        return postHelper(request, notebookentry_schema)
 
     def get(self):
         filter_start = request.args.get('start')
