@@ -15,6 +15,7 @@ def create_app():
     app = Flask(__name__, template_folder=template_dir)
     CORS(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+PROJECT_ROOT+'/db/log.db'
+    app.config['SQLALCHEMY_ECHO'] = True
     db.init_app(app)
     app.after_request(add_header)
     app.add_url_rule('/', view_func=IndexView.as_view('index'))

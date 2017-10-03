@@ -30,25 +30,6 @@ class SourcesView(MethodView):
 class DataView(MethodView):
 
     def post(self):
-        # data = request.get_json()
-        # if data is None:
-        #     abort(400)
-        # source = data.get("source")
-        # timestamp = data.get("timestamp")
-        # value = data.get("value")
-        # _type = data.get("type")
-        # data.pop('source', None)
-        # data.pop('timestamp', None)
-        # data.pop('value', None)
-        # data.pop('type', None)
-        # overflow = json.dumps(data)
-        # if not timestamp:
-        #     print("assigning timestamp")
-        #     timestamp = utcnow()
-        # tdata = (source, timestamp, value, _type, overflow)
-        # commit_to_db('INSERT INTO data (source, timestamp, value, type, overflow) VALUES (?,?,?,?,?)', tdata)
-        # return ('', 204)
-
         json_data = request.get_json()
         if not json_data:
             return jsonify({'message': 'No input data provided'}), 400
@@ -58,8 +39,9 @@ class DataView(MethodView):
             return jsonify(errors), 422
         print(data, file=sys.stderr)
 
-        # data.save()
+        db.session.add(data)
         db.session.commit()
+        print("DONE", file=sys.stderr)
         result = data_schema.dump(data)
         return jsonify(result.data)
 
@@ -74,8 +56,8 @@ class DataView(MethodView):
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 datas = (Data.query
                     .filter_by(source=filter_source)
-                    .filter(Data.timestamp >= filter_start_date)
-                    .filter(Data.timestamp <= filter_stop_date)
+                    .filter(db.func.date(Data.timestamp) >= filter_start_date)
+                    .filter(db.func.date(Data.timestamp) <= filter_stop_date)
                 )
             else:
                 datas = Data.query.filter_by(source=filter_source)
@@ -135,8 +117,8 @@ class AnnotationView(MethodView):
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 datas = (Annotations.query
                     .filter_by(source=filter_source)
-                    .filter(Annotations.timestamp >= filter_start_date)
-                    .filter(Annotations.timestamp <= filter_stop_date)
+                    .filter(db.func.date(Annotations.timestamp) >= filter_start_date)
+                    .filter(db.func.date(Annotations.timestamp) <= filter_stop_date)
                 )
             else:
                 datas = Annotations.query.filter_by(source=filter_source)

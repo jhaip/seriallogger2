@@ -26,15 +26,7 @@ class Data(db.Model):
     timestamp = db.Column(db.String(100), nullable=False)
     value = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(100), nullable=False)
-    overflow = db.Column(db.Text, nullable=False)
-
-    def __init__(self, **kwargs):
-        print(kwargs, file=sys.stderr)
-        self.source = kwargs["source"]
-        self.timestamp = kwargs["timestamp"]
-        self.value = kwargs["value"]
-        self.type = kwargs["type"]
-        self.overflow = kwargs.get("overflow", "")
+    overflow = db.Column(db.Text, nullable=False, default="")
 
     def __repr__(self):
         return '<Data %r>' % self.id
