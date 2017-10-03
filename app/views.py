@@ -13,6 +13,19 @@ import sys
 def utcnow():
     return datetime.now(tz=pytz.utc)
 
+def postHelper(request, schema):
+    json_data = request.get_json()
+    if not json_data:
+        return jsonify({'message': 'No input data provided'}), 400
+    data, errors = schema.load(json_data)
+    if errors:
+        return jsonify(errors), 422
+    # print(data, file=sys.stderr)
+    db.session.add(data)
+    db.session.commit()
+    result = schema.dump(data)
+    return jsonify(result.data)
+
 class IndexView(MethodView):
 
     def get(self, entry_id=None):
@@ -30,20 +43,7 @@ class SourcesView(MethodView):
 class DataView(MethodView):
 
     def post(self):
-        json_data = request.get_json()
-        if not json_data:
-            return jsonify({'message': 'No input data provided'}), 400
-
-        data, errors = data_schema.load(json_data)
-        if errors:
-            return jsonify(errors), 422
-        print(data, file=sys.stderr)
-
-        db.session.add(data)
-        db.session.commit()
-        print("DONE", file=sys.stderr)
-        result = data_schema.dump(data)
-        return jsonify(result.data)
+        return postHelper(request, data_schema)
 
     def get(self):
         filter_source = request.args.get('source')
@@ -70,41 +70,7 @@ class DataView(MethodView):
 class AnnotationView(MethodView):
 
     def post(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            utcnow(),
-            data["annotation"],
-            data["source"],
-            data["source_type"],
-            data["value"],
-            data["start_id"],
-            data["start_timestamp"],
-            data["start_line"],
-            data["start_char"],
-            data["end_id"],
-            data["end_timestamp"],
-            data["end_line"],
-            data["end_char"],
-        )
-        sql = ('INSERT INTO annotations ('
-               'timestamp, '
-               'annotation, '
-               'source, '
-               'source_type, '
-               'value, '
-               'start_id, '
-               'start_timestamp, '
-               'start_line, '
-               'start_char, '
-               'end_id, '
-               'end_timestamp, '
-               'end_line, '
-               'end_char)'
-               'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
-        commit_to_db(sql, tdata)
-        return ('', 204)
+        return postHelper(request, annotation_schema)
 
     def get(self):
         filter_source = request.args.get('source')
