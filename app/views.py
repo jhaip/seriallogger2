@@ -152,8 +152,8 @@ class NotebookEntriesView(MethodView):
             filter_start_date = iso8601.parse_date(request.args.get('start'))
             filter_stop_date = iso8601.parse_date(request.args.get('stop'))
             datas = (Notebookentry.query
-                .filter(Notebookentry.created_at >= filter_start_date)
-                .filter(Notebookentry.created_at <= filter_stop_date)
+                .filter(db.func.date(Notebookentry.created_at) >= filter_start_date)
+                .filter(db.func.date(Notebookentry.created_at) <= filter_stop_date)
             )
         else:
             datas = Notebookentry.query.all()
