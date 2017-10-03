@@ -79,6 +79,10 @@ class NotebookEntrySchema(Schema):
         # TODO: only assign this once
         data['created_at'] = utcnow()
 
+    @post_load
+    def make_notebookentry(self, data):
+        return Notebookentry(**data)
+
 class DerivativeSourceDefinitionsSchema(Schema):
     id = fields.Int(dump_only=True)
     created_at = fields.Str()  # auto assign time, make a DateTime(), dump_only=True
@@ -91,6 +95,10 @@ class DerivativeSourceDefinitionsSchema(Schema):
     def process_created_at(self, data):
         data['created_at'] = utcnow()
 
+    @post_load
+    def make_derivativesourcedefinition(self, data):
+        return Derivativesourcedefinitions(**data)
+
 class DerivativeSourcesSchema(Schema):
     id = fields.Int(dump_only=True)
     created_at = fields.Str()  # auto assign time, make a DateTime(), dump_only=True
@@ -102,6 +110,10 @@ class DerivativeSourcesSchema(Schema):
 
     def process_created_at(self, data):
         data['created_at'] = utcnow()
+
+    @post_load
+    def make_derivativesource(self, data):
+        return Derivativesources(**data)
 
 annotation_schema = AnnotationsSchema()
 annotations_schema = AnnotationsSchema(many=True)
