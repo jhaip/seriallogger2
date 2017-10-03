@@ -18,16 +18,28 @@ class AnnotationsSchema(Schema):
     value = fields.Str()
     start_id = fields.Str()
     start_timestamp = fields.Str()
-    start_line = fields.Str()
-    start_char = fields.Str()
+    start_line = fields.Integer()
+    start_char = fields.Integer()
     end_id = fields.Str()
     end_timestamp = fields.Str()
-    end_line = fields.Str()
-    end_char = fields.Str()
+    end_line = fields.Integer()
+    end_char = fields.Integer()
 
     @pre_load
     def process_timestamp(self, data):
         data['timestamp'] = utcnow()
+
+    @pre_load
+    def process_start_id(self, data):
+        data['start_id'] = str(data['start_id'])
+
+    @pre_load
+    def process_end_id(self, data):
+        data['end_id'] = str(data['end_id'])
+
+    @post_load
+    def make_annotation(self, data):
+        return Annotations(**data)
 
 class DataSchema(Schema):
     id = fields.Int(dump_only=True)
