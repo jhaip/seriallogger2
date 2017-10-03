@@ -26,6 +26,19 @@ def postHelper(request, schema):
     result = schema.dump(data)
     return jsonify(result.data)
 
+def putHelper(request, schema, model, key):
+    json_data = request.get_json()
+    if not json_data:
+        return jsonify({'message': 'No input data provided'}), 400
+    data, errors = schema.load(json_data)
+    if errors:
+        return jsonify(errors), 422
+    instance = model.query.get_or_404(key)
+    for k,v in json_data.items():
+        setattr(instance, k, v)
+    db.session.commit()
+    return jsonify(message='Successfuly updated'), 200
+
 class IndexView(MethodView):
 
     def get(self, entry_id=None):
@@ -164,22 +177,7 @@ class NotebookEntriesView(MethodView):
 class NotebookEntryView(MethodView):
 
     def put(self, entry_id):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            utcnow(),
-            data["name"],
-            data["text"],
-            entry_id,
-        )
-        sql = ('UPDATE notebookentry SET '
-               'last_modified = ?, '
-               'name = ?, '
-               'text = ? '
-               'WHERE id = ?')
-        commit_to_db(sql, tdata)
-        return ('', 204)
+        return putHelper(request, notebookentry_schema, Notebookentry, entry_id)
 
     def get(self, entry_id):
         print("--")
