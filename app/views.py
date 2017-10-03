@@ -39,6 +39,15 @@ def putHelper(request, schema, model, key):
     db.session.commit()
     return jsonify(message='Successfuly updated'), 200
 
+def deleteHelper(request, model, key, value):
+    json_data = request.get_json()
+    if not json_data:
+        return jsonify({'message': 'No input data provided'}), 400
+    model.query.filter(getattr(model, key) == json_data[value]).delete()
+    db.session.commit()
+    return jsonify(message='Successfuly deleted'), 200
+
+
 class IndexView(MethodView):
 
     def get(self, entry_id=None):
@@ -113,15 +122,7 @@ class DerivativeSourceDefinitionView(MethodView):
         return postHelper(request, derivativesourcedefinition_schema)
 
     def delete(self):
-            data = request.get_json()
-            if data is None:
-                abort(400)
-            tdata = (
-                data["name"],
-            )
-            sql = ('DELETE FROM derivativesourcedefinitions'
-                   'WHERE name = ?')
-            return ('', 204)
+        return deleteHelper(request, Derivativesourcedefinitions, "name", "name")
 
     def get(self):
             derivative_source_definitions = Derivativesourcedefinitions.query.all()
@@ -136,15 +137,7 @@ class DerivativeSourceView(MethodView):
         return postHelper(request, derivativesource_schema)
 
     def delete(self):
-        data = request.get_json()
-        if data is None:
-            abort(400)
-        tdata = (
-            data["name"],
-        )
-        sql = ('DELETE FROM derivativesources'
-               'WHERE name = ?')
-        return ('', 204)
+        return deleteHelper(request, Derivativesources, "name", "name")
 
     def get(self):
         derivative_sources = Derivativesources.query.all()
