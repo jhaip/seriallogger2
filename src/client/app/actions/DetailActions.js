@@ -133,6 +133,8 @@ export function fetchDetailDataForCode(source, start, stop) {
   };
   const repo = "jhaip/seriallogger2";
   const urlParams = new URLSearchParams(Object.entries(params));
+  // output:
+  // sha=master&path=photon%2F&since=2011-10-05T14%3A48%3A00.000Z&until=2012-11-06T15%3A48%3A00.000Z
   const url = `https://api.github.com/repos/${repo}/commits?${urlParams}`;
   const options = {
     headers: {

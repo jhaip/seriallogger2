@@ -31,6 +31,19 @@ class Data(db.Model):
     def __repr__(self):
         return '<Data %r>' % self.id
 
+class DataSource(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text, nullable=False)
+    headers = db.Column(db.Text, nullable=False)
+    request_data = db.Column(db.Text, nullable=False)
+    request_type = db.Column(db.String(100), nullable=False)
+    transform_function = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return '<DataSource %r>' % self.id
+
 class Notebookentry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.String(100), nullable=False)

@@ -25,6 +25,9 @@ class AnnotationsSchema(Schema):
     end_line = fields.Integer()
     end_char = fields.Integer()
 
+    def __repr__(self):
+        return '<AnnotationsSchema %r>' % self.id
+
     @pre_load
     def process_timestamp(self, data):
         data['timestamp'] = utcnow()
@@ -50,7 +53,7 @@ class DataSchema(Schema):
     overflow = fields.Str()
 
     def __repr__(self):
-        return '<Data %r>' % self.id
+        return '<DataSchema %r>' % self.id
 
     @pre_load
     def process_timestamp(self, data):
@@ -60,6 +63,23 @@ class DataSchema(Schema):
     def make_data(self, data):
         return Data(**data)
 
+class DataSourceSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()
+    description = fields.Str()
+    url = fields.Str()
+    headers = fields.Str()
+    request_data = fields.Str()
+    request_type = fields.Str()
+    transform_function = fields.Str()
+
+    def __repr__(self):
+        return '<DataSourceSchema %r>' % self.id
+
+    @post_load
+    def make_datasource(self, data):
+        return DataSource(**data)
+
 class NotebookEntrySchema(Schema):
     id = fields.Int(dump_only=True)
     created_at = fields.Str()  # auto assign time, make a DateTime(), dump_only=True
@@ -68,7 +88,7 @@ class NotebookEntrySchema(Schema):
     text = fields.Str()
 
     def __repr__(self):
-        return '<NotebookEntry %r>' % self.id
+        return '<NotebookEntrySchema %r>' % self.id
 
     @pre_load
     def process_last_modified(self, data):
@@ -90,7 +110,7 @@ class DerivativeSourceDefinitionsSchema(Schema):
     source_code = fields.Str()
 
     def __repr__(self):
-        return '<DerivativeSourceDefinition %r>' % self.id
+        return '<DerivativeSourceDefinitionsSchema %r>' % self.id
 
     def process_created_at(self, data):
         data['created_at'] = utcnow()
@@ -106,7 +126,7 @@ class DerivativeSourcesSchema(Schema):
     source_code = fields.Str()
 
     def __repr__(self):
-        return '<DerivativeSource %r>' % self.id
+        return '<DerivativeSourcesSchema %r>' % self.id
 
     def process_created_at(self, data):
         data['created_at'] = utcnow()
@@ -119,6 +139,8 @@ annotation_schema = AnnotationsSchema()
 annotations_schema = AnnotationsSchema(many=True)
 data_schema = DataSchema()
 datas_schema = DataSchema(many=True)
+datasource_schema = DataSourceSchema()
+datasources_schema = DataSourceSchema(many=True)
 notebookentry_schema = NotebookEntrySchema()
 notebookentries_schema = NotebookEntrySchema(many=True)
 derivativesourcedefinition_schema = DerivativeSourceDefinitionsSchema()

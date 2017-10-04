@@ -48,6 +48,16 @@ def deleteHelper(request, model, key, value):
     return jsonify(message='Successfuly deleted'), 200
 
 
+class DatabaseAdminView(MethodView):
+
+    def post(self):
+        print("ABOUT TO CREATE DATABAES", file=sys.stderr)
+        db.create_all()
+        db.session.commit()
+        print("DONE CREATE DATABAES", file=sys.stderr)
+        return jsonify(message='Successfuly created database'), 200
+
+
 class IndexView(MethodView):
 
     def get(self, entry_id=None):
@@ -56,10 +66,16 @@ class IndexView(MethodView):
 
 class SourcesView(MethodView):
 
+    def post(self):
+        return postHelper(request, datasource_schema)
+
     def get(self):
-        sources = [x.source for x in Data.query.group_by(Data.source).all()]
-        print(sources, file=sys.stderr)
-        return jsonify({'results': sources})
+        datasources = DataSource.query.all()
+        result = datasources_schema.dump(datasources)
+        return jsonify({'results': result.data})
+
+    def delete(self):
+        return deleteHelper(request, DataSource, "id", "id")
 
 
 class DataView(MethodView):

@@ -28,6 +28,7 @@ def create_app():
     app.add_url_rule("/api/derivative_sources", view_func=DerivativeSourceView.as_view('derivative_sources_view'))
     app.add_url_rule("/api/notebook/entries", view_func=NotebookEntriesView.as_view('notebook_entries_view'))
     app.add_url_rule("/api/notebook/entries/<int:entry_id>", view_func=NotebookEntryView.as_view('notebook_entry_view'))
+    app.add_url_rule("/admin/database", view_func=DatabaseAdminView.as_view('database_admin_view'))
     return app
 
 
