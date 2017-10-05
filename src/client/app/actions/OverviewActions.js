@@ -29,7 +29,7 @@ export function fetchSourcesList() {
       })
       .then(json => {
         dispatch(receiveSourcesList(json.results));
-        // dispatch(changeSelectedSource("code"));
+        dispatch(changeSelectedSource("code"));
         dispatch(fetchAllNewOverviewData());
         // dispatch(fetchDerivativeSources());
       });

@@ -18,7 +18,7 @@ class DetailViewTextRow extends React.Component {
            data-rn={this.props.rowNumber}
            data-rowinvalue={this.props.rowInValue}
            data-dataid={this.props.id}
-           data-datasource={this.props.source}
+           data-datasource={this.props.sourceName}
            data-datatype={this.props.type}
            data-datatimestamp={this.props.timestamp} >
         {childrenn}
@@ -29,7 +29,7 @@ class DetailViewTextRow extends React.Component {
 DetailViewTextRow.propTypes = {
   id: PropTypes.any.isRequired,
   rowNumber: PropTypes.number.isRequired,
-  source: PropTypes.string.isRequired,
+  sourceName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   timestamp: PropTypes.any.isRequired,
   childrenData: PropTypes.array.isRequired,

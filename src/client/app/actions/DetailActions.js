@@ -163,7 +163,9 @@ export function fetchDetailDataForCode(source, start, stop) {
 export function fetchDetailDataForAll(source, start, stop) {
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
-  const url = source.url;
+  const url = source.url
+    .replace('{{start}}', url_start)
+    .replace('{{stop}}', url_stop);
   let options = {
     method: source.request_type || 'GET'
   };
@@ -179,16 +181,30 @@ export function fetchDetailDataForAll(source, start, stop) {
       .then(response => response.json())
       .then(json => {
         // TODO: pass through source.transform_function
-        const clean_data = json.map(c => {
-          const value = `${c.commit.message}\r\n${c.commit.url}`;
-          return {
+        let clean_data;
+        if (source.name === "annotations") {
+          clean_data = json.results.map(d => {
+            const value = `${d.annotation}\r\nSource: ${d.source}\r\nStart: ${d.start_timestamp}\r\nEnd: ${d.end_timestamp}`;
+            return {
               value: value,
-              id: c.sha,
+              id: d.id,
               source: source,
-              type: "code",
-              timestamp: moment.utc(c.commit.author.date).toDate(),
-          };
-        });
+              type: "Annotation",
+              timestamp: d.timestamp
+            };
+          });
+        } else {
+          clean_data = json.map(c => {
+            const value = `${c.commit.message}\r\n${c.commit.url}`;
+            return {
+                value: value,
+                id: c.sha,
+                source: source,
+                type: "code",
+                timestamp: moment.utc(c.commit.author.date).toDate(),
+            };
+          });
+        }
         resolve(clean_data);
       });
   });
@@ -203,22 +219,34 @@ export function fetchDetailDataForUnknown(source, start, stop, state) {
   });
 }
 
-export function fetchDetailDataPurely(source, start, end, state) {
+export function fetchDetailDataPurely(sourceNameOrData, start, end, state) {
   let data_promise;
-  const isDerivativeSource = state.view.derivativeSources.find(ds => ds.name === source)
-  if (isDerivativeSource) {
-    data_promise = fetchDetailDataForUnknown(source, start, end, state);
+  let sourceName = '';
+  let sourceData = '';
+  if (typeof sourceNameOrData === 'string') {
+    sourceName = sourceNameOrData;
+    sourceData = state.view.sources.reduce((acc, s) => {
+      return (s.name === sourceName) ? s : acc;
+    }, null);
   } else {
-    switch (source) {
-      case "annotations":
-        data_promise = fetchDetailDataForAnnotations(source, start, end);
-        break;
-      case "code":
-        data_promise = fetchDetailDataForCode(source, start, end);
-        break;
-      default:
-        data_promise = fetchDetailDataForData(source, start, end);
-    }
+    sourceName = sourceNameOrData.name;
+    sourceData = sourceNameOrData;
+  }
+  const isDerivativeSource = state.view.derivativeSources.find(ds => ds.name === sourceName)
+  if (isDerivativeSource) {
+    data_promise = fetchDetailDataForUnknown(sourceData, start, end, state);
+  } else {
+    data_promise = fetchDetailDataForAll(sourceData, start, end);
+    // switch (source) {
+    //   case "annotations":
+    //     data_promise = fetchDetailDataForAnnotations(source, start, end);
+    //     break;
+    //   case "code":
+    //     data_promise = fetchDetailDataForCode(source, start, end);
+    //     break;
+    //   default:
+    //     data_promise = fetchDetailDataForData(source, start, end);
+    // }
   }
   return data_promise
 }

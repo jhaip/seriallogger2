@@ -12,7 +12,7 @@ class DetailViewTimeGroup extends React.Component {
                            key={r.rowNumber}
                            rowNumber={r.rowNumber}
                            rowInValue={r.rowInValue}
-                           source={this.props.source}
+                           sourceName={this.props.sourceName}
                            type={this.props.type}
                            timestamp={this.props.timestamp}
                            childrenData={r.children}
@@ -29,7 +29,7 @@ class DetailViewTimeGroup extends React.Component {
 }
 DetailViewTimeGroup.propTypes = {
   id: PropTypes.any.isRequired,
-  source: PropTypes.string.isRequired,
+  sourceName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   timestamp: PropTypes.any.isRequired,
   activeAnnotation: PropTypes.string.isRequired,

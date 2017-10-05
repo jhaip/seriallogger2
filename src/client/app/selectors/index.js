@@ -16,7 +16,7 @@ function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
       listRows.push({
         id: id,
         rowNumber: listRows.length,
-        source: source,
+        sourceName: source.name,
         type: type,
         timestamp: timestamp,
         children: [
@@ -152,7 +152,7 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
         (newRows[newRows.length-1].timestamp !== row.timestamp)) {
       newRows.push({
         id: row.id,
-        source: row.source,
+        sourceName: row.sourceName,
         type: row.type,
         timestamp: row.timestamp,
         rows: [row]
