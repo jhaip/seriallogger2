@@ -31,7 +31,7 @@ export function fetchSourcesList() {
         dispatch(receiveSourcesList(json.results));
         dispatch(changeSelectedSource("code"));
         dispatch(fetchAllNewOverviewData());
-        // dispatch(fetchDerivativeSources());
+        dispatch(fetchDerivativeSources());
       });
   }
 }
