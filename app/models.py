@@ -44,6 +44,19 @@ class DataSource(db.Model):
     def __repr__(self):
         return '<DataSource %r>' % self.id
 
+"""
+{
+"description": "Firmware code on Photon",
+"headers": "{\"Authorization\":\"Basic FILLINSECRET==\"}",
+"id": 1,
+"name": "code",
+"request_data": "",
+"request_type": "GET",
+"transform_function": "return sourceData.map(function(c) {             var value = c.commit.message + '\\r\\n' + c.commit.url;             return {                 'value': value,                 'id': c.sha,                 'timestamp': c.commit.author.date             };           });",
+"url": "https://api.github.com/repos/jhaip/seriallogger2/commits?sha=master&path=photon"
+}
+"""
+
 class Notebookentry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.String(100), nullable=False)
