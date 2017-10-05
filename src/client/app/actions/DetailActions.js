@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 import { getUtcDateString } from '../utils/time'
 import { saveView } from './ViewActions'
 import { fetchAnnotationsForDetailDataAction } from './AnnotationActions'
+import { computeDerivativeSource } from './OverviewActions'
 
 export const CHANGE_SELECTION_RANGE = 'CHANGE_SELECTION_RANGE'
 export const CHANGE_SELECTED_SOURCE = 'CHANGE_SELECTED_SOURCE'
@@ -188,7 +189,6 @@ export function fetchDetailDataForAll(source, start, stop) {
             return {
               value: value,
               id: d.id,
-              source: source,
               type: "Annotation",
               timestamp: d.timestamp
             };
@@ -203,24 +203,24 @@ export function fetchDetailDataForAll(source, start, stop) {
             return {
               value: datum,
               id: d.id,
-              source: source,
               type: d.type,
               timestamp: d.timestamp,
               overflow: d.overflow ? JSON.parse(d.overflow) : {}
             };
           });
-        } else if (source.name === "code") {
-          clean_data = json.map(c => {
-            const value = `${c.commit.message}\r\n${c.commit.url}`;
-            return {
-                value: value,
-                id: c.sha,
-                source: source,
-                type: "code",
-                timestamp: moment.utc(c.commit.author.date).toDate(),
-            };
-          });
+        } else if (!!source.transform_function) {
+          console.log("computing source with transform_function");
+          console.log(source);
+          clean_data = computeDerivativeSource(json, source.transform_function);
         }
+
+        // clean up dates
+        clean_data = clean_data.map(d => {
+          d.timestamp = moment.utc(d.timestamp).toDate()
+          d.source = source;
+          return d;
+        })
+
         resolve(clean_data);
       });
   });
