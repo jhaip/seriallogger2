@@ -193,7 +193,23 @@ export function fetchDetailDataForAll(source, start, stop) {
               timestamp: d.timestamp
             };
           });
-        } else {
+        } else if (source.name === "view" ||
+                   source.name === "serial") {
+          clean_data = json.results.map(d => {
+            let datum = d.value;
+            if (datum.slice(-2) === "\r\n") {
+              datum = datum.slice(0, -2);
+            }
+            return {
+              value: datum,
+              id: d.id,
+              source: source,
+              type: d.type,
+              timestamp: d.timestamp,
+              overflow: d.overflow ? JSON.parse(d.overflow) : {}
+            };
+          });
+        } else if (source.name === "code") {
           clean_data = json.map(c => {
             const value = `${c.commit.message}\r\n${c.commit.url}`;
             return {
