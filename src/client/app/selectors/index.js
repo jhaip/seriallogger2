@@ -16,7 +16,7 @@ function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
       listRows.push({
         id: id,
         rowNumber: listRows.length,
-        sourceName: source.name,
+        sourceName: source ? source.name : 'derivativeSourceNameIdk',
         type: type,
         timestamp: timestamp,
         children: [

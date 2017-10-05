@@ -250,7 +250,7 @@ export function fetchDetailDataPurely(sourceNameOrData, start, end, state) {
   }
   const isDerivativeSource = state.view.derivativeSources.find(ds => ds.name === sourceName)
   if (isDerivativeSource) {
-    data_promise = fetchDetailDataForUnknown(sourceData, start, end, state);
+    data_promise = fetchDetailDataForUnknown(sourceName, start, end, state);
   } else {
     data_promise = fetchDetailDataForAll(sourceData, start, end);
     // switch (source) {
@@ -269,7 +269,7 @@ export function fetchDetailDataPurely(sourceNameOrData, start, end, state) {
 
 export function fetchDetailData(source) {
   return (dispatch, getState) => {
-    dispatch(requestDetailData(source))
+    dispatch(requestDetailData(source));
     const { start, end } = getState().selected;
     return fetchDetailDataPurely(source, start, end, getState())
       .then(data => dispatch(receiveDetailData(source, data)))
