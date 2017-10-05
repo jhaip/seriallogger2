@@ -75,7 +75,7 @@ class SourcesView(MethodView):
         return jsonify({'results': result.data})
 
     def delete(self):
-        return deleteHelper(request, DataSource, "id", "id")
+        return deleteHelper(request, DataSource, "name", "name")
 
 
 class DataView(MethodView):
