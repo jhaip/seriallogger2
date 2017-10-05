@@ -9,8 +9,6 @@ import App from './components/App'
 import { fetchSourcesList } from './actions/OverviewActions'
 import { Promise } from 'es6-promise';
 window.Promise = Promise;
-import Cookies from 'js-cookie';
-Cookies.set('smv-github', '3ce6bf3f45fa870856a244ea2943a68bcf82e32a');
 
 window.API_URL = ""; // "http://localhost:5000";
 

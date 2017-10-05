@@ -31,7 +31,7 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
       });
     case RECEIVE_OVERVIEW_DATA:
       const newdata = Object.assign({}, state.data, {
-          [action.source]: action.data
+          [action.source.name]: action.data
       });
       return Object.assign({}, state, {
         data: newdata,

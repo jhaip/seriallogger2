@@ -107,4 +107,5 @@ ENV/
 node_modules
 
 static/bundle.js
+app/static/bundle.js
 *.db

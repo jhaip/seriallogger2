@@ -31,7 +31,7 @@ export function saveView() {
           "end": state.selected.end
         },
         "view": {
-          "sources": state.view.sources,
+          "sources": state.view.sources.map(s => s.name),
           "start": state.view.start,
           "end": state.view.end
         }

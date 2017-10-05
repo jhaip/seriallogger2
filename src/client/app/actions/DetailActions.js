@@ -160,6 +160,40 @@ export function fetchDetailDataForCode(source, start, stop) {
   });
 }
 
+export function fetchDetailDataForAll(source, start, stop) {
+  const url_start = getUtcDateString(start);
+  const url_stop = getUtcDateString(stop);
+  const url = source.url;
+  let options = {
+    method: source.request_type || 'GET'
+  };
+  if (!!source.headers) {
+    options.headers = JSON.parse(source.headers);
+  }
+  if (!!source.body) {
+    options.body = JSON.parse(source.body);
+  }
+
+  return new Promise((resolve, reject) => {
+    fetch(url, options)
+      .then(response => response.json())
+      .then(json => {
+        // TODO: pass through source.transform_function
+        const clean_data = json.map(c => {
+          const value = `${c.commit.message}\r\n${c.commit.url}`;
+          return {
+              value: value,
+              id: c.sha,
+              source: source,
+              type: "code",
+              timestamp: moment.utc(c.commit.author.date).toDate(),
+          };
+        });
+        resolve(clean_data);
+      });
+  });
+}
+
 export function fetchDetailDataForUnknown(source, start, stop, state) {
   return new Promise((resolve, reject) => {
     const data = state.view.derivativeSources.find(ds => ds.name === source).data;

@@ -2,6 +2,7 @@ import {
   fetchDetailDataForData,
   fetchDetailDataForAnnotations,
   fetchDetailDataForCode,
+  fetchDetailDataForAll,
   changeSelectedSource
 } from './DetailActions'
 
@@ -27,10 +28,10 @@ export function fetchSourcesList() {
         console.error(error);
       })
       .then(json => {
-        dispatch(receiveSourcesList(json.results.concat(["code", "annotations"])));
-        dispatch(changeSelectedSource("annotations"));
+        dispatch(receiveSourcesList(json.results));
+        // dispatch(changeSelectedSource("code"));
         dispatch(fetchAllNewOverviewData());
-        dispatch(fetchDerivativeSources());
+        // dispatch(fetchDerivativeSources());
       });
   }
 }
@@ -83,16 +84,17 @@ export function fetchOverviewData(source) {
     dispatch(requestOverviewData(source))
     const { start, end } = getState().view;
     let data_promise;
-    switch (source) {
-      case "annotations":
-        data_promise = fetchDetailDataForAnnotations(source, start, end);
-        break;
-      case "code":
-        data_promise = fetchDetailDataForCode(source, start, end);
-        break;
-      default:
-        data_promise = fetchDetailDataForData(source, start, end);
-    }
+    data_promise = fetchDetailDataForAll(source, start, end);
+    // switch (source) {
+    //   case "annotations":
+    //     data_promise = fetchDetailDataForAnnotations(source, start, end);
+    //     break;
+    //   case "code":
+    //     data_promise = fetchDetailDataForCode(source, start, end);
+    //     break;
+    //   default:
+    //     data_promise = fetchDetailDataForData(source, start, end);
+    // }
     return data_promise
       .then(data => dispatch(receiveOverviewData(source, data)))
   }
