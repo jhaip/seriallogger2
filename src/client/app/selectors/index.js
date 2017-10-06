@@ -177,6 +177,7 @@ export const getSelectedViewEmbedCode = createSelector(
       `<Embed source="${selected.source}" ` +
       `start="${getUtcDateString(selected.start)}" ` +
       `end="${getUtcDateString(selected.end)}" ` +
+      `visualType="${selected.visualType}"` +
       `></Embed>`
     )
   }
