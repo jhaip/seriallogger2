@@ -29,9 +29,11 @@ export function fetchSourcesList() {
       })
       .then(json => {
         dispatch(receiveSourcesList(json.results));
-        dispatch(changeSelectedSource("code"));
         dispatch(fetchAllNewOverviewData());
         dispatch(fetchDerivativeSources());
+        if (json.results.length > 0) {
+          dispatch(changeSelectedSource(json.results[0].name));
+        }
       });
   }
 }
