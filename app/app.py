@@ -21,6 +21,7 @@ def create_app():
     app.add_url_rule('/', view_func=IndexView.as_view('index'))
     app.add_url_rule("/notebook/", view_func=IndexView.as_view('index2'))
     app.add_url_rule("/notebook/<entry_id>", view_func=IndexView.as_view('index3'))
+    app.add_url_rule('/new/', view_func=IndexView.as_view('index4'))
     app.add_url_rule("/api/sources", view_func=SourcesView.as_view('sources_view'))
     app.add_url_rule("/api/data", view_func=DataView.as_view('data_view'))
     app.add_url_rule("/api/annotations", view_func=AnnotationView.as_view('annotation_view'))

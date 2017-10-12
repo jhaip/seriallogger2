@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom'
 import DataOverviewPage from '../containers/DataOverviewPage'
 import Notebook from '../containers/Notebook'
+import NewDataOverviewPage from './NewDataOverviewPage'
 
 
 class App extends React.Component {
@@ -24,6 +25,7 @@ class App extends React.Component {
           </div>
           <div style={{padding: "10px"}}>
             <Route exact path="/" component={DataOverviewPage}/>
+            <Route exact path="/new" component={NewDataOverviewPage}/>
             <Route path="/notebook/" component={Notebook}/>
           </div>
         </div>
