@@ -29,8 +29,10 @@ class AnnotationsSchema(Schema):
         return '<AnnotationsSchema %r>' % self.id
 
     @pre_load
-    def process_timestamp(self, data):
+    def process_timestamps(self, data):
         data['timestamp'] = utcnow()
+        data['start_timestamp'] = str(data['start_timestamp'])
+        data['end_timestamp'] = str(data['end_timestamp'])
 
     @pre_load
     def process_start_id(self, data):
@@ -39,6 +41,13 @@ class AnnotationsSchema(Schema):
     @pre_load
     def process_end_id(self, data):
         data['end_id'] = str(data['end_id'])
+
+    @pre_load
+    def process_source_type(self, data):
+        if 'source_type' in data:
+            data['source_type'] = data['source_type']
+        else:
+            data['source_type'] = ''
 
     @post_load
     def make_annotation(self, data):
