@@ -3,14 +3,8 @@ import fetch from 'isomorphic-fetch'
 import { getUtcDateString } from '../utils/time'
 import { getSelectionDetails } from '../utils/selection'
 
-export const REQUEST_SELECTED_DATA_ANNOTATIONS = 'REQUEST_SELECTED_DATA_ANNOTATIONS'
-export const RECEIVE_SELECTED_DATA_ANNOTATIONS = 'RECEIVE_SELECTED_DATA_ANNOTATIONS'
 export const CHANGE_ACTIVE_ANNOTATION = 'CHANGE_ACTIVE_ANNOTATION'
 export const SET_POTENTIAL_ANNOTATION = 'SET_POTENTIAL_ANNOTATION'
-
-export function requestDetailDataAnnotations(source) {
-  return { type: REQUEST_SELECTED_DATA_ANNOTATIONS, source }
-}
 
 export function receiveDetailDataAnnotations(source, data) {
   return { type: RECEIVE_SELECTED_DATA_ANNOTATIONS, source, data }
@@ -60,7 +54,6 @@ function fetchAnnotationsForDetailData(source, start, end) {
 
 export function fetchAnnotationsForDetailDataAction(source) {
   return (dispatch, getState) => {
-    dispatch(requestDetailDataAnnotations(source))
     const { start, end } = getState().selected;
     return fetchAnnotationsForDetailData(source, start, end)
       .then(data => dispatch(receiveDetailDataAnnotations(source, data)))

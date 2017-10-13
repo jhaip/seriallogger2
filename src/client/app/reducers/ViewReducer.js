@@ -2,12 +2,14 @@ import moment from 'moment'
 import {
   CHANGE_VIEW_RANGE,
   RECEIVE_OVERVIEW_DATA,
+  RECEIVE_SOURCES_LIST,
+} from '../actions/OverviewActions'
+import {
   ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
-  RECEIVE_SOURCES_LIST,
   computeDerivativeSource,
   RECEIVE_DERIVATIVE_SOURCES
-} from '../actions/OverviewActions'
+} from '../actions/DerivativeSourceActions'
 
 const INITIAL_VIEW_STATE = {
     start: moment().subtract(45, 'days').toDate(),

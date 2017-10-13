@@ -1,11 +1,13 @@
 import {
   RECEIVE_OVERVIEW_DATA,
+  RECEIVE_SOURCES_LIST,
+} from '../actions/OverviewActions'
+import {
   ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
-  RECEIVE_SOURCES_LIST,
   computeDerivativeSource,
   RECEIVE_DERIVATIVE_SOURCES
-} from '../actions/OverviewActions'
+} from '../actions/DerivativeSourceActions'
 import { partition, uniqWith, isEqual } from 'lodash'
 
 let a = [{v: 1}, {v:3}, {v:5}];

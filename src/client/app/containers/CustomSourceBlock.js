@@ -8,7 +8,7 @@ import {
   fetchDerivativeSourceDefinitions,
   saveDerivativeSourceDefinition,
   deleteDerivativeSourceDefinition
-} from '../actions/OverviewActions'
+} from '../actions/DerivativeSourceActions'
 
 const mapStateToProps = state => {
   return {
