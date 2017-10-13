@@ -97,8 +97,8 @@ export function requestOverviewData(source) {
   return { type: REQUEST_OVERVIEW_DATA, source }
 }
 
-export function receiveOverviewData(source, data) {
-  return { type: RECEIVE_OVERVIEW_DATA, source, data }
+export function receiveOverviewData(source, data, start, end) {
+  return { type: RECEIVE_OVERVIEW_DATA, source, data, start, end }
 }
 
 export function fetchOverviewData(source) {
@@ -118,7 +118,7 @@ export function fetchOverviewData(source) {
     //     data_promise = fetchDetailDataForData(source, start, end);
     // }
     return data_promise
-      .then(data => dispatch(receiveOverviewData(source, data)))
+      .then(data => dispatch(receiveOverviewData(source, data, start, end)))
   }
 }
 
