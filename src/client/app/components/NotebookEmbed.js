@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import DetailViewText from './DetailViewText'
 import DetailViewLineGraph from "../containers/DetailViewLineGraph"
 import moment from 'moment'
-import { fetchDetailDataPurely } from '../actions/DetailActions'
+import { fetchDataPurely } from '../actions/DataActions'
 import { createAnnotatedSelectedDataTree } from '../selectors/index'
 
 const mapStateToProps = state => {
@@ -26,7 +26,7 @@ class NotebookEmbed extends React.Component {
     this.setState({is_fetching: true});
     // TODO: don't call this function directly, dispatch an action like
     // the overview does
-    fetchDetailDataPurely(
+    fetchDataPurely(
       props.source,
       props.start,
       props.end,
