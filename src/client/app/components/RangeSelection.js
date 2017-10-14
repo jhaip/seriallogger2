@@ -13,7 +13,6 @@ class RangeSelection extends React.Component {
       value0: this.props.startTime,
       value1: this.props.endTime
     }
-    console.log(this.state);
     this.onStartTimeChange = this.onStartTimeChange.bind(this);
     this.onEndTimeChange = this.onEndTimeChange.bind(this);
   }

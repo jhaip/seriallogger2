@@ -166,11 +166,6 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   return newRows;
 }
 
-export const getAnnotatedSelectedDataTree = createSelector(
-  [ getSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
-  createAnnotatedSelectedDataTree
-)
-
 export const getSelectedViewEmbedCode = createSelector(
   [ getSelected ],
   (selected) => {
@@ -197,21 +192,22 @@ export const getDataWithDerivativeSources = createSelector(
   }
 )
 
+function getCacheData(state, sourceName, start, end) {
+  const cacheData = state.data[sourceName].cache;
+  const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
+  if (cacheDataMatch) {
+    return cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
+  }
+  console.error("DIDN't find a cache data match "+sourceName);
+  return [];
+}
+
 export const getViewDataNew = (state) => {
   const start = state.view.start;
   const end = state.view.end;
   return Object.keys(state.data).reduce((acc, sourceName) => {
     if (state.data[sourceName]) {
-      const cacheData = state.data[sourceName].cache;
-      // need to map time ranges to the source
-      const cacheDataMatch = find(cacheData, d => d.start >= start && d.end <= end);
-      if (cacheDataMatch) {
-        // TODO: only return data in time range
-        acc[sourceName] = cacheDataMatch.data;
-      } else {
-        console.error("DIDN't find a cache data match "+sourceName);
-        acc[sourceName] = [];
-      }
+      acc[sourceName] = getCacheData(state, sourceName, start, end)
     } else {
       acc[sourceName] = [];
     }
@@ -219,3 +215,19 @@ export const getViewDataNew = (state) => {
     return acc;
   }, {});
 }
+
+export const selectSelectedData = (state) => {
+  const start = state.selected.start;
+  const end = state.selected.end;
+  const sourceName = state.selected.source;
+  if (state.data[sourceName]) {
+    return getCacheData(state, sourceName, start, end);
+  } else {
+    return [];
+  }
+}
+
+export const getAnnotatedSelectedDataTree = createSelector(
+  [ selectSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
+  createAnnotatedSelectedDataTree
+)

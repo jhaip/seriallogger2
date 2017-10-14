@@ -41,7 +41,7 @@ export default function selected(state = INITIAL_SELECTED_STATE, action) {
       })
     case RECEIVE_DATA:
       return Object.assign({}, state, {
-        source: action.source,
+        source: action.source.name || action.source,
         data: action.data
       })
     case RECEIVE_SELECTED_DATA_ANNOTATIONS:

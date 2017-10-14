@@ -8,10 +8,6 @@ import {
 } from '../actions/DerivativeSourceActions'
 import { partition, uniqWith, isEqual } from 'lodash'
 
-let a = [{v: 1}, {v:3}, {v:5}];
-console.log(_.partition(a, v => v.v < 2));
-console.log(_.partition(a, v => v.v < 1));
-
 const INITIAL_SELECTED_STATE = {}
 
 // "id":
@@ -63,11 +59,31 @@ export default function foo(state = INITIAL_SELECTED_STATE, action) {
         data: action.data
       };
       if (oldDataOverlapping.length > 0) {
-        joinedOverlappingData = {
-          start: new Date(Math.min(oldDataOverlapping[0].start, action.start)),
-          end: new Date(Math.max(oldDataOverlapping[oldDataOverlapping.length-1].end, action.end)),
-          data: uniqWith(oldDataOverlapping.concat(action.data), isEqual)
-        };
+        if (oldDataOverlapping[0].start <= action.start &&
+            oldDataOverlapping[0].end >= action.end) {
+          // new data is all inside: ignore it
+          joinedOverlappingData = oldDataOverlapping[0];
+        } else if (oldDataOverlapping[0].start >= action.start &&
+                   oldDataOverlapping[oldDataOverlapping.length-1].end <= action.end) {
+          // everything in oldDataOverlapping is contained by new data, replace all old data
+          joinedOverlappingData = {
+            start: action.start,
+            end: action.end,
+            data: action.data
+          };
+        } else {
+          // should only be 1 overlap that new data extends, take the unique of both
+          // or throw and error
+          if (oldDataOverlapping.length === 1) {
+            joinedOverlappingData = {
+              start: new Date(Math.min(oldDataOverlapping[0].start, action.start)),
+              end: new Date(Math.max(oldDataOverlapping[oldDataOverlapping.length-1].end, action.end)),
+              data: uniqWith(oldDataOverlapping[0].data.concat(action.data), isEqual)
+            };
+          } else {
+            console.error("BAD LOGIC, oldDataOverlapping.length === "+oldDataOverlapping.length);
+          }
+        }
       }
 
       const newCacheData = oldDataBefore.concat(joinedOverlappingData, oldDataAfter)
