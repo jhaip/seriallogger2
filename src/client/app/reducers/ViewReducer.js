@@ -1,7 +1,7 @@
 import moment from 'moment'
+import { RECEIVE_DATA } from '../actions/DataActions'
 import {
   CHANGE_VIEW_RANGE,
-  RECEIVE_OVERVIEW_DATA,
   RECEIVE_SOURCES_LIST,
 } from '../actions/OverviewActions'
 import {
@@ -31,7 +31,7 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
         start: action.start,
         end: action.end
       });
-    case RECEIVE_OVERVIEW_DATA:
+    case RECEIVE_DATA:
       const newdata = Object.assign({}, state.data, {
           [action.source.name]: action.data
       });

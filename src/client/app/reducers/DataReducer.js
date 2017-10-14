@@ -1,7 +1,5 @@
-import {
-  RECEIVE_OVERVIEW_DATA,
-  RECEIVE_SOURCES_LIST,
-} from '../actions/OverviewActions'
+import { RECEIVE_SOURCES_LIST } from '../actions/OverviewActions'
+import { RECEIVE_DATA } from '../actions/DataActions'
 import {
   ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
@@ -48,8 +46,8 @@ export default function foo(state = INITIAL_SELECTED_STATE, action) {
         return acc;
       }, {})
       return Object.assign({}, state, x)
-    case RECEIVE_OVERVIEW_DATA:
-      const name = action.source.name;
+    case RECEIVE_DATA:
+      const name = action.source.name || action.source;
       console.log(`receving data for source ${name}`)
       let oldCacheData = state[name].cache;
 

@@ -1,0 +1,54 @@
+{
+    "results": [
+        {
+            "description": "Annotations data",
+            "headers": "",
+            "id": 2,
+            "name": "annotations",
+            "request_data": "",
+            "request_type": "GET",
+            "transform_function": "",
+            "url": "http://localhost:5000/api/annotations?start={{start}}&stop={{stop}}"
+        },
+        {
+            "description": "view data",
+            "headers": "",
+            "id": 3,
+            "name": "view",
+            "request_data": "",
+            "request_type": "GET",
+            "transform_function": "",
+            "url": "http://localhost:5000/api/data?source=view&start={{start}}&stop={{stop}}"
+        },
+        {
+            "description": "serial data",
+            "headers": "",
+            "id": 4,
+            "name": "serial",
+            "request_data": "",
+            "request_type": "GET",
+            "transform_function": "",
+            "url": "http://localhost:5000/api/data?source=serial&start={{start}}&stop={{stop}}"
+        },
+        {
+            "description": "Firmware code on Photon",
+            "headers": "{\"Authorization\":\"Basic amhhaXA6YzhkM2ZhMjYzMTFlY2E4NTEyMDA2YTU4MjJlZDY5M2RkYjczN2Y2MQ==\"}",
+            "id": 5,
+            "name": "code",
+            "request_data": "",
+            "request_type": "GET",
+            "transform_function": "return sourceData.map(function(c) {             var value = c.commit.message + '\\r\\n' + c.commit.url;             return {                 'value': value,                 'id': c.sha,                 'timestamp': c.commit.author.date             };           });",
+            "url": "https://api.github.com/repos/jhaip/seriallogger2/commits?sha=master&path=photon"
+        },
+        {
+            "description": "Data from Adafruit.io",
+            "headers": "{\"X-AIO-Key\":\"3a3688bc5a6f46da9c5281823032892f\"}",
+            "id": 6,
+            "name": "adafruit",
+            "request_data": "",
+            "request_type": "GET",
+            "transform_function": "return sourceData.map(function(c) { c.timestamp = c.created_at; return c; });",
+            "url": "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data"
+        }
+    ]
+}

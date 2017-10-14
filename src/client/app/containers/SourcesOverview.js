@@ -2,16 +2,16 @@ import { connect } from 'react-redux'
 import { changeSelectionRange } from '../actions/DetailActions'
 import LabeledTimelineList from '../components/LabeledTimelineList'
 import moment from 'moment'
-import { getDataWithDerivativeSources } from '../selectors'
+import { getDataWithDerivativeSources, getViewDataNew } from '../selectors'
 
 const mapStateToProps = state => {
   return {
     viewStartTime: state.view.start,
     viewEndTime: state.view.end,
-    viewLabels: state.view.sources.map(s => s.name).concat(state.view.derivativeSources.map(ds => ds.name)),
+    viewLabels: Object.keys(state.data), // state.view.sources.map(s => s.name).concat(state.view.derivativeSources.map(ds => ds.name)),
     selectionStartTime: state.selected.start,
     selectionEndTime: state.selected.end,
-    data: getDataWithDerivativeSources(state)
+    data: getViewDataNew(state) // getDataWithDerivativeSources(state)
   }
 }
 

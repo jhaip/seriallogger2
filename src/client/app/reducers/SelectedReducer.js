@@ -7,9 +7,9 @@ import {
 import {
   CHANGE_SELECTION_RANGE,
   CHANGE_SELECTED_SOURCE,
-  RECEIVE_SELECTED_DATA,
   CHANGE_SELECTED_VISUAL_TYPE
 } from '../actions/DetailActions'
+import { RECEIVE_DATA } from '../actions/DataActions'
 
 const INITIAL_SELECTED_STATE = {
     start: moment().subtract(1, 'days').toDate(),
@@ -39,7 +39,7 @@ export default function selected(state = INITIAL_SELECTED_STATE, action) {
         activeAnnotation: "",
         potential_annotation: null
       })
-    case RECEIVE_SELECTED_DATA:
+    case RECEIVE_DATA:
       return Object.assign({}, state, {
         source: action.source,
         data: action.data

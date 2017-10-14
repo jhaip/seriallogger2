@@ -1,9 +1,8 @@
 import { fetchDetailDataForAll, changeSelectedSource } from './DetailActions'
 import { fetchDerivativeSources } from './DerivativeSourceActions'
+import { fetchData } from './DataActions'
 
 export const CHANGE_VIEW_RANGE = 'CHANGE_VIEW_RANGE'
-export const REQUEST_OVERVIEW_DATA = 'REQUEST_OVERVIEW_DATA'
-export const RECEIVE_OVERVIEW_DATA = 'RECEIVE_OVERVIEW_DATA'
 export const RECEIVE_SOURCES_LIST = 'RECEIVE_SOURCES_LIST'
 
 export function receiveSourcesList(sources) {
@@ -64,22 +63,9 @@ export function changeViewRange(start, end) {
     dispatch(fetchAllNewOverviewData());
   }
 }
-
-export function requestOverviewData(source) {
-  return { type: REQUEST_OVERVIEW_DATA, source }
-}
-
-export function receiveOverviewData(source, data, start, end) {
-  return { type: RECEIVE_OVERVIEW_DATA, source, data, start, end }
-}
-
 export function fetchOverviewData(source) {
   return (dispatch, getState) => {
-    dispatch(requestOverviewData(source))
     const { start, end } = getState().view;
-    let data_promise;
-    data_promise = fetchDetailDataForAll(source, start, end);
-    return data_promise
-      .then(data => dispatch(receiveOverviewData(source, data, start, end)))
+    dispatch(fetchData(source, start, end));
   }
 }

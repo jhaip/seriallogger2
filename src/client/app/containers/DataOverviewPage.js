@@ -27,7 +27,7 @@ class DataOverviewPageBase extends React.Component {
       <div>
         <OverviewBlock />
         <CustomSourceBlock />
-        <DetailBlock />
+        {/* <DetailBlock /> */}
       </div>
     );
   }

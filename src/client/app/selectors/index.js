@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect'
 import { getUtcDateString } from '../utils/time'
+import { find } from 'lodash'
 
 const getSelected = (state) => state.selected
 const getSelectedData = (state) => state.selected.data
@@ -195,3 +196,26 @@ export const getDataWithDerivativeSources = createSelector(
     }, {}));
   }
 )
+
+export const getViewDataNew = (state) => {
+  const start = state.view.start;
+  const end = state.view.end;
+  return Object.keys(state.data).reduce((acc, sourceName) => {
+    if (state.data[sourceName]) {
+      const cacheData = state.data[sourceName].cache;
+      // need to map time ranges to the source
+      const cacheDataMatch = find(cacheData, d => d.start >= start && d.end <= end);
+      if (cacheDataMatch) {
+        // TODO: only return data in time range
+        acc[sourceName] = cacheDataMatch.data;
+      } else {
+        console.error("DIDN't find a cache data match");
+        acc[sourceName] = [];
+      }
+    } else {
+      acc[sourceName] = [];
+    }
+
+    return acc;
+  }, {});
+}
