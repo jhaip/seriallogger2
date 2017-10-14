@@ -209,7 +209,7 @@ export const getViewDataNew = (state) => {
         // TODO: only return data in time range
         acc[sourceName] = cacheDataMatch.data;
       } else {
-        console.error("DIDN't find a cache data match");
+        console.error("DIDN't find a cache data match "+sourceName);
         acc[sourceName] = [];
       }
     } else {
