@@ -121,13 +121,21 @@ class AnnotationView(MethodView):
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 datas = (Annotations.query
                     .filter_by(source=filter_source)
-                    .filter(db.func.date(Annotations.timestamp) >= filter_start_date)
-                    .filter(db.func.date(Annotations.timestamp) <= filter_stop_date)
+                    .filter(db.func.date(Annotations.start_timestamp) >= filter_start_date)
+                    .filter(db.func.date(Annotations.start_timestamp) <= filter_stop_date)
                 )
             else:
                 datas = Annotations.query.filter_by(source=filter_source)
         else:
-            datas = Annotations.query.all()
+            if filter_start and filter_stop:
+                filter_start_date = iso8601.parse_date(request.args.get('start'))
+                filter_stop_date = iso8601.parse_date(request.args.get('stop'))
+                datas = (Annotations.query
+                    .filter(db.func.date(Annotations.timestamp) >= filter_start_date)
+                    .filter(db.func.date(Annotations.timestamp) <= filter_stop_date)
+                )
+            else:
+                datas = Annotations.query.all()
         result = annotations_schema.dump(datas)
         return jsonify({'results': result.data})
 

@@ -88,11 +88,11 @@ export function saveNewAnnotation(annotation) {
         "source_type": currentSelectionDetails.start.data_type,
         "value": "",
         "start_id": currentSelectionDetails.start.data_id,
-        "start_timestamp": currentSelectionDetails.start.data_timestamp,
+        "start_timestamp": moment.utc(currentSelectionDetails.start.data_timestamp).toISOString(),
         "start_line": currentSelectionDetails.start.row,
         "start_char": currentSelectionDetails.start.character,
         "end_id": currentSelectionDetails.end.data_id,
-        "end_timestamp": currentSelectionDetails.end.data_timestamp,
+        "end_timestamp": moment.utc(currentSelectionDetails.end.data_timestamp).toISOString(),
         "end_line": currentSelectionDetails.end.row,
         "end_char": currentSelectionDetails.end.character,
       };

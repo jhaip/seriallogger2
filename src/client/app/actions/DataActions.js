@@ -4,6 +4,7 @@ import { getUtcDateString } from '../utils/time'
 import { computeDerivativeSource } from './DerivativeSourceActions'
 
 export const RECEIVE_DATA = 'RECEIVE_DATA'
+export const RECEIVE_DATA_ANNOTATIONS = 'RECEIVE_DATA_ANNOTATIONS'
 
 function getCleanedSourceData(source, json) {
   let clean_data;
@@ -75,6 +76,25 @@ export function fetchSourceData(source, start, stop) {
 }
 
 
+function fetchDataAnnotations(sourceName, start, stop) {
+  if (typeof sourceName !== 'string') {
+    console.error("sourceName isn't a string!");
+    sourceName = sourceName.name;
+  }
+  const url_start = getUtcDateString(start);
+  const url_stop = getUtcDateString(stop);
+  const url = `http://localhost:5000/api/annotations?source=${sourceName}&start=${url_start}&stop=${url_stop}`;
+  return new Promise((resolve, reject) => {
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+        resolve(json.results);
+      });
+  });
+}
+
+
 export function fetchDerivativeSourceData(source, start, stop, state) {
   return new Promise((resolve, reject) => {
     const data = state.view.derivativeSources.find(ds => ds.name === source).data;
@@ -107,6 +127,19 @@ export function fetchDataPurely(sourceNameOrData, start, end, state) {
   return data_promise
 }
 
+export function receiveDataAnnotations(source, annotations, start, end) {
+  return { type: RECEIVE_DATA_ANNOTATIONS, source, annotations, start, end }
+}
+
+export function fetchDataAnnotationsAction(source, start, end) {
+  return (dispatch, getState) => {
+    return fetchDataAnnotations(source, start, end)
+      .then(annotations => {
+        dispatch(receiveDataAnnotations(source, annotations, start, end));
+      })
+  }
+}
+
 export function receiveData(source, data, start, end) {
   return { type: RECEIVE_DATA, source, data, start, end }
 }
@@ -114,6 +147,9 @@ export function receiveData(source, data, start, end) {
 export function fetchData(source, start, end) {
   return (dispatch, getState) => {
     return fetchDataPurely(source, start, end, getState())
-      .then(data => dispatch(receiveData(source, data, start, end)))
+      .then(data => {
+        dispatch(receiveData(source, data, start, end));
+        dispatch(fetchDataAnnotationsAction(source, start, end));
+      })
   }
 }
