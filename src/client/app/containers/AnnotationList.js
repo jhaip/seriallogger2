@@ -1,10 +1,11 @@
 import { connect } from 'react-redux'
 import { changeActiveAnnotation } from '../actions/AnnotationActions'
 import AnnotationListBase from '../components/AnnotationListBase'
+import { getSelectedAnnotations } from '../selectors'
 
 const mapStateToProps = state => {
   return {
-    annotations: state.selected.annotations,
+    annotations: getSelectedAnnotations(state), // state.selected.annotations,
     activeAnnotation: String(state.selected.activeAnnotation)
   }
 }

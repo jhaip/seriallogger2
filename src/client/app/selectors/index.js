@@ -3,8 +3,6 @@ import { getUtcDateString } from '../utils/time'
 import { find } from 'lodash'
 
 const getSelected = (state) => state.selected
-const getSelectedData = (state) => state.selected.data
-const getSelectedAnnotations = (state) => state.selected.annotations
 const getPotentialAnnotation = (state) =>  state.selected.potential_annotation
 
 function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
@@ -115,7 +113,25 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
 
   // annotate rows
   const a = potential_annotation === null ? [] : potential_annotation;
-  for (var annotation of annotations.concat(a)) {
+  const cleanAnnotations = annotations.map(d => {
+    return {
+      "start": {
+        "id": d.start_id,
+        "timestamp": d.start_timestamp,
+        "row": d.start_line,
+        "character": d.start_char,
+      },
+      "end": {
+        "id": d.end_id,
+        "timestamp": d.end_timestamp,
+        "row": d.end_line,
+        "character": d.end_char,
+      },
+      "id": d.id,
+      "annotation": d.annotation
+    };
+  });
+  for (var annotation of cleanAnnotations.concat(a)) {
     // check that data is loaded enough to match annotation
     if (rows.length > annotation.end.row) {
       if (annotation.start.id  == annotation.end.id &&
@@ -202,6 +218,18 @@ function getCacheData(state, sourceName, start, end) {
   return [];
 }
 
+function getCacheDataAnnotations(state, sourceName, start, end) {
+  const cacheData = state.data[sourceName].cache;
+  const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
+  if (cacheDataMatch) {
+    return cacheDataMatch.annotations; // .filter(d => d.timestamp >= start && d.timestamp <= end);
+  }
+  console.error("DIDN't find a cache data match "+sourceName);
+  return [];
+}
+
+const getSelectedData = (state) => state.selected.data
+
 export const getViewDataNew = (state) => {
   const start = state.view.start;
   const end = state.view.end;
@@ -222,6 +250,19 @@ export const selectSelectedData = (state) => {
   const sourceName = state.selected.source;
   if (state.data[sourceName]) {
     return getCacheData(state, sourceName, start, end);
+  } else {
+    return [];
+  }
+}
+
+export const getSelectedAnnotations = (state) => {
+  const start = state.selected.start;
+  const end = state.selected.end;
+  const sourceName = state.selected.source;
+  if (state.data[sourceName]) {
+    console.log("get selected annotations return");
+    console.log(getCacheDataAnnotations(state, sourceName, start, end));
+    return getCacheDataAnnotations(state, sourceName, start, end);
   } else {
     return [];
   }
