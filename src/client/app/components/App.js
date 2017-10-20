@@ -22,6 +22,9 @@ class App extends React.Component {
             <div style={{display: "inline-block", paddingRight: "20px"}}>
               <Link to="/notebook/">Notebook</Link>
             </div>
+            <div style={{display: "inline-block", paddingRight: "20px"}}>
+              <Link to="/new/">New</Link>
+            </div>
           </div>
           <div style={{padding: "10px"}}>
             <Route exact path="/" component={DataOverviewPage}/>
