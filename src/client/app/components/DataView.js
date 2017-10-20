@@ -39,10 +39,18 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    changeDataViewVisualType,
-    changeDataViewStart,
-    changeDataViewEnd,
-    changeDataViewSourceNames
+    changeDataViewVisualType: (dataViewId, visualType) => {
+      dispatch(changeDataViewVisualType(dataViewId, visualType))
+    },
+    changeDataViewStart: (dataViewId, start) => {
+      dispatch(changeDataViewStart(dataViewId, start))
+    },
+    changeDataViewEnd: (dataViewId, end) => {
+      dispatch(changeDataViewEnd(dataViewId, end))
+    },
+    changeDataViewSourceNames: (dataViewId, sourceNames) => {
+      dispatch(changeDataViewSourceNames(dataViewId, sourceNames))
+    }
   }
 }
 
@@ -64,6 +72,10 @@ class DataView extends React.Component {
         );
     }
   }
+  onTimeChange(start, end) {
+    this.props.changeDataViewStart(this.props.id, start);
+    this.props.changeDataViewEnd(this.props.id, end);
+  }
   render() {
     const source_dropdown_styles = {
       width: "150px",
@@ -79,7 +91,7 @@ class DataView extends React.Component {
             <DropdownList
               data={["raw", "line graph"]}
               value={this.props.visualType}
-              onChange={this.todo}
+              onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
               style={source_dropdown_styles}
             />
           </div>
@@ -87,13 +99,13 @@ class DataView extends React.Component {
             <RangeSelection
               startTime={moment.utc(this.props.start).toDate()}
               endTime={moment.utc(this.props.end).toDate()}
-              onChange={this.todo} />
+              onChange={this.onTimeChange} />
           </div>
           <div style={{padding: "10px 0px", display: "inline-block"}}>
             <input
               type="submit"
               id="copy-selected-view-embed-button"
-              data-clipboard-text={this.props.selected_view_embed_code}
+              data-clipboard-text={this.todo}
               value="Copy"
               readOnly
             />
@@ -102,6 +114,7 @@ class DataView extends React.Component {
             <Multiselect
               data={this.props.sourceNames}
               defaultValue={this.props.sourceNames}
+              onChange={this.props.changeDataViewSourceNames}
             />
           </div>
         </div>
