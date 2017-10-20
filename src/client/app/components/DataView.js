@@ -6,9 +6,29 @@ import 'react-widgets/dist/css/react-widgets.css'
 import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import RangeSelection from "./RangeSelection"
+import AnnotationView from "./AnnotationView"
+import DetailViewText from "./DetailViewText"
+import DetailViewLineGraph from "../containers/DetailViewLineGraph"
+import {
+  getDataViewData,
+  getAnnotatedDataTree
+} from '../selectors'
 
-const mapStateToProps = state => {
-  return {}
+const mapStateToProps = (state, ownProps) => {
+  return {
+    data: getDataViewData(
+      state,
+      ownProps.start,
+      ownProps.end,
+      ownProps.sourceNames
+    ),
+    dataForTextBad: getAnnotatedDataTree(
+      state,
+      ownProps.start,
+      ownProps.end,
+      ownProps.sourceNames
+    ),
+  }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -16,6 +36,23 @@ const mapDispatchToProps = dispatch => {
 }
 
 class DataView extends React.Component {
+  renderVisual() {
+    switch (this.props.selectedVisualType) {
+      case "line graph":
+        return (
+          <DetailViewLineGraph
+            data={this.props.data}
+            activeAnnotation={this.props.activeAnnotation} />
+        );
+        break;
+      case "raw":
+      default:
+        return (
+          <DetailViewText data={this.props.dataForTextBad}
+                          activeAnnotation={this.props.activeAnnotation} />
+        );
+    }
+  }
   render() {
     const source_dropdown_styles = {
       width: "150px",
@@ -27,31 +64,38 @@ class DataView extends React.Component {
     return (
       <div>
         <div>
-          <DropdownList
-            data={["raw", "line graph"]}
-            value={this.props.visualType}
-            onChange={this.todo}
-            style={source_dropdown_styles}
-          />
-          <input
-            type="submit"
-            id="copy-selected-view-embed-button"
-            data-clipboard-text={this.props.selected_view_embed_code}
-            value="Copy Embed Code"
-            readOnly
-          />
+          <div style={{padding: "10px 0px", display: "inline-block"}}>
+            <DropdownList
+              data={["raw", "line graph"]}
+              value={this.props.visualType}
+              onChange={this.todo}
+              style={source_dropdown_styles}
+            />
+          </div>
+          <div style={{padding: "10px 0px", display: "inline-block"}}>
+            <RangeSelection
+              startTime={moment.utc(this.props.start).toDate()}
+              endTime={moment.utc(this.props.end).toDate()}
+              onChange={this.todo} />
+          </div>
+          <div style={{padding: "10px 0px", display: "inline-block"}}>
+            <input
+              type="submit"
+              id="copy-selected-view-embed-button"
+              data-clipboard-text={this.props.selected_view_embed_code}
+              value="Copy"
+              readOnly
+            />
+          </div>
+          <div>
+            <Multiselect
+              data={this.props.sourceNames}
+              defaultValue={this.props.sourceNames}
+            />
+          </div>
         </div>
-        <div style={{padding: "10px 0px"}}>
-          <RangeSelection
-            startTime={moment.utc(this.props.start).toDate()}
-            endTime={moment.utc(this.props.end).toDate()}
-            onChange={this.todo} />
-        </div>
-        <div>
-          <Multiselect
-            data={this.props.sourceNames}
-            defaultValue={this.props.sourceNames}
-          />
+        <div className="selected-view__data-container">
+          { this.renderVisual() }
         </div>
       </div>
     );
@@ -61,7 +105,8 @@ DataView.propTypes = {
   sourceNames: PropTypes.array.isRequired,
   start: PropTypes.string.isRequired,
   end: PropTypes.string.isRequired,
-  visualType: PropTypes.string.isRequired
+  visualType: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired
 };
 
 export default connect(

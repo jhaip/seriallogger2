@@ -44,7 +44,6 @@ class RangeSelection extends React.Component {
     return (
       <div>
         <div>
-          Showing
           <DateTimePicker
             value={this.state.value0}
             onChange={this.onStartTimeChange}

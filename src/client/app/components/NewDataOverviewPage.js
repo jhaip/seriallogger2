@@ -17,15 +17,12 @@ class NewDataOverviewPage extends React.Component {
   render() {
     const list = this.props.views.map(v => {
       return (
-        <div>
-          <h2>Todo View</h2>
-          <DataView
-            sourceNames={v.sourceNames}
-            start={v.start}
-            end={v.end}
-            visualType={v.visualType}
-          ></DataView>
-        </div>
+        <DataView
+          sourceNames={v.sourceNames}
+          start={v.start}
+          end={v.end}
+          visualType={v.visualType}
+        />
       );
     });
     return (

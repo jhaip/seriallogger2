@@ -255,6 +255,16 @@ export const selectSelectedData = (state) => {
   }
 }
 
+export const getDataViewData = (state, start, end, sourceNames) => {
+  if (sourceNames.length > 0) {
+    const sourceName = sourceNames[0]; // TODO: return data for all sources
+    if (state.data[sourceName]) {
+      return getCacheData(state, sourceName, start, end);
+    }
+  }
+  return [];
+}
+
 export const getSelectedAnnotations = (state) => {
   const start = state.selected.start;
   const end = state.selected.end;
@@ -272,3 +282,9 @@ export const getAnnotatedSelectedDataTree = createSelector(
   [ selectSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
   createAnnotatedSelectedDataTree
 )
+
+export const getAnnotatedDataTree = (state, start, end, sourceNames) => {
+  const data = getDataViewData(state, start, end, sourceNames)
+  return createAnnotatedSelectedDataTree(data, [], []);
+  // TODO: annotations and potential annotations
+}

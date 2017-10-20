@@ -3,9 +3,9 @@ import moment from 'moment'
 const INITIAL_VIEW_STATE = {
     views: [
       {
-        sourceNames: ['NeoRED'],
-        start: moment().subtract(1, 'days').toDate(),
-        end: moment().toDate(),
+        sourceNames: ['view'],
+        start: moment().subtract(5, 'days').toDate(),
+        end: moment().subtract(1, 'minute').toDate(),
         visualType: "raw"
       },
       {
