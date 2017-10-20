@@ -13,6 +13,12 @@ import {
   getDataViewData,
   getAnnotatedDataTree
 } from '../selectors'
+import {
+  changeDataViewVisualType,
+  changeDataViewStart,
+  changeDataViewEnd,
+  changeDataViewSourceNames
+} from '../actions/DataViewActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -32,7 +38,12 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    changeDataViewVisualType,
+    changeDataViewStart,
+    changeDataViewEnd,
+    changeDataViewSourceNames
+  }
 }
 
 class DataView extends React.Component {
