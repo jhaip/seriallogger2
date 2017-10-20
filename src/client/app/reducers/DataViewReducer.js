@@ -1,4 +1,10 @@
 import moment from 'moment'
+import {
+  CHANGE_DATAVIEW_VISUALTYPE,
+  CHANGE_DATAVIEW_START,
+  CHANGE_DATAVIEW_STOP,
+  CHANGE_DATAVIEW_SOURCENAMES
+} from '../actions/DataViewActions'
 
 const INITIAL_VIEW_STATE = {
     views: [
@@ -20,5 +26,25 @@ const INITIAL_VIEW_STATE = {
 };
 
 export default function dataview(state = INITIAL_VIEW_STATE, action) {
-  return state
+  switch (action.type) {
+    case CHANGE_DATAVIEW_VISUALTYPE:
+      return Object.assign({}, state, {
+        views: state.views.map(view => {
+          if (view.id === action.dataViewId) {
+            return Object.assign({}, view, {
+              visualType: action.visualType
+            })
+          }
+          return view;
+        })
+      });
+    case CHANGE_DATAVIEW_START:
+      return todo
+    case CHANGE_DATAVIEW_STOP:
+      return todo
+    case CHANGE_DATAVIEW_SOURCENAME:
+      return todo
+    default:
+      return state
+  }
 }
