@@ -6,13 +6,15 @@ const INITIAL_VIEW_STATE = {
         sourceNames: ['view'],
         start: moment().subtract(5, 'days').toDate(),
         end: moment().subtract(1, 'minute').toDate(),
-        visualType: "raw"
+        visualType: "raw",
+        id: 'e146218e-90ed-490c-8cca-910d7d07c82e'
       },
       {
         sourceNames: ['NeoBLU', 'NeoGRN'],
         start: moment().subtract(2, 'days').toDate(),
         end: moment().subtract(1, 'days').toDate(),
-        visualType: "line graph"
+        visualType: "line graph",
+        id: '2c92b120-af09-49a2-9378-11ecdf62a170'
       }
     ]
 };

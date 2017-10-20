@@ -22,6 +22,8 @@ class NewDataOverviewPage extends React.Component {
           start={v.start}
           end={v.end}
           visualType={v.visualType}
+          id={v.id}
+          key={v.id}
         />
       );
     });

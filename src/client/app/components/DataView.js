@@ -103,10 +103,11 @@ class DataView extends React.Component {
 }
 DataView.propTypes = {
   sourceNames: PropTypes.array.isRequired,
-  start: PropTypes.string.isRequired,
-  end: PropTypes.string.isRequired,
+  start: PropTypes.instanceOf(Date).isRequired,
+  end: PropTypes.instanceOf(Date).isRequired,
   visualType: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  id: PropTypes.string.isRequired
 };
 
 export default connect(
