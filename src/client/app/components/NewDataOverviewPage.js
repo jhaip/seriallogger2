@@ -20,7 +20,7 @@ class NewDataOverviewPage extends React.Component {
         <DataView
           sourceNames={v.sourceNames}
           start={v.start}
-          end={v.end}
+          stop={v.stop}
           visualType={v.visualType}
           id={v.id}
           key={v.id}

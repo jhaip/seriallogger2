@@ -25,15 +25,16 @@ const mapStateToProps = (state, ownProps) => {
     data: getDataViewData(
       state,
       ownProps.start,
-      ownProps.end,
+      ownProps.stop,
       ownProps.sourceNames
     ),
     dataForTextBad: getAnnotatedDataTree(
       state,
       ownProps.start,
-      ownProps.end,
+      ownProps.stop,
       ownProps.sourceNames
     ),
+    availableSourceNames: Object.keys(state.data)
   }
 }
 
@@ -55,20 +56,25 @@ const mapDispatchToProps = dispatch => {
 }
 
 class DataView extends React.Component {
+  constructor(props) {
+    super(props);
+    this.renderVisual = this.renderVisual.bind(this);
+    this.onTimeChange = this.onTimeChange.bind(this);
+  }
   renderVisual() {
-    switch (this.props.selectedVisualType) {
+    switch (this.props.visualType) {
       case "line graph":
         return (
           <DetailViewLineGraph
             data={this.props.data}
-            activeAnnotation={this.props.activeAnnotation} />
+            activeAnnotation={""} />
         );
         break;
       case "raw":
       default:
         return (
           <DetailViewText data={this.props.dataForTextBad}
-                          activeAnnotation={this.props.activeAnnotation} />
+                          activeAnnotation={""} />
         );
     }
   }
@@ -98,7 +104,7 @@ class DataView extends React.Component {
           <div style={{padding: "10px 0px", display: "inline-block"}}>
             <RangeSelection
               startTime={moment.utc(this.props.start).toDate()}
-              endTime={moment.utc(this.props.end).toDate()}
+              endTime={moment.utc(this.props.stop).toDate()}
               onChange={this.onTimeChange} />
           </div>
           <div style={{padding: "10px 0px", display: "inline-block"}}>
@@ -112,9 +118,9 @@ class DataView extends React.Component {
           </div>
           <div>
             <Multiselect
-              data={this.props.sourceNames}
-              defaultValue={this.props.sourceNames}
-              onChange={this.props.changeDataViewSourceNames}
+              value={this.props.sourceNames}
+              data={this.props.availableSourceNames}
+              onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
             />
           </div>
         </div>
@@ -126,9 +132,10 @@ class DataView extends React.Component {
   }
 }
 DataView.propTypes = {
+  availableSourceNames: PropTypes.array.isRequired,
   sourceNames: PropTypes.array.isRequired,
   start: PropTypes.instanceOf(Date).isRequired,
-  end: PropTypes.instanceOf(Date).isRequired,
+  stop: PropTypes.instanceOf(Date).isRequired,
   visualType: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
   id: PropTypes.string.isRequired

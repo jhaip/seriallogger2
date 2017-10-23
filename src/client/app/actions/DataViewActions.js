@@ -21,5 +21,5 @@ export function changeDataViewEnd(dataViewId, stop) {
 }
 
 export function changeDataViewSourceNames(dataViewId, sourceNames) {
-  return { type: CHANGE_DATAVIEW_VISUALTYPE, dataViewId, sourceNames }
+  return { type: CHANGE_DATAVIEW_SOURCENAMES, dataViewId, sourceNames }
 }
