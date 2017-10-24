@@ -30,7 +30,7 @@ class DetailViewTimeGroup extends React.Component {
 DetailViewTimeGroup.propTypes = {
   id: PropTypes.any.isRequired,
   sourceName: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
   timestamp: PropTypes.any.isRequired,
   activeAnnotation: PropTypes.string.isRequired,
 };
