@@ -4,7 +4,7 @@ import moment from 'moment'
 
 class DetailViewTimestampRow extends React.Component {
   render() {
-    const text = moment(this.props.timestamp).fromNow();
+    const text = this.props.sourceName + ", " + moment(this.props.timestamp).fromNow();
     return (
       <div className="timestamp-row noselect">
         {text}
@@ -13,7 +13,8 @@ class DetailViewTimestampRow extends React.Component {
   }
 }
 DetailViewTimestampRow.propTypes = {
-  timestamp: PropTypes.any.isRequired
+  timestamp: PropTypes.any.isRequired,
+  sourceName: PropTypes.string.isRequired
 };
 
 export default DetailViewTimestampRow

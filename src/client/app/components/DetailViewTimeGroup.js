@@ -21,7 +21,9 @@ class DetailViewTimeGroup extends React.Component {
     })
     return (
       <div>
-        <DetailViewTimestampRow timestamp={this.props.timestamp} />
+        <DetailViewTimestampRow
+          timestamp={this.props.timestamp}
+          sourceName={this.props.sourceName} />
         {listRows}
       </div>
     );
