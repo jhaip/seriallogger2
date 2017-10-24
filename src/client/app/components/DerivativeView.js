@@ -62,20 +62,12 @@ class DataView extends React.Component {
     this.onTimeChange = this.onTimeChange.bind(this);
   }
   renderVisual() {
-    switch (this.props.visualType) {
-      case "line graph":
-        return (
-          <DetailViewLineGraph
-            data={this.props.data}
-            activeAnnotation={""} />
-        );
-      case "raw":
-      default:
-        return (
-          <DetailViewText data={this.props.dataForTextBad}
-                          activeAnnotation={""} />
-        );
-    }
+    return (
+      <div>
+        <h3>TODO: Code Editor</h3>
+        <h3>TODO: show results as text</h3>
+      </div>
+    );
   }
   onTimeChange(start, end) {
     this.props.changeDataViewStart(this.props.id, start);
@@ -94,9 +86,8 @@ class DataView extends React.Component {
         <div>
           <div style={{padding: "10px 0px", display: "inline-block"}}>
             <DropdownList
-              data={["raw", "line graph"]}
-              value={this.props.visualType}
-              onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
+              data={["derivative source 1", "derivative source 2"]}
+              value={"derivative source 1"}
               style={source_dropdown_styles}
             />
           </div>
@@ -106,16 +97,8 @@ class DataView extends React.Component {
               endTime={moment.utc(this.props.stop).toDate()}
               onChange={this.onTimeChange} />
           </div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
-            <input
-              type="submit"
-              id="copy-selected-view-embed-button"
-              data-clipboard-text={this.todo}
-              value="Copy"
-              readOnly
-            />
-          </div>
           <div>
+            Dependencies:
             <Multiselect
               value={this.props.sourceNames}
               data={this.props.availableSourceNames}

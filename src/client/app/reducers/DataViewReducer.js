@@ -17,9 +17,9 @@ const INITIAL_VIEW_STATE = {
       },
       {
         sourceNames: ['NeoBLU', 'NeoGRN'],
-        start: moment().subtract(2, 'days').toDate(),
+        start: moment().subtract(50, 'days').toDate(),
         stop: moment().subtract(1, 'days').toDate(),
-        visualType: "line graph",
+        visualType: "derivative",
         id: '2c92b120-af09-49a2-9378-11ecdf62a170'
       }
     ]
