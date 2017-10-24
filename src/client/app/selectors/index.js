@@ -230,6 +230,7 @@ function getCacheDataAnnotations(state, sourceName, start, end) {
 
 const getSelectedData = (state) => state.selected.data
 
+/* TODO: depricated */
 export const getViewDataNew = (state) => {
   const start = state.view.start;
   const end = state.view.end;
@@ -244,6 +245,7 @@ export const getViewDataNew = (state) => {
   }, {});
 }
 
+/* TODO: depricated */
 export const selectSelectedData = (state) => {
   const start = state.selected.start;
   const end = state.selected.end;
@@ -260,6 +262,16 @@ export const getDataViewData = (state, start, end, sourceNames) => {
     const sourceName = sourceNames[0]; // TODO: return data for all sources
     if (state.data[sourceName]) {
       return getCacheData(state, sourceName, start, end);
+    }
+  }
+  return [];
+}
+
+export const getDataViewDataAnnotations = (state, start, end, sourceNames) => {
+  if (sourceNames.length > 0) {
+    const sourceName = sourceNames[0]; // TODO: return data for all sources
+    if (state.data[sourceName]) {
+      return getCacheDataAnnotations(state, sourceName, start, end);
     }
   }
   return [];
@@ -284,7 +296,8 @@ export const getAnnotatedSelectedDataTree = createSelector(
 )
 
 export const getAnnotatedDataTree = (state, start, end, sourceNames) => {
-  const data = getDataViewData(state, start, end, sourceNames)
-  return createAnnotatedSelectedDataTree(data, [], []);
+  const data = getDataViewData(state, start, end, sourceNames);
+  const annotations = getDataViewDataAnnotations(state, start, end, sourceNames);
+  return createAnnotatedSelectedDataTree(data, annotations, []);
   // TODO: annotations and potential annotations
 }
