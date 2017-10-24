@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect'
 import { getUtcDateString } from '../utils/time'
 import { find } from 'lodash'
+import moment from 'moment'
 
 const getSelected = (state) => state.selected
 const getPotentialAnnotation = (state) =>  state.selected.potential_annotation
@@ -82,9 +83,11 @@ function addAnnotationToRow(children, start, end, annotation_id) {
   return new_children;
 }
 
-function getRowWithIdAndRowNumber(rows, id, row_number) {
+function getRowWithIdAndRowNumber(rows, sourceName, id, row_number) {
   for (var i=0; i<rows.length; i+=1) {
-    if (rows[i].id == id && rows[i].rowNumber == row_number) {
+    if (rows[i].id == id &&
+        rows[i].rowNumber == row_number &&
+        rows[i].sourceName == sourceName) {
       return i;
     }
   }
@@ -128,7 +131,8 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
         "character": d.end_char,
       },
       "id": d.id,
-      "annotation": d.annotation
+      "annotation": d.annotation,
+      "sourceName": d.source
     };
   });
   for (var annotation of cleanAnnotations.concat(a)) {
@@ -136,18 +140,18 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
     if (rows.length > annotation.end.row) {
       if (annotation.start.id  == annotation.end.id &&
           annotation.start.row == annotation.end.row) {
-        var row_index = getRowWithIdAndRowNumber(rows, annotation.start.id, annotation.start.row);
+        var row_index = getRowWithIdAndRowNumber(rows, annotation.sourceName, annotation.start.id, annotation.start.row);
         rows[row_index].children = addAnnotationToRow(rows[row_index].children,
-                                                           annotation.start.character,
-                                                           annotation.end.character,
-                                                           annotation.id);
+                                                      annotation.start.character,
+                                                      annotation.end.character,
+                                                      annotation.id);
       } else {
-        var start_row = getRowWithIdAndRowNumber(rows, annotation.start.id, annotation.start.row);
-        var end_row = getRowWithIdAndRowNumber(rows, annotation.end.id, annotation.end.row);
+        var start_row = getRowWithIdAndRowNumber(rows, annotation.sourceName, annotation.start.id, annotation.start.row);
+        var end_row = getRowWithIdAndRowNumber(rows, annotation.sourceName, annotation.end.id, annotation.end.row);
         rows[start_row].children = addAnnotationToRow(rows[start_row].children,
-                                                           annotation.start.character,
-                                                           null,
-                                                           annotation.id);
+                                                      annotation.start.character,
+                                                      null,
+                                                      annotation.id);
         for (var i = start_row + 1; i < end_row; i += 1) {
           rows[i].children = addAnnotationToRow(rows[i].children,
                                                 null,
@@ -155,9 +159,9 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
                                                 annotation.id);
         }
         rows[end_row].children = addAnnotationToRow(rows[end_row].children,
-                                                         null,
-                                                         annotation.end.character,
-                                                         annotation.id);
+                                                    null,
+                                                    annotation.end.character,
+                                                    annotation.id);
       }
     }
   }
@@ -166,7 +170,8 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   let newRows = [];
   for (var row of rows) {
     if ((newRows.length === 0) ||
-        (newRows[newRows.length-1].timestamp !== row.timestamp)) {
+        (newRows[newRows.length-1].timestamp !== row.timestamp) ||
+        (newRows[newRows.length-1].sourceName !== row.sourceName)) {
       newRows.push({
         id: row.id,
         sourceName: row.sourceName,
@@ -258,23 +263,25 @@ export const selectSelectedData = (state) => {
 }
 
 export const getDataViewData = (state, start, end, sourceNames) => {
-  if (sourceNames.length > 0) {
-    const sourceName = sourceNames[0]; // TODO: return data for all sources
+  const data = sourceNames.reduce((acc, sourceName) => {
     if (state.data[sourceName]) {
-      return getCacheData(state, sourceName, start, end);
+      acc = acc.concat(getCacheData(state, sourceName, start, end));
     }
-  }
-  return [];
+    return acc;
+  }, []);
+  return data.sort((a, b) => {
+    return moment.utc(a.timestamp).diff(moment.utc(b.timestamp));
+  });
 }
 
 export const getDataViewDataAnnotations = (state, start, end, sourceNames) => {
-  if (sourceNames.length > 0) {
-    const sourceName = sourceNames[0]; // TODO: return data for all sources
+  const data = sourceNames.reduce((acc, sourceName) => {
     if (state.data[sourceName]) {
-      return getCacheDataAnnotations(state, sourceName, start, end);
+      acc = acc.concat(getCacheDataAnnotations(state, sourceName, start, end));
     }
-  }
-  return [];
+    return acc;
+  }, []);
+  return data;
 }
 
 export const getSelectedAnnotations = (state) => {
