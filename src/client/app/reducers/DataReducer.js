@@ -1,7 +1,6 @@
 import { RECEIVE_SOURCES_LIST } from '../actions/OverviewActions'
 import { RECEIVE_DATA, RECEIVE_DATA_ANNOTATIONS } from '../actions/DataActions'
 import {
-  ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
   computeDerivativeSource,
   RECEIVE_DERIVATIVE_SOURCES

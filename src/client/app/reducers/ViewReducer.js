@@ -5,7 +5,6 @@ import {
   RECEIVE_SOURCES_LIST,
 } from '../actions/OverviewActions'
 import {
-  ADD_DERIVATIVE_DATA_SOURCE,
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,
   computeDerivativeSource,
   RECEIVE_DERIVATIVE_SOURCES
@@ -17,11 +16,7 @@ const INITIAL_VIEW_STATE = {
     sources: [],
     data: {},
     derivativeSources: [],
-    derivativeSourceDefinitions: {
-      definitions: {},
-      sources: [],
-      data: {}
-    }
+    derivativeSourceDefinitions: {}
 };
 
 export default function view(state = INITIAL_VIEW_STATE, action) {
@@ -43,20 +38,9 @@ export default function view(state = INITIAL_VIEW_STATE, action) {
           })
         })
       })
-    case ADD_DERIVATIVE_DATA_SOURCE:
-      return Object.assign({}, state, {
-        derivativeSourceDefinitions: Object.assign({}, state.derivativeSourceDefinitions, {
-          sources: state.derivativeSourceDefinitions.sources.slice(0).concat([action.sourceName]),
-          data: Object.assign({}, state.derivativeSourceDefinitions.data, {
-              [action.sourceName]: computeDerivativeSource(state.data, action.derivativeFunc)
-          })
-        })
-      })
     case RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS:
       return Object.assign({}, state, {
-        derivativeSourceDefinitions: Object.assign({}, state.derivativeSourceDefinitions, {
-          definitions: Object.assign({}, action.sources)
-        })
+        derivativeSourceDefinitions: Object.assign({}, action.sources)
       })
     case RECEIVE_SOURCES_LIST:
       return Object.assign({}, state, {
