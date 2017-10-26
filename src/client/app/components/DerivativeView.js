@@ -55,17 +55,43 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-class DataView extends React.Component {
+class DerivativeView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      input: `return sourceData.view.map(function(d) {
+  return {
+    "timestamp": d.timestamp,
+    "value": JSON.parse(d.value).page
+  };
+});`,
+      output: '',
+      error: '',
+      sourceName: '',
+      derivativeSourceBase: 'Blank'
+    };
     this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
   }
   renderVisual() {
     return (
       <div>
-        <h3>TODO: Code Editor</h3>
-        <h3>TODO: show results as text</h3>
+        <div>
+          <textarea
+            style={{'width': '630px', 'height': '100px'}}
+            value={this.state.input}
+            onChange={this.onChangeInput} />
+        </div>
+        <div>
+          <pre style={{'width': '630px', 'height': '200px', 'border': '1px solid #CCC'}}>
+            { this.state.output }
+          </pre>
+        </div>
+        <div />
+        {
+          this.state.error &&
+          <p style={{color: 'red'}}>{ this.state.error }</p>
+        }
       </div>
     );
   }
@@ -106,6 +132,9 @@ class DataView extends React.Component {
             />
           </div>
         </div>
+        <div>
+          <div>return a derivative source given variable "sourceData".</div>
+        </div>
         <div className="selected-view__data-container">
           { this.renderVisual() }
         </div>
@@ -113,7 +142,7 @@ class DataView extends React.Component {
     );
   }
 }
-DataView.propTypes = {
+DerivativeView.propTypes = {
   availableSourceNames: PropTypes.array.isRequired,
   sourceNames: PropTypes.array.isRequired,
   start: PropTypes.instanceOf(Date).isRequired,
@@ -126,4 +155,4 @@ DataView.propTypes = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DataView)
+)(DerivativeView)
