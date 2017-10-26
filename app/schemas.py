@@ -121,6 +121,7 @@ class DerivativeSourceDefinitionsSchema(Schema):
     def __repr__(self):
         return '<DerivativeSourceDefinitionsSchema %r>' % self.id
 
+    @pre_load
     def process_created_at(self, data):
         data['created_at'] = utcnow()
 
@@ -137,6 +138,7 @@ class DerivativeSourcesSchema(Schema):
     def __repr__(self):
         return '<DerivativeSourcesSchema %r>' % self.id
 
+    @pre_load
     def process_created_at(self, data):
         data['created_at'] = utcnow()
 
