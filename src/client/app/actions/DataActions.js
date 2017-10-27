@@ -95,11 +95,45 @@ function fetchDataAnnotations(sourceName, start, stop) {
 }
 
 
+function fetchDataOrGetCacheData(state, sourceName, start, end) {
+  return new Promise((resolve, reject) => {
+    const cacheData = state.data[sourceName].cache;
+    const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
+    if (cacheDataMatch) {
+      cacheDataMatchInRange = cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
+      resolve(cacheDataMatchInRange);
+    } else {
+      // fetch for data
+      return fetchDataPurely(source, start, end, getState())
+        .then(data => {
+          resolve(data);
+        });
+    }
+  });
+}
+
 export function fetchDerivativeSourceData(source, start, stop, state) {
   return new Promise((resolve, reject) => {
     const data = state.view.derivativeSources.find(ds => ds.name === source).data;
     // TODO: filter by start and stop times
     // TODO: fetch data dependencies
+
+    /*
+    const sourceData = state.data[source];
+    const sourceDependencies = ourceData.request_data;
+    if (!sourceDependencies) {
+      return getCleanedSourceData(source, []);
+    } else {
+      // fetch data dependencies or get data from cache
+      for (let i=0; i<sourceDependencies.length; i+=1) {
+        fetchDataOrGetCacheData(state, sourceName, start, end)
+          .then(sdData => {
+            TODO
+          });
+      }
+    }
+    */
+
     resolve(data);
   });
 }
@@ -118,7 +152,7 @@ export function fetchDataPurely(sourceNameOrData, start, end, state) {
     sourceName = sourceNameOrData.name;
     sourceData = sourceNameOrData;
   }
-  const isDerivativeSource = state.view.derivativeSources.find(ds => ds.name === sourceName)
+  const isDerivativeSource = state.data[sourceName].request_type === 'DERIVATIVE';
   if (isDerivativeSource) {
     data_promise = fetchDerivativeSourceData(sourceName, start, end, state);
   } else {

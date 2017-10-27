@@ -20,12 +20,14 @@ import {
   changeDataViewSourceNames
 } from '../actions/DataViewActions'
 import {
-  addDerivativeDataSource,
   computeDerivativeSource,
   fetchDerivativeSourceDefinitions,
   saveDerivativeSourceDefinition,
   deleteDerivativeSourceDefinition
 } from '../actions/DerivativeSourceActions'
+import {
+  createDerivativeDataSource
+} from '../actions/DataSourceActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -60,8 +62,8 @@ const mapDispatchToProps = dispatch => {
     changeDataViewSourceNames: (dataViewId, sourceNames) => {
       dispatch(changeDataViewSourceNames(dataViewId, sourceNames))
     },
-    addDerivativeDataSource: (sourceName, derivativeFunc) => {
-      dispatch(addDerivativeDataSource(sourceName, derivativeFunc));
+    addDerivativeDataSource: (sourceName, derivativeFunc, sourceDependencies) => {
+      dispatch(createDerivativeDataSource(sourceName, derivativeFunc, sourceDependencies));
     },
     fetchDerivativeSourceDefinitions: () => {
       dispatch(fetchDerivativeSourceDefinitions());
@@ -144,7 +146,9 @@ class DerivativeView extends React.Component {
   }
   createSource(e) {
     e.preventDefault();
-    this.props.addDerivativeDataSource(this.state.sourceName, this.state.input);
+    this.props.addDerivativeDataSource(this.state.sourceName,
+                                       this.state.input,
+                                       this.props.sourceNames);
   }
   handleSourceNameChange(e) {
     e.preventDefault();
