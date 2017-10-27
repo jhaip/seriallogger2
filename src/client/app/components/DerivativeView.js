@@ -19,6 +19,13 @@ import {
   changeDataViewEnd,
   changeDataViewSourceNames
 } from '../actions/DataViewActions'
+import {
+  addDerivativeDataSource,
+  computeDerivativeSource,
+  fetchDerivativeSourceDefinitions,
+  saveDerivativeSourceDefinition,
+  deleteDerivativeSourceDefinition
+} from '../actions/DerivativeSourceActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -34,7 +41,8 @@ const mapStateToProps = (state, ownProps) => {
       ownProps.stop,
       ownProps.sourceNames
     ),
-    availableSourceNames: Object.keys(state.data)
+    availableSourceNames: Object.keys(state.data),
+    derivativeSourceDefinitions: state.derivativeSourceDefinitions
   }
 }
 
@@ -51,6 +59,18 @@ const mapDispatchToProps = dispatch => {
     },
     changeDataViewSourceNames: (dataViewId, sourceNames) => {
       dispatch(changeDataViewSourceNames(dataViewId, sourceNames))
+    },
+    addDerivativeDataSource: (sourceName, derivativeFunc) => {
+      dispatch(addDerivativeDataSource(sourceName, derivativeFunc));
+    },
+    fetchDerivativeSourceDefinitions: () => {
+      dispatch(fetchDerivativeSourceDefinitions());
+    },
+    saveDerivativeSourceDefinition: (name, sourceCode) => {
+      dispatch(saveDerivativeSourceDefinition(name, sourceCode));
+    },
+    deleteDerivativeSourceDefinition: (name) => {
+      dispatch(deleteDerivativeSourceDefinition(name));
     }
   }
 }
@@ -72,6 +92,63 @@ class DerivativeView extends React.Component {
     };
     this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
+    this.getSampleOutput = this.getSampleOutput.bind(this);
+    this.onChangeInput = this.onChangeInput.bind(this);
+    this.save = this.save.bind(this);
+    this.delete = this.delete.bind(this);
+    this.createSource = this.createSource.bind(this);
+    this.handleSourceNameChange = this.handleSourceNameChange.bind(this);
+    this.onDerivativeSourceBaseChange = this.onDerivativeSourceBaseChange.bind(this);
+    props.fetchDerivativeSourceDefinitions();
+  }
+  onChangeInput(e) {
+    e.preventDefault();
+    this.setState({input: e.target.value});
+  }
+  save(e) {
+    e.preventDefault();
+    const name = prompt("Enter your derivative source's name");
+    if (name !== null) {
+      this.props.saveDerivativeSourceDefinition(name, this.state.input);
+    }
+  }
+  delete(e) {
+    e.preventDefault();
+    if (confirm("Are you sure you want to delete this derivative source?")) {
+      this.props.deleteDerivativeSourceDefinition(this.state.derivativeSourceBase);
+    }
+  }
+  getSampleOutput() {
+    const funcBody = this.state.input;
+    const sourceData = this.props.sourceData;
+    let result = null;
+    try {
+      result = computeDerivativeSource(sourceData, funcBody);
+      this.setState({error: ''});
+    } catch (e) {
+        if (e instanceof SyntaxError) {
+            this.setState({error: `Syntax Error: ${e.message}`});
+        } else {
+            this.setState({error: e.message});
+        }
+    }
+    this.setState({output: result.map(l => JSON.stringify(l)).join("\n---\n")});
+  }
+  onDerivativeSourceBaseChange(source) {
+    const newInput = this.props.derivativeSourceDefinitions[source] || "";
+    this.setState({
+      derivativeSourceBase: source,
+      input: newInput,
+      output: ''
+    });
+  }
+  createSource(e) {
+    e.preventDefault();
+    this.props.addDerivativeDataSource(this.state.sourceName, this.state.input);
+  }
+  handleSourceNameChange(e) {
+    e.preventDefault();
+    this.setState({sourceName: e.target.value});
   }
   renderVisual() {
     return (
@@ -112,8 +189,9 @@ class DerivativeView extends React.Component {
         <div>
           <div style={{padding: "10px 0px", display: "inline-block"}}>
             <DropdownList
-              data={["derivative source 1", "derivative source 2"]}
-              value={"derivative source 1"}
+              data={["Blank"].concat(Object.keys(this.props.derivativeSourceDefinitions))}
+              value={this.state.derivativeSourceBase}
+              onChange={this.onDerivativeSourceBaseChange}
               style={source_dropdown_styles}
             />
           </div>
@@ -133,6 +211,17 @@ class DerivativeView extends React.Component {
           </div>
         </div>
         <div>
+          <button onClick={ this.getSampleOutput }>Run</button>
+          <button onClick={ this.save }>Save</button>
+          <button onClick={ this.delete }>Delete</button>
+          <input
+            type="text"
+            value={this.state.sourceName}
+            placeholder="New source name"
+            onChange={this.handleSourceNameChange} />
+          <button onClick={ this.createSource }>Add source to Overview</button>
+        </div>
+        <div>
           <div>return a derivative source given variable "sourceData".</div>
         </div>
         <div className="selected-view__data-container">
@@ -144,12 +233,17 @@ class DerivativeView extends React.Component {
 }
 DerivativeView.propTypes = {
   availableSourceNames: PropTypes.array.isRequired,
+  derivativeSourceDefinitions: PropTypes.object.isRequired,
   sourceNames: PropTypes.array.isRequired,
   start: PropTypes.instanceOf(Date).isRequired,
   stop: PropTypes.instanceOf(Date).isRequired,
   visualType: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  addDerivativeDataSource: PropTypes.func.isRequired,
+  fetchDerivativeSourceDefinitions: PropTypes.func.isRequired,
+  saveDerivativeSourceDefinition: PropTypes.func.isRequired,
+  deleteDerivativeSourceDefinition: PropTypes.func.isRequired
 };
 
 export default connect(
