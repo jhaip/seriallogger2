@@ -68,24 +68,23 @@ class DataView extends React.Component {
     this.onTimeChange = this.onTimeChange.bind(this);
     this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
   }
-  fetchDataForAllSources() {
-    this.props.sourceNames.forEach(sourceName => {
-      console.log("FETCHING SOURCE NAMES, "+sourceName);
-      this.props.fetchData(sourceName, this.props.start, this.props.stop);
+  fetchDataForAllSources(nextProps) {
+    nextProps.sourceNames.forEach(sourceName => {
+      nextProps.fetchData(sourceName, nextProps.start, nextProps.stop);
     });
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.availableSourceNames.length === 0) {
       if (nextProps.availableSourceNames.length > 0) {
         console.log("GOT AVAILABLE SOURCES, FETCHING SOURCE NAMES FOR DATA VIEW");
-        this.fetchDataForAllSources();
+        this.fetchDataForAllSources(nextProps);
       }
     } else if (this.props.availableSourceNames.length > 0) {
       if (this.props.sourceNames !== nextProps.sourceNames ||
           this.props.start !== nextProps.start ||
           this.props.stop !== nextProps.stop) {
         console.log("VIEW CHANGED, FETCHING SOURCE NAMES FOR DATA VIEW");
-        this.fetchDataForAllSources();
+        this.fetchDataForAllSources(nextProps);
       }
     }
   }
