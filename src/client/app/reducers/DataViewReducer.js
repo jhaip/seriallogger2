@@ -14,14 +14,14 @@ const INITIAL_VIEW_STATE = {
         stop: moment().subtract(1, 'minute').toDate(),
         visualType: "raw",
         id: 'e146218e-90ed-490c-8cca-910d7d07c82e'
-      },
-      {
-        sourceNames: ['NeoBLU', 'NeoGRN'],
-        start: moment().subtract(50, 'days').toDate(),
-        stop: moment().subtract(1, 'days').toDate(),
-        visualType: "derivative",
-        id: '2c92b120-af09-49a2-9378-11ecdf62a170'
       }
+      // {
+      //   sourceNames: ['NeoBLU', 'NeoGRN'],
+      //   start: moment().subtract(50, 'days').toDate(),
+      //   stop: moment().subtract(1, 'days').toDate(),
+      //   visualType: "derivative",
+      //   id: '2c92b120-af09-49a2-9378-11ecdf62a170'
+      // }
     ]
 };
 

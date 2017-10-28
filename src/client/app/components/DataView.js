@@ -19,6 +19,9 @@ import {
   changeDataViewEnd,
   changeDataViewSourceNames
 } from '../actions/DataViewActions'
+import {
+  fetchData
+} from '../actions/DataActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -40,6 +43,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchData: (source, start, end) => {
+      dispatch(fetchData(source, start, end))
+    },
     changeDataViewVisualType: (dataViewId, visualType) => {
       dispatch(changeDataViewVisualType(dataViewId, visualType))
     },
@@ -60,6 +66,28 @@ class DataView extends React.Component {
     super(props);
     this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
+    this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
+  }
+  fetchDataForAllSources() {
+    this.props.sourceNames.forEach(sourceName => {
+      console.log("FETCHING SOURCE NAMES, "+sourceName);
+      this.props.fetchData(sourceName, this.props.start, this.props.stop);
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.availableSourceNames.length === 0) {
+      if (nextProps.availableSourceNames.length > 0) {
+        console.log("GOT AVAILABLE SOURCES, FETCHING SOURCE NAMES FOR DATA VIEW");
+        this.fetchDataForAllSources();
+      }
+    } else if (this.props.availableSourceNames.length > 0) {
+      if (this.props.sourceNames !== nextProps.sourceNames ||
+          this.props.start !== nextProps.start ||
+          this.props.stop !== nextProps.stop) {
+        console.log("VIEW CHANGED, FETCHING SOURCE NAMES FOR DATA VIEW");
+        this.fetchDataForAllSources();
+      }
+    }
   }
   renderVisual() {
     switch (this.props.visualType) {
@@ -137,7 +165,8 @@ DataView.propTypes = {
   stop: PropTypes.instanceOf(Date).isRequired,
   visualType: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  fetchData: PropTypes.func.isRequired
 };
 
 export default connect(

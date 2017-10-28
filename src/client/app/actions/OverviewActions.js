@@ -40,8 +40,8 @@ export function fetchSourcesList() {
             "url": "http://localhost:5000/api/data?source=view&start={{start}}&stop={{stop}}"
         }]);
         dispatch(receiveSourcesList(results));
-        dispatch(fetchAllNewOverviewData());
-        dispatch(fetchDerivativeSources());
+        //dispatch(fetchAllNewOverviewData());
+        // dispatch(fetchDerivativeSources());
         if (results.length > 0) {
           dispatch(changeSelectedSource(results[0].name));
         }
@@ -49,6 +49,7 @@ export function fetchSourcesList() {
   }
 }
 
+// depricated
 export function fetchAllNewOverviewData() {
   return (dispatch, getState) => {
     getState().view.sources.forEach(source => {
@@ -57,12 +58,14 @@ export function fetchAllNewOverviewData() {
   }
 }
 
+/* depricated */
 export function changeViewRange(start, end) {
   return (dispatch, getState) => {
     dispatch({ type: CHANGE_VIEW_RANGE, start, end });
     dispatch(fetchAllNewOverviewData());
   }
 }
+/* depricated */
 export function fetchOverviewData(source) {
   return (dispatch, getState) => {
     const { start, end } = getState().view;

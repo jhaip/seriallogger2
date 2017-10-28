@@ -6,7 +6,18 @@ import { computeDerivativeSource } from './DerivativeSourceActions'
 export const RECEIVE_DATA = 'RECEIVE_DATA'
 export const RECEIVE_DATA_ANNOTATIONS = 'RECEIVE_DATA_ANNOTATIONS'
 
-function getCleanedSourceData(source, json) {
+
+function receiveDataAnnotations(source, annotations, start, end) {
+  return { type: RECEIVE_DATA_ANNOTATIONS, source, annotations, start, end }
+}
+
+
+function receiveData(source, data, start, end) {
+  return { type: RECEIVE_DATA, source, data, start, end }
+}
+
+
+function applyTranformFunction(source, json) {
   let clean_data;
   if (source.name === "annotations") {
     clean_data = json.results.map(d => {
@@ -50,7 +61,7 @@ function getCleanedSourceData(source, json) {
 }
 
 
-export function fetchSourceData(source, start, stop) {
+function fetchSourceData(source, start, stop) {
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
   const url = source.url
@@ -70,7 +81,9 @@ export function fetchSourceData(source, start, stop) {
     fetch(url, options)
       .then(response => response.json())
       .then(json => {
-        resolve(getCleanedSourceData(source, json));
+        console.log(source);
+        console.log(json);
+        resolve(applyTranformFunction(source, json));
       });
   });
 }
@@ -95,76 +108,6 @@ function fetchDataAnnotations(sourceName, start, stop) {
 }
 
 
-function fetchDataOrGetCacheData(state, sourceName, start, end) {
-  return new Promise((resolve, reject) => {
-    const cacheData = state.data[sourceName].cache;
-    const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
-    if (cacheDataMatch) {
-      cacheDataMatchInRange = cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
-      resolve(cacheDataMatchInRange);
-    } else {
-      // fetch for data
-      return fetchDataPurely(source, start, end, getState())
-        .then(data => {
-          resolve(data);
-        });
-    }
-  });
-}
-
-export function fetchDerivativeSourceData(source, start, stop, state) {
-  return new Promise((resolve, reject) => {
-    const data = state.view.derivativeSources.find(ds => ds.name === source).data;
-    // TODO: filter by start and stop times
-    // TODO: fetch data dependencies
-
-    /*
-    const sourceData = state.data[source];
-    const sourceDependencies = ourceData.request_data;
-    if (!sourceDependencies) {
-      return getCleanedSourceData(source, []);
-    } else {
-      // fetch data dependencies or get data from cache
-      for (let i=0; i<sourceDependencies.length; i+=1) {
-        fetchDataOrGetCacheData(state, sourceName, start, end)
-          .then(sdData => {
-            TODO
-          });
-      }
-    }
-    */
-
-    resolve(data);
-  });
-}
-
-
-export function fetchDataPurely(sourceNameOrData, start, end, state) {
-  let data_promise;
-  let sourceName = '';
-  let sourceData = '';
-  if (typeof sourceNameOrData === 'string') {
-    sourceName = sourceNameOrData;
-    sourceData = state.view.sources.reduce((acc, s) => {
-      return (s.name === sourceName) ? s : acc;
-    }, null);
-  } else {
-    sourceName = sourceNameOrData.name;
-    sourceData = sourceNameOrData;
-  }
-  const isDerivativeSource = state.data[sourceName].request_type === 'DERIVATIVE';
-  if (isDerivativeSource) {
-    data_promise = fetchDerivativeSourceData(sourceName, start, end, state);
-  } else {
-    data_promise = fetchSourceData(sourceData, start, end);
-  }
-  return data_promise
-}
-
-export function receiveDataAnnotations(source, annotations, start, end) {
-  return { type: RECEIVE_DATA_ANNOTATIONS, source, annotations, start, end }
-}
-
 export function fetchDataAnnotationsAction(source, start, end) {
   return (dispatch, getState) => {
     return fetchDataAnnotations(source, start, end)
@@ -174,16 +117,51 @@ export function fetchDataAnnotationsAction(source, start, end) {
   }
 }
 
-export function receiveData(source, data, start, end) {
-  return { type: RECEIVE_DATA, source, data, start, end }
-}
 
+/* External action to fetch data for a sourceName. Returns nothing.
+ * regardless if it is a derivative or not
+ * or if the data is fetched from cache or from an external HTTP call
+ */
 export function fetchData(source, start, end) {
   return (dispatch, getState) => {
-    return fetchDataPurely(source, start, end, getState())
+    fetchDataOrGetCacheData(source, start, end, getState())
       .then(data => {
+        console.log("ABOUT TO DISPATCH");
         dispatch(receiveData(source, data, start, end));
         dispatch(fetchDataAnnotationsAction(source, start, end));
       })
   }
+}
+
+
+function fetchDataOrGetCacheData(sourceName, start, end, state) {
+  return new Promise((resolve, reject) => {
+    console.log("fetchDataOrGetCacheData "+sourceName);
+    const sourceData = state.data[sourceName];
+    console.log("after "+sourceName);
+    console.log(sourceData);
+    // 1. Check cache
+    const cacheData = sourceData.cache;
+    const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
+    if (cacheDataMatch) {
+      cacheDataMatchInRange = cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
+      console.log("found a cache hit, returning it "+sourceName);
+      resolve(cacheDataMatchInRange);
+    } else {
+      console.log("no cache hit, fetching "+sourceName);
+      // 2. fetch data
+      if (sourceData.request_type === 'DERIVATIVE') {
+        // TODO: fetch for derivatie source dependencies
+        console.log("TODO: fetch for derivative source dependencies "+sourceName);
+        return [];
+      } else {
+        console.log("fetching form source data "+sourceName);
+        return fetchSourceData(sourceData, start, end)
+          .then(data => {
+            console.log("resolving fetched data "+sourceName);
+            resolve(data); // resolve has applyTranformFunction() already called
+          });
+      }
+    }
+  });
 }
