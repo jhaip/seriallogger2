@@ -126,7 +126,6 @@ export function fetchData(source, start, end) {
   return (dispatch, getState) => {
     fetchDataOrGetCacheData(source, start, end, getState())
       .then(data => {
-        console.log("ABOUT TO DISPATCH");
         dispatch(receiveData(source, data, start, end));
         dispatch(fetchDataAnnotationsAction(source, start, end));
       })
@@ -136,29 +135,21 @@ export function fetchData(source, start, end) {
 
 function fetchDataOrGetCacheData(sourceName, start, end, state) {
   return new Promise((resolve, reject) => {
-    console.log("fetchDataOrGetCacheData "+sourceName);
     const sourceData = state.data[sourceName];
-    console.log("after "+sourceName);
-    console.log(sourceData);
     // 1. Check cache
     const cacheData = sourceData.cache;
     const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
     if (cacheDataMatch) {
       cacheDataMatchInRange = cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
-      console.log("found a cache hit, returning it "+sourceName);
       resolve(cacheDataMatchInRange);
     } else {
-      console.log("no cache hit, fetching "+sourceName);
       // 2. fetch data
       if (sourceData.request_type === 'DERIVATIVE') {
         // TODO: fetch for derivatie source dependencies
-        console.log("TODO: fetch for derivative source dependencies "+sourceName);
         return [];
       } else {
-        console.log("fetching form source data "+sourceName);
         return fetchSourceData(sourceData, start, end)
           .then(data => {
-            console.log("resolving fetched data "+sourceName);
             resolve(data); // resolve has applyTranformFunction() already called
           });
       }
