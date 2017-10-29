@@ -28,6 +28,7 @@ import {
 import {
   createDerivativeDataSource
 } from '../actions/DataSourceActions'
+import { fetchData } from '../actions/DataActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -50,6 +51,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchData: (source, start, end) => {
+      dispatch(fetchData(source, start, end))
+    },
     changeDataViewVisualType: (dataViewId, visualType) => {
       dispatch(changeDataViewVisualType(dataViewId, visualType))
     },
@@ -81,10 +85,10 @@ class DerivativeView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: `return sourceData.view.map(function(d) {
+      input: `return sourceData.map(function(d) {
   return {
     "timestamp": d.timestamp,
-    "value": JSON.parse(d.value).page
+    "value": JSON.parse(d.value)
   };
 });`,
       output: '',
@@ -101,7 +105,30 @@ class DerivativeView extends React.Component {
     this.createSource = this.createSource.bind(this);
     this.handleSourceNameChange = this.handleSourceNameChange.bind(this);
     this.onDerivativeSourceBaseChange = this.onDerivativeSourceBaseChange.bind(this);
-    props.fetchDerivativeSourceDefinitions();
+    this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
+  }
+  fetchDataForAllSources(nextProps) {
+    nextProps.sourceNames.forEach(sourceName => {
+      nextProps.fetchData(sourceName, nextProps.start, nextProps.stop);
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.availableSourceNames.length === 0) {
+      if (nextProps.availableSourceNames.length > 0) {
+        console.log("GOT AVAILABLE SOURCES, FETCHING SOURCE NAMES FOR DATA VIEW");
+        this.fetchDataForAllSources(nextProps);
+      }
+    } else if (this.props.availableSourceNames.length > 0) {
+      if (this.props.sourceNames !== nextProps.sourceNames ||
+          this.props.start !== nextProps.start ||
+          this.props.stop !== nextProps.stop) {
+        console.log("VIEW CHANGED, FETCHING SOURCE NAMES FOR DATA VIEW");
+        this.fetchDataForAllSources(nextProps);
+      }
+    }
+  }
+  componentWillMount() {
+    this.props.fetchDerivativeSourceDefinitions();
   }
   onChangeInput(e) {
     e.preventDefault();
@@ -122,7 +149,7 @@ class DerivativeView extends React.Component {
   }
   getSampleOutput() {
     const funcBody = this.state.input;
-    const sourceData = this.props.sourceData;
+    const sourceData = this.props.data;
     let result = null;
     try {
       result = computeDerivativeSource(sourceData, funcBody);

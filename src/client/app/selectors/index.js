@@ -8,7 +8,7 @@ const getPotentialAnnotation = (state) =>  state.selected.potential_annotation
 
 function getRowsFromValue(value, id, source, type, timestamp, startRowNumber) {
   let listRows = [];
-  let lines = value.split(/\r\n/);
+  let lines = String(value).split(/\r\n/);
   let rn = startRowNumber;
   for (let i = 0; i < lines.length; i+=1) {
     let subline = lines[i].split(/\n/);

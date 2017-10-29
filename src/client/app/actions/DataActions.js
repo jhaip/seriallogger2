@@ -17,6 +17,17 @@ function receiveData(source, data, start, end) {
 }
 
 
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+
 function applyTranformFunction(source, json) {
   let clean_data;
   if (source.name === "annotations") {
@@ -54,6 +65,7 @@ function applyTranformFunction(source, json) {
   clean_data = clean_data.map(d => {
     d.timestamp = moment.utc(d.timestamp).toDate()
     d.source = source;
+    d.id = d.id || guid();
     return d;
   });
 
@@ -145,8 +157,26 @@ function fetchDataOrGetCacheData(sourceName, start, end, state) {
     } else {
       // 2. fetch data
       if (sourceData.request_type === 'DERIVATIVE') {
-        // TODO: fetch for derivatie source dependencies
-        return [];
+        if (typeof sourceData.request_data === 'string' &&
+            sourceData.request_data.length > 2) {
+          const dataDependencies = JSON.parse(sourceData.request_data);
+          const promises = dataDependencies.map(s => {
+            return fetchDataOrGetCacheData(s, start, end, state);
+          });
+          return Promise.all(promises).then(dependencyData => {
+            console.log("GOT DERIVATIVE DATA DEPENDENCIES DATA");
+            console.log(dependencyData);
+            const joinedData = dependencyData.reduce((acc, d) => {
+              return acc.concat(d);
+            }, []);
+            console.log(joinedData);
+            const transformedData = applyTranformFunction(sourceData, joinedData);
+            console.log(transformedData);
+            resolve(transformedData);
+          });
+        } else {
+          return [];
+        }
       } else {
         return fetchSourceData(sourceData, start, end)
           .then(data => {

@@ -19,9 +19,7 @@ import {
   changeDataViewEnd,
   changeDataViewSourceNames
 } from '../actions/DataViewActions'
-import {
-  fetchData
-} from '../actions/DataActions'
+import { fetchData } from '../actions/DataActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
