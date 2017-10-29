@@ -5,6 +5,9 @@ import {
   CHANGE_DATAVIEW_STOP,
   CHANGE_DATAVIEW_SOURCENAMES
 } from '../actions/DataViewActions'
+import {
+  CHANGE_ACTIVE_ANNOTATION
+} from '../actions/AnnotationActions'
 
 const INITIAL_VIEW_STATE = {
     views: [
@@ -48,6 +51,8 @@ export default function dataview(state = INITIAL_VIEW_STATE, action) {
       return createUpdatedDataView(state, action, 'stop');
     case CHANGE_DATAVIEW_SOURCENAMES:
       return createUpdatedDataView(state, action, 'sourceNames');
+    case CHANGE_ACTIVE_ANNOTATION:
+      return createUpdatedDataView(state, action, 'activeAnnotation');
     default:
       return state
   }

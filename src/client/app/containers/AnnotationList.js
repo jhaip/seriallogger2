@@ -2,7 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { changeActiveAnnotation } from '../actions/AnnotationActions'
-import { getDataViewDataAnnotations } from '../selectors'
+import {
+  getDataViewDataAnnotations,
+  getDataViewActiveAnnotation
+} from '../selectors'
 import DetailViewTimeGroup from "../components/DetailViewTimeGroup"
 
 
@@ -29,18 +32,18 @@ AnnotationListItem.propTypes = {
 const mapStateToProps = (state, props) => {
   return {
     annotations: getDataViewDataAnnotations(state, props.dataViewId),
-    activeAnnotation: String(state.selected.activeAnnotation)
+    activeAnnotation: getDataViewActiveAnnotation(state, props.dataViewId)
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, props) => {
   return {
     handleClick: (clicked_annotation_id) => {
       console.log("on annotation item click!");
-      dispatch(changeActiveAnnotation(clicked_annotation_id));
+      dispatch(changeActiveAnnotation(String(clicked_annotation_id), props.dataViewId));
     },
     clearActiveAnnotation: () => {
-      dispatch(changeActiveAnnotation(""));
+      dispatch(changeActiveAnnotation("", props.dataViewId));
     }
   }
 }

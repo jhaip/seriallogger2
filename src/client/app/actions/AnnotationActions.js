@@ -10,11 +10,8 @@ export function receiveDetailDataAnnotations(source, data) {
   return { type: RECEIVE_SELECTED_DATA_ANNOTATIONS, source, data }
 }
 
-export function changeActiveAnnotation(new_active_annotation) {
-  return {
-    type: CHANGE_ACTIVE_ANNOTATION,
-    active_annotation: new_active_annotation
-  }
+export function changeActiveAnnotation(activeAnnotation, dataViewId) {
+  return { type: CHANGE_ACTIVE_ANNOTATION, activeAnnotation, dataViewId }
 }
 
 function fetchAnnotationsForDetailData(source, start, end) {

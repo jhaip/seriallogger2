@@ -288,6 +288,12 @@ export const getDataViewDataAnnotations = (state, dataViewId) => {
   return data;
 }
 
+export const getDataViewActiveAnnotation = (state, dataViewId) => {
+  const dataView = find(state.dataview.views, v => String(v.id) === String(dataViewId));
+  const activeAnnotation = dataView.activeAnnotation || "";
+  return activeAnnotation;
+}
+
 // depricated
 export const getSelectedAnnotations = (state) => {
   const start = state.selected.start;
@@ -302,6 +308,7 @@ export const getSelectedAnnotations = (state) => {
   }
 }
 
+// depricated
 export const getAnnotatedSelectedDataTree = createSelector(
   [ selectSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
   createAnnotatedSelectedDataTree

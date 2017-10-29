@@ -11,7 +11,9 @@ import DetailViewText from "./DetailViewText"
 import DetailViewLineGraph from "../containers/DetailViewLineGraph"
 import {
   getDataViewData,
-  getAnnotatedDataTree
+  getAnnotatedDataTree,
+  getDataViewDataAnnotations,
+  getDataViewActiveAnnotation
 } from '../selectors'
 import {
   changeDataViewVisualType,
@@ -21,22 +23,23 @@ import {
 } from '../actions/DataViewActions'
 import { fetchData } from '../actions/DataActions'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, props) => {
   return {
     data: getDataViewData(
       state,
-      ownProps.start,
-      ownProps.stop,
-      ownProps.sourceNames
+      props.start,
+      props.stop,
+      props.sourceNames
     ),
     dataForTextBad: getAnnotatedDataTree(
       state,
-      ownProps.start,
-      ownProps.stop,
-      ownProps.sourceNames,
-      ownProps.id
+      props.start,
+      props.stop,
+      props.sourceNames,
+      props.id
     ),
-    availableSourceNames: Object.keys(state.data)
+    availableSourceNames: Object.keys(state.data),
+    activeAnnotation: getDataViewActiveAnnotation(state, props.id)
   }
 }
 
@@ -93,13 +96,16 @@ class DataView extends React.Component {
         return (
           <DetailViewLineGraph
             data={this.props.data}
-            activeAnnotation={""} />
+            activeAnnotation={this.props.activeAnnotation}
+          />
         );
       case "raw":
       default:
         return (
-          <DetailViewText data={this.props.dataForTextBad}
-                          activeAnnotation={""} />
+          <DetailViewText
+            data={this.props.dataForTextBad}
+            activeAnnotation={this.props.activeAnnotation}
+          />
         );
     }
   }
@@ -167,7 +173,8 @@ DataView.propTypes = {
   visualType: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
   id: PropTypes.string.isRequired,
-  fetchData: PropTypes.func.isRequired
+  fetchData: PropTypes.func.isRequired,
+  activeAnnotation: PropTypes.string.isRequired
 };
 
 export default connect(
