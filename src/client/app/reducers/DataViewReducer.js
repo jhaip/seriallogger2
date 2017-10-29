@@ -6,13 +6,14 @@ import {
   CHANGE_DATAVIEW_SOURCENAMES
 } from '../actions/DataViewActions'
 import {
-  CHANGE_ACTIVE_ANNOTATION
+  CHANGE_ACTIVE_ANNOTATION,
+  SET_POTENTIAL_ANNOTATION
 } from '../actions/AnnotationActions'
 
 const INITIAL_VIEW_STATE = {
     views: [
       {
-        sourceNames: ['NeoRED'],
+        sourceNames: ['NeoRED', 'NeoGRN'],
         start: moment().subtract(50, 'days').toDate(),
         stop: moment().subtract(1, 'minute').toDate(),
         visualType: "raw",
@@ -53,6 +54,8 @@ export default function dataview(state = INITIAL_VIEW_STATE, action) {
       return createUpdatedDataView(state, action, 'sourceNames');
     case CHANGE_ACTIVE_ANNOTATION:
       return createUpdatedDataView(state, action, 'activeAnnotation');
+    case SET_POTENTIAL_ANNOTATION:
+      return createUpdatedDataView(state, action, 'potential_annotation');
     default:
       return state
   }

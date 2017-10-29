@@ -12,7 +12,7 @@ class AnnotationView extends React.Component {
           <FilterSelectViewToSelected />
         </div>
         <div style={{marginBottom: "10px"}}>
-          <AddAnnotationBlock />
+          <AddAnnotationBlock dataViewId={this.props.dataViewId} />
         </div>
         <AnnotationList dataViewId={this.props.dataViewId} />
       </div>

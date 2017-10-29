@@ -11,13 +11,13 @@ const mapStateToProps = state => {
   return {}
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, props) => {
   return {
     onStartAnnotation: () => {
-      dispatch(setPotentialAnnotation());
+      dispatch(setPotentialAnnotation(props.dataViewId));
     },
     onStopAnnotation: () => {
-      dispatch(clearPotentialAnnotation());
+      dispatch(clearPotentialAnnotation(props.dataViewId));
     },
     saveNewAnnotation: (annotation) => {
       return dispatch(saveNewAnnotation(annotation));
@@ -110,7 +110,8 @@ class AddAnnotationBlock extends React.Component {
 AddAnnotationBlock.propTypes = {
   onStartAnnotation: PropTypes.func.isRequired,
   onStopAnnotation: PropTypes.func.isRequired,
-  saveNewAnnotation: PropTypes.func.isRequired
+  saveNewAnnotation: PropTypes.func.isRequired,
+  dataViewId: PropTypes.string.isRequired
 };
 
 export default connect(

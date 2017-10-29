@@ -111,16 +111,18 @@ export function saveNewAnnotation(annotation) {
   }
 }
 
-export function setPotentialAnnotation() {
+export function setPotentialAnnotation(dataViewId) {
   return {
     type: SET_POTENTIAL_ANNOTATION,
-    potential_annotation: getSelectionDetails()
+    potential_annotation: getSelectionDetails(),
+    dataViewId
   }
 }
 
-export function clearPotentialAnnotation() {
+export function clearPotentialAnnotation(dataViewId) {
   return {
     type: SET_POTENTIAL_ANNOTATION,
-    potential_annotation: null
+    potential_annotation: null,
+    dataViewId
   }
 }

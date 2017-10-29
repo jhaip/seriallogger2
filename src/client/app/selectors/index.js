@@ -115,7 +115,26 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   }
 
   // annotate rows
-  const a = potential_annotation === null ? [] : potential_annotation;
+  const a = potential_annotation === null ? [] : [potential_annotation];
+  const cleanPotentialAnnotations = a.map(d => {
+    return {
+      "start": {
+        "id": d.start.data_id,
+        "timestamp": d.start.data_timestamp,
+        "row": d.start.row,
+        "character": d.start.character,
+      },
+      "end": {
+        "id": d.end.data_id,
+        "timestamp": d.end.data_timestamp,
+        "row": d.end.row,
+        "character": d.end.character,
+      },
+      "id": d.id,
+      "annotation": "",
+      "sourceName": d.start.data_source
+    };
+  });
   const cleanAnnotations = annotations.map(d => {
     return {
       "start": {
@@ -135,7 +154,7 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
       "sourceName": d.source
     };
   });
-  for (var annotation of cleanAnnotations.concat(a)) {
+  for (var annotation of cleanAnnotations.concat(cleanPotentialAnnotations)) {
     // check that data is loaded enough to match annotation
     if (rows.length > annotation.end.row) {
       if (annotation.start.id  == annotation.end.id &&
@@ -288,6 +307,12 @@ export const getDataViewDataAnnotations = (state, dataViewId) => {
   return data;
 }
 
+export const getDataViewPotentialAnnotation = (state, dataViewId) => {
+  const dataView = find(state.dataview.views, v => v.id === dataViewId);
+  const potentialAnnotation = dataView.potential_annotation || null;
+  return potentialAnnotation;
+}
+
 export const getDataViewActiveAnnotation = (state, dataViewId) => {
   const dataView = find(state.dataview.views, v => String(v.id) === String(dataViewId));
   const activeAnnotation = dataView.activeAnnotation || "";
@@ -318,6 +343,6 @@ export const getAnnotatedDataTree = (state, start, end, sourceNames, dataViewId)
   const dataView = find(state.dataview.views, v => v.id === dataViewId);
   const data = getDataViewData(state, start, end, sourceNames);
   const annotations = getDataViewDataAnnotations(state, dataViewId);
-  return createAnnotatedSelectedDataTree(data, annotations, []);
-  // TODO: annotations and potential annotations
+  const potentialAnnotation = getDataViewPotentialAnnotation(state, dataViewId);
+  return createAnnotatedSelectedDataTree(data, annotations, potentialAnnotation);
 }
