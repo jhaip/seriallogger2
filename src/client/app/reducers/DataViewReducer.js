@@ -9,8 +9,8 @@ import {
 const INITIAL_VIEW_STATE = {
     views: [
       {
-        sourceNames: ['view'],
-        start: moment().subtract(5, 'days').toDate(),
+        sourceNames: ['NeoRED'],
+        start: moment().subtract(50, 'days').toDate(),
         stop: moment().subtract(1, 'minute').toDate(),
         visualType: "raw",
         id: 'e146218e-90ed-490c-8cca-910d7d07c82e'

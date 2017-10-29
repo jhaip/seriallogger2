@@ -42,7 +42,8 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.start,
       ownProps.stop,
-      ownProps.sourceNames
+      ownProps.sourceNames,
+      ownProps.id
     ),
     availableSourceNames: Object.keys(state.data),
     derivativeSourceDefinitions: state.derivativeSourceDefinitions

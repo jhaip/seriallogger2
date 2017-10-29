@@ -274,7 +274,11 @@ export const getDataViewData = (state, start, end, sourceNames) => {
   });
 }
 
-export const getDataViewDataAnnotations = (state, start, end, sourceNames) => {
+export const getDataViewDataAnnotations = (state, dataViewId) => {
+  const dataView = find(state.dataview.views, v => v.id === dataViewId);
+  const start = dataView.start;
+  const end = dataView.stop;
+  const sourceNames = dataView.sourceNames;
   const data = sourceNames.reduce((acc, sourceName) => {
     if (state.data[sourceName]) {
       acc = acc.concat(getCacheDataAnnotations(state, sourceName, start, end));
@@ -284,6 +288,7 @@ export const getDataViewDataAnnotations = (state, start, end, sourceNames) => {
   return data;
 }
 
+// depricated
 export const getSelectedAnnotations = (state) => {
   const start = state.selected.start;
   const end = state.selected.end;
@@ -302,9 +307,10 @@ export const getAnnotatedSelectedDataTree = createSelector(
   createAnnotatedSelectedDataTree
 )
 
-export const getAnnotatedDataTree = (state, start, end, sourceNames) => {
+export const getAnnotatedDataTree = (state, start, end, sourceNames, dataViewId) => {
+  const dataView = find(state.dataview.views, v => v.id === dataViewId);
   const data = getDataViewData(state, start, end, sourceNames);
-  const annotations = getDataViewDataAnnotations(state, start, end, sourceNames);
+  const annotations = getDataViewDataAnnotations(state, dataViewId);
   return createAnnotatedSelectedDataTree(data, annotations, []);
   // TODO: annotations and potential annotations
 }

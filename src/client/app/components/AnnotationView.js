@@ -14,10 +14,13 @@ class AnnotationView extends React.Component {
         <div style={{marginBottom: "10px"}}>
           <AddAnnotationBlock />
         </div>
-        <AnnotationList />
+        <AnnotationList dataViewId={this.props.dataViewId} />
       </div>
     );
   }
 }
+AnnotationView.propTypes = {
+  dataViewId: PropTypes.string.isRequired,
+};
 
 export default AnnotationView

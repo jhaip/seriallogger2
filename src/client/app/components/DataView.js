@@ -33,7 +33,8 @@ const mapStateToProps = (state, ownProps) => {
       state,
       ownProps.start,
       ownProps.stop,
-      ownProps.sourceNames
+      ownProps.sourceNames,
+      ownProps.id
     ),
     availableSourceNames: Object.keys(state.data)
   }
@@ -150,6 +151,9 @@ class DataView extends React.Component {
         </div>
         <div className="selected-view__data-container">
           { this.renderVisual() }
+          <div className="selected-view__data-annotations-col">
+            <AnnotationView dataViewId={this.props.id} />
+          </div>
         </div>
       </div>
     );
