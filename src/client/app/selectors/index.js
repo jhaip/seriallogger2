@@ -206,20 +206,6 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   return newRows;
 }
 
-// TODO: rename and refactor for new data views
-export const getSelectedViewEmbedCode = createSelector(
-  [ getSelected ],
-  (selected) => {
-    return (
-      `<Embed source="${selected.source}" ` +
-      `start="${getUtcDateString(selected.start)}" ` +
-      `end="${getUtcDateString(selected.end)}" ` +
-      `visualType="${selected.visualType}"` +
-      `></Embed>`
-    )
-  }
-)
-
 function getCacheData(state, sourceName, start, end) {
   const cacheData = state.data[sourceName].cache;
   const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);

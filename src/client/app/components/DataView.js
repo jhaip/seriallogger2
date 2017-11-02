@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { getUtcDateString } from '../utils/time'
 import moment from 'moment'
 import 'react-widgets/dist/css/react-widgets.css'
 import DropdownList from 'react-widgets/lib/DropdownList'
@@ -22,6 +23,7 @@ import {
   changeDataViewSourceNames
 } from '../actions/DataViewActions'
 import { fetchData } from '../actions/DataActions'
+import Clipboard from 'clipboard'
 
 const mapStateToProps = (state, props) => {
   return {
@@ -66,6 +68,13 @@ const mapDispatchToProps = dispatch => {
 class DataView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      'embedCode': `<Embed source="${props.sourceNames.join(", ")}" ` +
+        `start="${getUtcDateString(props.start)}" ` +
+        `end="${getUtcDateString(props.stop)}" ` +
+        `visualType="${props.visualType}"` +
+        `></Embed>`
+    };
     this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
     this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
@@ -89,6 +98,9 @@ class DataView extends React.Component {
         this.fetchDataForAllSources(nextProps);
       }
     }
+  }
+  componentDidMount() {
+    var clipboard = new Clipboard('#copy-selected-view-embed-button');
   }
   renderVisual() {
     switch (this.props.visualType) {
@@ -142,7 +154,7 @@ class DataView extends React.Component {
             <input
               type="submit"
               id="copy-selected-view-embed-button"
-              data-clipboard-text={this.todo}
+              data-clipboard-text={this.state.embedCode}
               value="Copy"
               readOnly
             />
