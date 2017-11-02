@@ -145,9 +145,13 @@ export function fetchData(source, start, end) {
 }
 
 
-function fetchDataOrGetCacheData(sourceName, start, end, state) {
+export function fetchDataOrGetCacheData(sourceName, start, end, state) {
   return new Promise((resolve, reject) => {
     const sourceData = state.data[sourceName];
+    if (!sourceData) {
+      resolve([]);
+      return;
+    }
     // 1. Check cache
     const cacheData = sourceData.cache;
     const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);

@@ -19,10 +19,10 @@ class NotebookEmbed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {data: [], is_fetching: false}
+    this.updateData = this.updateData.bind(this);
   }
 
-  update(props) {
-    console.log("UPDATING NOTEBOOK EMBED!");
+  updateData(props) {
     this.setState({is_fetching: true});
     // TODO: don't call this function directly, dispatch an action like
     // the overview does
@@ -30,9 +30,9 @@ class NotebookEmbed extends React.Component {
       props.source,
       props.start,
       props.end,
-      this.props.state
+      props.state
     ).then(data => {
-      switch (this.props.visualType) {
+      switch (props.visualType) {
         case "line graph":
           this.setState({data: data, is_fetching: false});
           break;
@@ -45,15 +45,16 @@ class NotebookEmbed extends React.Component {
   }
 
   componentDidMount() {
-    this.update(this.props);
+    this.updateData(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     if (new String(this.props.source).valueOf() !== new String(nextProps.source).valueOf() ||
         new String(this.props.visualType).valueOf() !== new String(nextProps.visualType).valueOf() ||
         !moment(this.props.start).isSame(moment(nextProps.start)) ||
-        !moment(this.props.end).isSame(moment(nextProps.end)) ) {
-      this.update(nextProps);
+        !moment(this.props.end).isSame(moment(nextProps.end)) ||
+        (Object.keys(this.props.state.data).length === 0 && Object.keys(nextProps.state.data).length > 0) ) {
+      this.updateData(nextProps);
     }
   }
 

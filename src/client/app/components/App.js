@@ -6,7 +6,7 @@ import {
   Link
 } from 'react-router-dom'
 import Notebook from '../containers/Notebook'
-import NewDataOverviewPage from './NewDataOverviewPage'
+import DataOverviewPage from './DataOverviewPage'
 
 
 class App extends React.Component {
@@ -23,7 +23,7 @@ class App extends React.Component {
             </div>
           </div>
           <div style={{padding: "10px"}}>
-            <Route exact path="/" component={NewDataOverviewPage}/>
+            <Route exact path="/" component={DataOverviewPage}/>
             <Route path="/notebook/" component={Notebook}/>
           </div>
         </div>

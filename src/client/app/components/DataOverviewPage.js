@@ -14,7 +14,7 @@ const mapDispatchToProps = dispatch => {
   return {}
 }
 
-class NewDataOverviewPage extends React.Component {
+class DataOverviewPage extends React.Component {
   render() {
     const list = this.props.views.map(v => {
       if (v.visualType === "derivative") {
@@ -48,11 +48,11 @@ class NewDataOverviewPage extends React.Component {
     );
   }
 }
-NewDataOverviewPage.propTypes = {
+DataOverviewPage.propTypes = {
   views: PropTypes.array.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NewDataOverviewPage)
+)(DataOverviewPage)
