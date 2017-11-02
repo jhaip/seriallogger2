@@ -3,10 +3,9 @@ import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
-import vegaSpec__DotTimeline from './vega-spec--dot-timeline';
 import configureStore from './configureStore'
 import App from './components/App'
-import { fetchSourcesList } from './actions/OverviewActions'
+import { fetchSourcesList } from './actions/DataSourceActions'
 import { Promise } from 'es6-promise';
 window.Promise = Promise;
 

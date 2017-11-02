@@ -206,6 +206,7 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   return newRows;
 }
 
+// TODO: rename and refactor for new data views
 export const getSelectedViewEmbedCode = createSelector(
   [ getSelected ],
   (selected) => {
@@ -216,19 +217,6 @@ export const getSelectedViewEmbedCode = createSelector(
       `visualType="${selected.visualType}"` +
       `></Embed>`
     )
-  }
-)
-
-const getViewData = (state) => state.view.data
-const getViewDerivativeSources = (state) => state.view.derivativeSources
-
-export const getDataWithDerivativeSources = createSelector(
-  [ getViewData, getViewDerivativeSources ],
-  (data, derivativeSources) => {
-    return Object.assign({}, data, derivativeSources.reduce((acc, ds) => {
-      acc[ds.name] = ds.data;
-      return acc;
-    }, {}));
   }
 )
 
@@ -250,35 +238,6 @@ function getCacheDataAnnotations(state, sourceName, start, end) {
   }
   console.error("DIDN't find a cache data match "+sourceName);
   return [];
-}
-
-const getSelectedData = (state) => state.selected.data
-
-/* TODO: depricated */
-export const getViewDataNew = (state) => {
-  const start = state.view.start;
-  const end = state.view.end;
-  return Object.keys(state.data).reduce((acc, sourceName) => {
-    if (state.data[sourceName]) {
-      acc[sourceName] = getCacheData(state, sourceName, start, end)
-    } else {
-      acc[sourceName] = [];
-    }
-
-    return acc;
-  }, {});
-}
-
-/* TODO: depricated */
-export const selectSelectedData = (state) => {
-  const start = state.selected.start;
-  const end = state.selected.end;
-  const sourceName = state.selected.source;
-  if (state.data[sourceName]) {
-    return getCacheData(state, sourceName, start, end);
-  } else {
-    return [];
-  }
 }
 
 export const getDataViewData = (state, start, end, sourceNames) => {
@@ -318,26 +277,6 @@ export const getDataViewActiveAnnotation = (state, dataViewId) => {
   const activeAnnotation = dataView.activeAnnotation || "";
   return activeAnnotation;
 }
-
-// depricated
-export const getSelectedAnnotations = (state) => {
-  const start = state.selected.start;
-  const end = state.selected.end;
-  const sourceName = state.selected.source;
-  if (state.data[sourceName]) {
-    console.log("get selected annotations return");
-    console.log(getCacheDataAnnotations(state, sourceName, start, end));
-    return getCacheDataAnnotations(state, sourceName, start, end);
-  } else {
-    return [];
-  }
-}
-
-// depricated
-export const getAnnotatedSelectedDataTree = createSelector(
-  [ selectSelectedData, getSelectedAnnotations, getPotentialAnnotation ],
-  createAnnotatedSelectedDataTree
-)
 
 export const getAnnotatedDataTree = (state, start, end, sourceNames, dataViewId) => {
   const dataView = find(state.dataview.views, v => v.id === dataViewId);

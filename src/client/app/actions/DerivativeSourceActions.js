@@ -1,6 +1,7 @@
 export const RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS = 'RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS'
 export const RECEIVE_DERIVATIVE_SOURCES = 'RECEIVE_DERIVATIVE_SOURCES'
 
+// TODO: depricate now that derivative sources are saved as regular sources
 export function fetchDerivativeSources() {
   return (dispatch, getState) => {
     const url = `${window.API_URL}/api/derivative_sources`

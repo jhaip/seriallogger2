@@ -1,4 +1,4 @@
-import { RECEIVE_SOURCES_LIST } from '../actions/OverviewActions'
+import { RECEIVE_SOURCES_LIST } from '../actions/DataSourceActions'
 import { RECEIVE_DATA, RECEIVE_DATA_ANNOTATIONS } from '../actions/DataActions'
 import {
   RECEIVE_DERIVATIVE_SOURCE_DEFINITIONS,

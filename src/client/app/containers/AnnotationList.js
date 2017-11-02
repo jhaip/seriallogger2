@@ -6,7 +6,6 @@ import {
   getDataViewDataAnnotations,
   getDataViewActiveAnnotation
 } from '../selectors'
-import DetailViewTimeGroup from "../components/DetailViewTimeGroup"
 
 
 class AnnotationListItem extends React.Component {

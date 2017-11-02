@@ -6,55 +6,8 @@ import { getSelectionDetails } from '../utils/selection'
 export const CHANGE_ACTIVE_ANNOTATION = 'CHANGE_ACTIVE_ANNOTATION'
 export const SET_POTENTIAL_ANNOTATION = 'SET_POTENTIAL_ANNOTATION'
 
-export function receiveDetailDataAnnotations(source, data) {
-  return { type: RECEIVE_SELECTED_DATA_ANNOTATIONS, source, data }
-}
-
 export function changeActiveAnnotation(activeAnnotation, dataViewId) {
   return { type: CHANGE_ACTIVE_ANNOTATION, activeAnnotation, dataViewId }
-}
-
-function fetchAnnotationsForDetailData(source, start, end) {
-  const url_source = encodeURIComponent(source);
-  const url_start = getUtcDateString(start);
-  const url_end = getUtcDateString(end);
-  const url = `${window.API_URL}/api/annotations`
-    + `?source=${url_source}`
-    + `&start=${url_start}`
-    + `&stop=${url_end}`;
-  return new Promise((resolve, reject) => {
-    fetch(url)
-      .then(response => response.json())
-      .then(json => {
-        const clean_data = json.results.map(d => {
-          return {
-            "start": {
-              "id": d.start_id,
-              "timestamp": d.start_timestamp,
-              "row": d.start_line,
-              "character": d.start_char,
-            },
-            "end": {
-              "id": d.end_id,
-              "timestamp": d.end_timestamp,
-              "row": d.end_line,
-              "character": d.end_char,
-            },
-            "id": d.id,
-            "annotation": d.annotation
-          };
-        });
-        resolve(clean_data);
-      });
-  });
-}
-
-export function fetchAnnotationsForDetailDataAction(source) {
-  return (dispatch, getState) => {
-    const { start, end } = getState().selected;
-    return fetchAnnotationsForDetailData(source, start, end)
-      .then(data => dispatch(receiveDetailDataAnnotations(source, data)))
-  }
 }
 
 export function saveNewAnnotation(annotation) {

@@ -1,12 +1,8 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import FilterSelectViewToSelectedBase from '../components/FilterSelectViewToSelectedBase'
 import { getSelectionDetails } from '../utils/selection'
-import { changeSelectionRange } from '../actions/DetailActions'
 import moment from 'moment'
-
-const mapStateToProps = state => {
-  return {}
-}
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -16,14 +12,30 @@ const mapDispatchToProps = dispatch => {
       var start_date = moment.utc(selection_details.start.data_timestamp).subtract(1, 's').toDate();
       var end_date = moment.utc(selection_details.end.data_timestamp).add(1, 's').toDate();
       console.log(start_date);
-      dispatch(changeSelectionRange(start_date, end_date));
+      // TODO: dispatch a new function to change the selection range on the
+      //       current Data View
+      // dispatch(changeSelectionRange(start_date, end_date));
     }
   }
 }
 
-const FilterSelectViewToSelected = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FilterSelectViewToSelectedBase)
+class FilterSelectViewToSelected extends React.Component {
+  render() {
+    return (
+      <div>
+        <input type="submit"
+               value="Narrow to Selected"
+               className="selected-view__narrow-to-selected"
+               onClick={this.props.onClick} />
+      </div>
+    );
+  }
+}
+FilterSelectViewToSelected.propTypes = {
+  onClick: PropTypes.func.isRequired
+};
 
-export default FilterSelectViewToSelected
+export default connect(
+  null,
+  mapDispatchToProps
+)(FilterSelectViewToSelected)
