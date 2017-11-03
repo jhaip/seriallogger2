@@ -7,8 +7,8 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import RangeSelection from "./RangeSelection"
 import AnnotationView from "./AnnotationView"
-import DetailViewText from "./DetailViewText"
-import DetailViewLineGraph from "../containers/DetailViewLineGraph"
+import DetailViewText from "./DataViews/Text/DetailViewText"
+import DetailViewLineGraph from "./DataViews/LineGraph/DetailViewLineGraph"
 import {
   getDataViewData,
   getAnnotatedDataTree
