@@ -8,6 +8,7 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import RangeSelection from "./RangeSelection"
 import AnnotationView from "./Annotations/AnnotationView"
+import FilterDataViewToSelected from "./FilterDataViewToSelected"
 import DataViewText from "./DataViews/Text/DataViewText"
 import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
 import {
@@ -100,7 +101,7 @@ class DataView extends React.Component {
     }
   }
   componentDidMount() {
-    var clipboard = new Clipboard('#copy-selected-view-embed-button');
+    var clipboard = new Clipboard('#-selected-view-embed-button');
   }
   renderVisual() {
     switch (this.props.visualType) {
@@ -158,6 +159,9 @@ class DataView extends React.Component {
               value="Copy"
               readOnly
             />
+          </div>
+          <div style={{padding: "10px 0px", display: "inline-block"}}>
+            <FilterDataViewToSelected dataViewId={this.props.id} />
           </div>
           <div>
             <Multiselect
