@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import DetailViewText from "./DataViews/Text/DetailViewText"
-import DetailViewLineGraph from "./DataViews/LineGraph/DetailViewLineGraph"
+import DetailViewText from "../DataViews/Text/DetailViewText"
+import DetailViewLineGraph from "../DataViews/LineGraph/DetailViewLineGraph"
 import moment from 'moment'
-import { fetchDataOrGetCacheData } from '../actions/DataActions'
-import { createAnnotatedSelectedDataTree } from '../selectors/index'
+import { fetchDataOrGetCacheData } from '../../actions/DataActions'
+import { createAnnotatedSelectedDataTree } from '../../selectors/index'
 
 const mapStateToProps = state => {
   return {

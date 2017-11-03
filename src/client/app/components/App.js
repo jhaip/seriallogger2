@@ -5,7 +5,7 @@ import {
   Route,
   Link
 } from 'react-router-dom'
-import Notebook from '../containers/Notebook'
+import Notebook from './Notebook/Notebook'
 import DataOverviewPage from './DataOverviewPage'
 
 

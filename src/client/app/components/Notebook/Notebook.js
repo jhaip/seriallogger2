@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { saveView } from '../actions/ViewActions'
+import { saveView } from '../../actions/ViewActions'
 import NotebookEntry from './NotebookEntry'
 import NotebookList from './NotebookList'
 

@@ -6,8 +6,8 @@ import { connect } from 'react-redux'
 import {
   fetchNotebookEntry,
   updateNotebookEntry
-} from '../actions/NotebookActions'
-import NotebookEmbed from '../components/NotebookEmbed'
+} from '../../actions/NotebookActions'
+import NotebookEmbed from './NotebookEmbed'
 
 const mapStateToProps = state => {
   return {
@@ -83,7 +83,7 @@ const compile = marksy({
   }
 })
 
-class NotebookEntryBase extends React.Component {
+class NotebookEntry extends React.Component {
   constructor(props) {
     super(props);
     this.state = {text: '', title: ''};
@@ -171,14 +171,12 @@ class NotebookEntryBase extends React.Component {
     );
   }
 }
-NotebookEntryBase.propTypes = {
+NotebookEntry.propTypes = {
   entry: PropTypes.any,
   fetchNotebookEntry: PropTypes.func.isRequired
 };
 
-const NotebookEntry = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NotebookEntryBase)
-
-export default NotebookEntry
+)(NotebookEntry)

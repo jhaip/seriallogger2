@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchNotebookEntries, createNotebookEntry } from '../actions/NotebookActions'
-import NotebookEntryListItem from '../components/NotebookEntryListItem'
+import { fetchNotebookEntries, createNotebookEntry } from '../../actions/NotebookActions'
+import NotebookEntryListItem from './NotebookEntryListItem'
 
 const mapStateToProps = state => {
   return {
@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-class NotebookListBase extends React.Component {
+class NotebookList extends React.Component {
   componentDidMount() {
     this.props.fetchNotebookEntries();
   }
@@ -47,14 +47,12 @@ class NotebookListBase extends React.Component {
     );
   }
 }
-NotebookListBase.propTypes = {
+NotebookList.propTypes = {
   entries: PropTypes.array.isRequired,
   onCreateEntry: PropTypes.func.isRequired
 };
 
-const NotebookList = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(NotebookListBase)
-
-export default NotebookList
+)(NotebookList)
