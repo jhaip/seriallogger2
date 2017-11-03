@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { getSelectionDetails } from '../utils/selection'
+import { getSelectionDetails } from '../../utils/selection'
 import moment from 'moment'
 
 const mapDispatchToProps = dispatch => {

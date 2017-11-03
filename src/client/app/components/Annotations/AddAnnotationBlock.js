@@ -5,7 +5,7 @@ import {
   setPotentialAnnotation,
   clearPotentialAnnotation,
   saveNewAnnotation
-} from '../actions/AnnotationActions'
+} from '../../actions/AnnotationActions'
 
 const mapStateToProps = state => {
   return {}

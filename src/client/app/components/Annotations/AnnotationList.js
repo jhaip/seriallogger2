@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { changeActiveAnnotation } from '../actions/AnnotationActions'
+import { changeActiveAnnotation } from '../../actions/AnnotationActions'
 import {
   getDataViewDataAnnotations,
   getDataViewActiveAnnotation
-} from '../selectors'
+} from '../../selectors'
 
 
 class AnnotationListItem extends React.Component {
