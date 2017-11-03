@@ -8,8 +8,8 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import RangeSelection from "./RangeSelection"
 import AnnotationView from "./Annotations/AnnotationView"
-import DetailViewText from "./DataViews/Text/DetailViewText"
-import DetailViewLineGraph from "./DataViews/LineGraph/DetailViewLineGraph"
+import DataViewText from "./DataViews/Text/DataViewText"
+import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
 import {
   getDataViewData,
   getAnnotatedDataTree,
@@ -106,7 +106,7 @@ class DataView extends React.Component {
     switch (this.props.visualType) {
       case "line graph":
         return (
-          <DetailViewLineGraph
+          <DataViewLineGraph
             data={this.props.data}
             activeAnnotation={this.props.activeAnnotation}
           />
@@ -114,7 +114,7 @@ class DataView extends React.Component {
       case "raw":
       default:
         return (
-          <DetailViewText
+          <DataViewText
             data={this.props.dataForTextBad}
             activeAnnotation={this.props.activeAnnotation}
           />

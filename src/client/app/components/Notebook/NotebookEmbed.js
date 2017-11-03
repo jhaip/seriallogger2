@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import DetailViewText from "../DataViews/Text/DetailViewText"
-import DetailViewLineGraph from "../DataViews/LineGraph/DetailViewLineGraph"
+import DataViewText from "../DataViews/Text/DataViewText"
+import DataViewLineGraph from "../DataViews/LineGraph/DataViewLineGraph"
 import moment from 'moment'
 import { fetchDataOrGetCacheData } from '../../actions/DataActions'
 import { createAnnotatedSelectedDataTree } from '../../selectors/index'
@@ -62,7 +62,7 @@ class NotebookEmbed extends React.Component {
     switch (this.props.visualType) {
       case "line graph":
         return (
-          <DetailViewLineGraph
+          <DataViewLineGraph
             data={this.state.data}
             activeAnnotation="" />
         );
@@ -70,7 +70,7 @@ class NotebookEmbed extends React.Component {
       case "raw":
       default:
         return (
-          <DetailViewText data={this.state.data}
+          <DataViewText data={this.state.data}
                           activeAnnotation="" />
         );
     }

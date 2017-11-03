@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-class DetailViewTextRowSubtext extends React.Component {
+class DataViewTextRowSubtext extends React.Component {
   render() {
     let classes = "";
     if (this.props.annotationGroups.length) {
@@ -19,10 +19,10 @@ class DetailViewTextRowSubtext extends React.Component {
     );
   }
 }
-DetailViewTextRowSubtext.propTypes = {
+DataViewTextRowSubtext.propTypes = {
   annotationGroups: PropTypes.array.isRequired,
   text: PropTypes.string.isRequired,
   activeAnnotation: PropTypes.string.isRequired,
 };
 
-export default DetailViewTextRowSubtext
+export default DataViewTextRowSubtext

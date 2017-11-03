@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DetailViewTextRowSubtext from  "./DetailViewTextRowSubtext"
+import DataViewTextRowSubtext from  "./DataViewTextRowSubtext"
 
-class DetailViewTextRow extends React.Component {
+class DataViewTextRow extends React.Component {
   render() {
     let k = 0;
     const childrenn = this.props.childrenData.map((c) => {
       return (
-        <DetailViewTextRowSubtext text={c.text}
+        <DataViewTextRowSubtext text={c.text}
                                   key={k++}
                                   annotationGroups={c.annotationGroups}
                                   activeAnnotation={this.props.activeAnnotation} />
@@ -26,7 +26,7 @@ class DetailViewTextRow extends React.Component {
     );
   }
 }
-DetailViewTextRow.propTypes = {
+DataViewTextRow.propTypes = {
   id: PropTypes.any.isRequired,
   rowNumber: PropTypes.number.isRequired,
   sourceName: PropTypes.string.isRequired,
@@ -36,4 +36,4 @@ DetailViewTextRow.propTypes = {
   activeAnnotation: PropTypes.string.isRequired
 };
 
-export default DetailViewTextRow
+export default DataViewTextRow

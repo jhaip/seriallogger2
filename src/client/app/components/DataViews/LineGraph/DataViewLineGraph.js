@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { VictoryChart, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
 
 
-class DetailViewLineGraph extends React.Component {
+class DataViewLineGraph extends React.Component {
   render() {
     let groups = {
       "default": []
@@ -70,9 +70,9 @@ class DetailViewLineGraph extends React.Component {
     );
   }
 }
-DetailViewLineGraph.propTypes = {
+DataViewLineGraph.propTypes = {
   data: PropTypes.array,
   activeAnnotation: PropTypes.string.isRequired,
 };
 
-export default DetailViewLineGraph
+export default DataViewLineGraph

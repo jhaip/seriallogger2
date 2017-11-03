@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 
-class DetailViewTimestampRow extends React.Component {
+class DataViewTimestampRow extends React.Component {
   render() {
     const text = this.props.sourceName + ", " + moment(this.props.timestamp).fromNow();
     return (
@@ -12,9 +12,9 @@ class DetailViewTimestampRow extends React.Component {
     );
   }
 }
-DetailViewTimestampRow.propTypes = {
+DataViewTimestampRow.propTypes = {
   timestamp: PropTypes.any.isRequired,
   sourceName: PropTypes.string.isRequired
 };
 
-export default DetailViewTimestampRow
+export default DataViewTimestampRow

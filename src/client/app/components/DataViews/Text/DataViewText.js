@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DetailViewTimeGroup from "./DetailViewTimeGroup"
+import DataViewTimeGroup from "./DataViewTimeGroup"
 
-class DetailViewText extends React.Component {
+class DataViewText extends React.Component {
   render() {
     const listRows = this.props.data.map((d) =>
-      <DetailViewTimeGroup key={`${d.sourceName}-${d.id}`}
+      <DataViewTimeGroup key={`${d.sourceName}-${d.id}`}
                            {...d}
                            activeAnnotation={this.props.activeAnnotation}/>
     );
@@ -16,9 +16,9 @@ class DetailViewText extends React.Component {
     );
   }
 }
-DetailViewText.propTypes = {
+DataViewText.propTypes = {
   data: PropTypes.array,
   activeAnnotation: PropTypes.string.isRequired,
 };
 
-export default DetailViewText
+export default DataViewText

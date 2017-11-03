@@ -1,14 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DetailViewTextRow from "./DetailViewTextRow"
-import DetailViewTimestampRow from "./DetailViewTimestampRow"
+import DataViewTextRow from "./DataViewTextRow"
+import DataViewTimestampRow from "./DataViewTimestampRow"
 
 let rn = 0; // BAD global state
-class DetailViewTimeGroup extends React.Component {
+class DataViewTimeGroup extends React.Component {
   render() {
     const listRows = this.props.rows.map((r) => {
       return (
-        <DetailViewTextRow id={r.id}
+        <DataViewTextRow id={r.id}
                            key={r.rowNumber}
                            rowNumber={r.rowNumber}
                            rowInValue={r.rowInValue}
@@ -21,7 +21,7 @@ class DetailViewTimeGroup extends React.Component {
     })
     return (
       <div>
-        <DetailViewTimestampRow
+        <DataViewTimestampRow
           timestamp={this.props.timestamp}
           sourceName={this.props.sourceName} />
         {listRows}
@@ -29,7 +29,7 @@ class DetailViewTimeGroup extends React.Component {
     );
   }
 }
-DetailViewTimeGroup.propTypes = {
+DataViewTimeGroup.propTypes = {
   id: PropTypes.any.isRequired,
   sourceName: PropTypes.string.isRequired,
   type: PropTypes.string,
@@ -37,4 +37,4 @@ DetailViewTimeGroup.propTypes = {
   activeAnnotation: PropTypes.string.isRequired,
 };
 
-export default DetailViewTimeGroup
+export default DataViewTimeGroup
