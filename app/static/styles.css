@@ -127,3 +127,10 @@ h3 {
     font-size: 11px;
     box-sizing: border-box;
 }
+
+.source-editor input {
+    display: block;
+}
+.source-editor label {
+    display: block;
+}
