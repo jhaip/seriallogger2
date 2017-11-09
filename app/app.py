@@ -23,6 +23,7 @@ def create_app():
     app.add_url_rule("/notebook/<entry_id>", view_func=IndexView.as_view('index3'))
     app.add_url_rule("/sources/", view_func=IndexView.as_view('index4'))
     app.add_url_rule("/api/sources", view_func=SourcesView.as_view('sources_view'))
+    app.add_url_rule("/api/sources/<int:datasource_id>", view_func=SourcesView.as_view('source_view'))
     app.add_url_rule("/api/data", view_func=DataView.as_view('data_view'))
     app.add_url_rule("/api/annotations", view_func=AnnotationView.as_view('annotation_view'))
     app.add_url_rule("/api/derivative_source_definitions", view_func=DerivativeSourceDefinitionView.as_view('derivative_source_definitions_view'))

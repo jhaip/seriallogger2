@@ -47,6 +47,11 @@ def deleteHelper(request, model, key, value):
     db.session.commit()
     return jsonify(message='Successfuly deleted'), 200
 
+def deleteHelperKey(request, model, key, value):
+    model.query.filter(getattr(model, key) == value).delete()
+    db.session.commit()
+    return jsonify(message='Successfuly deleted'), 200
+
 
 class DatabaseAdminView(MethodView):
 
@@ -69,13 +74,16 @@ class SourcesView(MethodView):
     def post(self):
         return postHelper(request, datasource_schema)
 
+    def put(self, datasource_id):
+        return putHelper(request, datasource_schema, DataSource, datasource_id)
+
     def get(self):
         datasources = DataSource.query.all()
         result = datasources_schema.dump(datasources)
         return jsonify({'results': result.data})
 
-    def delete(self):
-        return deleteHelper(request, DataSource, "name", "name")
+    def delete(self, datasource_id):
+        return deleteHelperKey(request, DataSource, "id", datasource_id)
 
 
 class DataView(MethodView):

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import 'react-widgets/dist/css/react-widgets.css'
 import DropdownList from 'react-widgets/lib/DropdownList'
 import SourceEditor from './SourceEditor'
+import { updateDataSource, fetchSourcesList } from '../../actions/DataSourceActions'
 
 
 const mapStateToProps = (state, props) => {
@@ -14,8 +15,10 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveSource: () => {
-      console.log("TODO: save source");
+    saveSource: (sourceDescription, action) => {
+      dispatch(updateDataSource(sourceDescription, action)).then(() => {
+        dispatch(fetchSourcesList());
+      });
     }
   }
 }
@@ -28,18 +31,13 @@ class SourcesPage extends React.Component {
     };
     this.saveSourceDescription = this.saveSourceDescription.bind(this);
   }
-  saveSourceDescription(sourceDescription, action) {
-    switch(action) {
-      case 'create':
-        console.log("TODO: create");
-        break;
-      case 'update':
-        console.log("TODO: update");
-        break;
-      case 'delete':
-        console.log("TODO: delete");
-        break;
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.data.hasOwnProperty(this.state.selectedSourceName)) {
+      this.setState({'selectedSourceName': ''});
     }
+  }
+  saveSourceDescription(sourceDescription, action) {
+    this.props.saveSource(sourceDescription, action);
   }
   render() {
     const availableSources = Object.keys(this.props.data).filter((key) => {

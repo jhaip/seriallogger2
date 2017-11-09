@@ -41,7 +41,7 @@ export function fetchSourcesList() {
   }
 }
 
-export function createDataSource(opts) {
+export function updateDataSource(opts, action) {
   return (dispatch, getState) => {
     const dataSourceOptions = {
       name: opts.name || "Untitled",
@@ -52,9 +52,20 @@ export function createDataSource(opts) {
       request_type: opts.request_type || "",
       transform_function: opts.transform_function || ""
     }
-    const url = `${window.API_URL}/api/sources`;
+    let url = `${window.API_URL}/api/sources`;
+    let update_http_verb = 'POST';
+    switch (action) {
+      case 'update':
+        update_http_verb = 'PUT';
+        url += '/'+opts.id;
+        break;
+      case 'delete':
+        update_http_verb = 'DELETE'
+        url += '/'+opts.id;
+        break;
+    }
     const options = {
-      method: 'POST',
+      method: update_http_verb,
       headers: {
         'Content-Type': 'application/json'
       },
@@ -75,6 +86,6 @@ export function createDerivativeDataSource(name, transform_function, sourceDepen
       request_data: JSON.stringify(sourceDependencies),
       transform_function
     }
-    return dispatch(createDataSource(opts));
+    return dispatch(updateDataSource(opts, 'create'));
   }
 }

@@ -99,10 +99,13 @@ export default function foo(state = INITIAL_SELECTED_STATE, action) {
   switch (action.type) {
     case RECEIVE_SOURCES_LIST:
       let x = action.sources.slice(0).reduce((acc, source) => {
-        acc[source.name] = Object.assign({}, source, { cache: [] });
+        const existingCache = state[source.name]
+          ? state[source.name].cache
+          : [];
+        acc[source.name] = Object.assign({}, source, { cache: existingCache });
         return acc;
       }, {})
-      return Object.assign({}, state, x)
+      return Object.assign({}, x);
     case RECEIVE_DATA:
       name = action.source.name || action.source;
       console.log(`receving data for source ${name}`)
