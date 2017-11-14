@@ -8,6 +8,7 @@ import {
 import Notebook from './Notebook/Notebook'
 import DataOverviewPage from './DataOverviewPage'
 import SourcesPage from './Sources/SourcesPage'
+import DerivativeSourcesPage from './DerivativeSourcesPage'
 
 
 class App extends React.Component {
@@ -25,11 +26,15 @@ class App extends React.Component {
             <div style={{display: "inline-block", paddingRight: "20px"}}>
               <Link to="/sources/">Edit Sources</Link>
             </div>
+            <div style={{display: "inline-block", paddingRight: "20px"}}>
+              <Link to="/derivative-sources/">Derivative Sources</Link>
+            </div>
           </div>
           <div style={{padding: "10px"}}>
             <Route exact path="/" component={DataOverviewPage}/>
             <Route path="/notebook/" component={Notebook}/>
             <Route path="/sources/" component={SourcesPage}/>
+            <Route path="/derivative-sources/" component={DerivativeSourcesPage}/>
           </div>
         </div>
       </Router>

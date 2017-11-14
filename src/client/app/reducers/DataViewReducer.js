@@ -13,14 +13,14 @@ import {
 const INITIAL_VIEW_STATE = {
     views: [
       {
-        sourceNames: ['NeoRED', 'NeoGRN'],
+        sourceNames: [],
         start: moment().subtract(50, 'days').toDate(),
         stop: moment().subtract(1, 'minute').toDate(),
         visualType: "raw",
         id: 'e146218e-90ed-490c-8cca-910d7d07c82e'
       },
       {
-        sourceNames: ['NeoBLU', 'NeoGRN'],
+        sourceNames: [],
         start: moment().subtract(50, 'days').toDate(),
         stop: moment().subtract(1, 'days').toDate(),
         visualType: "derivative",

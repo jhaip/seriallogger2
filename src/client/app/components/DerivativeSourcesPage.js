@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import DataView from "./DataView"
+import DerivativeView from "./DerivativeView"
 
 const mapStateToProps = state => {
   return {
@@ -13,13 +13,13 @@ const mapDispatchToProps = dispatch => {
   return {}
 }
 
-class DataOverviewPage extends React.Component {
+class DerivativeSourcesPage extends React.Component {
   render() {
-    const v = this.props.views.length ? this.props.views[0] : null;
+    const v = this.props.views.length ? this.props.views[1] : null;
     return (
       <div>
         { v &&
-          <DataView
+          <DerivativeView
             sourceNames={v.sourceNames}
             start={v.start}
             stop={v.stop}
@@ -32,11 +32,12 @@ class DataOverviewPage extends React.Component {
     );
   }
 }
-DataOverviewPage.propTypes = {
+
+DerivativeSourcesPage.propTypes = {
   views: PropTypes.array.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DataOverviewPage)
+)(DerivativeSourcesPage)
