@@ -82,9 +82,10 @@ class AddAnnotationBlock extends React.Component {
         {
           this.state.isEditing ?
             <div>
+              <h5>New Annotation:</h5>
               <input type="type"
                      style={{marginBottom: "5px"}}
-                     className="selected-view__data-add-annotation-text"
+                     className="selected-view__data-add-annotation-text form-control"
                      onChange={this.handleChange}
                      value={this.state.annotationValue}
                      disabled={this.state.isSaving} />

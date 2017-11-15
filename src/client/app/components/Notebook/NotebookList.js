@@ -38,11 +38,14 @@ class NotebookList extends React.Component {
     return (
       <div>
         {list}
-        <input type="Submit"
-               onClick={this.props.onCreateEntry}
-               value="New Entry"
-               readOnly
-               style={{marginTop: "10px"}}/>
+        <input
+          type="Submit"
+          className="btn btn-default"
+          onClick={this.props.onCreateEntry}
+          value="New Entry"
+          readOnly
+          style={{marginTop: "10px"}}
+        />
       </div>
     );
   }

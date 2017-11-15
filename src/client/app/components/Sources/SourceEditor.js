@@ -42,65 +42,87 @@ class SourceEditor extends React.Component {
               : `Editing data source ${this.state.sourceDescription.name}`
             }
           </h2>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.name || ''}
-            onChange={(v) => this.update('name', v)}
-          />
+          <form style={{width: "500px"}}>
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name"
+                value={this.state.sourceDescription.name || ''}
+                onChange={(v) => this.update('name', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={this.state.sourceDescription.description || ''}
+                onChange={(v) => this.update('description', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>URL</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="URL"
+                value={this.state.sourceDescription.url || ''}
+                onChange={(v) => this.update('url', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Request Type</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Request Type"
+                value={this.state.sourceDescription.request_type || ''}
+                onChange={(v) => this.update('request_type', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Request Data</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Request Data"
+                value={this.state.sourceDescription.request_data || ''}
+                onChange={(v) => this.update('request_data', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Request Headers</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Request Headers"
+                value={this.state.sourceDescription.headers || ''}
+                onChange={(v) => this.update('headers', v)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Transform Function</label>
+              <textarea
+                className="form-control" rows="3"
+                value={this.state.sourceDescription.transform_function || ''}
+                onChange={(v) => this.update('transform_function', v)}
+              />
+            </div>
+          </form>
         </div>
-        <div>
-          <label>Description:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.description || ''}
-            onChange={(v) => this.update('description', v)}
-          />
-        </div>
-        <div>
-          <label>URL:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.url || ''}
-            onChange={(v) => this.update('url', v)}
-          />
-        </div>
-        <div>
-          <label>Request Type:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.request_type || ''}
-            onChange={(v) => this.update('request_type', v)}
-          />
-        </div>
-        <div>
-          <label>Request Data:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.request_data || ''}
-            onChange={(v) => this.update('request_data', v)}
-          />
-        </div>
-        <div>
-          <label>Headers:</label>
-          <input
-            type="text"
-            value={this.state.sourceDescription.headers || ''}
-            onChange={(v) => this.update('headers', v)}
-          />
-        </div>
-        <div>
-          <label>Transform Function:</label>
-          <textarea
-            style={{'width': '400px', 'height': '100px'}}
-            value={this.state.sourceDescription.transform_function || ''}
-            onChange={(v) => this.update('transform_function', v)}
-          />
-        </div>
-        <div>
-          <button onClick={this.save}>Save</button>
+        <div style={{marginTop: "10px"}}>
+          <button className="btn btn-primary" onClick={this.save}>Save</button>
           { !this.props.isNew &&
-            <button onClick={this.delete}>Delete</button>
+            <button
+              style={{marginLeft: "10px"}}
+              className="btn btn-default"
+              onClick={this.delete}
+            >
+              Delete
+            </button>
           }
         </div>
       </div>

@@ -45,19 +45,27 @@ class SourcesPage extends React.Component {
     });
     return (
       <div>
-        { this.state.selectedSourceName != '' &&
-          <button
-            onClick={() => this.setState({'selectedSourceName': ''})}
-          >
-            Create New Source
-          </button>
-        }
-        <DropdownList
-          data={availableSources}
-          value={this.state.selectedSourceName}
-          placeholder="Select a Data Source"
-          onChange={(v) => this.setState({'selectedSourceName': v})}
-        />
+        <div style={{display: "flex"}}>
+          <div style={{width: "250px"}}>
+            <DropdownList
+              data={availableSources}
+              value={this.state.selectedSourceName}
+              placeholder="Select a Data Source"
+              onChange={(v) => this.setState({'selectedSourceName': v})}
+            />
+          </div>
+          <div style={{marginLeft: "10px"}}>
+            { this.state.selectedSourceName != '' &&
+              <button
+                className="btn btn-primary"
+                style={{marginBottom: "10px"}}
+                onClick={() => this.setState({'selectedSourceName': ''})}
+              >
+                Create New Source
+              </button>
+            }
+          </div>
+        </div>
         <SourceEditor
           sourceDescription={
             this.state.selectedSourceName != ''
