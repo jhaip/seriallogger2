@@ -14,7 +14,7 @@ class DataViewTextRow extends React.Component {
       )
     })
     return (
-      <pre className={"row row-rn-"+this.props.id}
+      <div className={"monspace row row-rn-"+this.props.id}
            data-rn={this.props.rowNumber}
            data-rowinvalue={this.props.rowInValue}
            data-dataid={this.props.id}
@@ -22,7 +22,7 @@ class DataViewTextRow extends React.Component {
            data-datatype={this.props.type || ''}
            data-datatimestamp={this.props.timestamp} >
         {childrenn}
-      </pre>
+      </div>
     );
   }
 }

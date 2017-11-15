@@ -30,7 +30,7 @@ class FilterDataViewToSelected extends React.Component {
         <input
           type="submit"
           value="Narrow to Selected"
-          className="selected-view__narrow-to-selected"
+          className="selected-view__narrow-to-selected btn btn-default"
           onClick={() => this.props.onClick(this.props.dataViewId)}
         />
       </div>

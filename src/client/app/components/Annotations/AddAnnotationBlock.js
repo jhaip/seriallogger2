@@ -83,6 +83,7 @@ class AddAnnotationBlock extends React.Component {
           this.state.isEditing ?
             <div>
               <input type="type"
+                     style={{marginBottom: "5px"}}
                      className="selected-view__data-add-annotation-text"
                      onChange={this.handleChange}
                      value={this.state.annotationValue}
@@ -90,17 +91,18 @@ class AddAnnotationBlock extends React.Component {
               <div>
                 <input type="submit"
                        value="Save"
-                       className="selected-view__data-save-annotation"
+                       className="selected-view__data-save-annotation btn btn-primary btn-sm"
                        onClick={this.onSaveAnnotation} />
                 <input type="submit"
                        value="Cancel"
-                       className="selected-view__data-cancel-annotation"
+                       style={{marginLeft: "5px"}}
+                       className="selected-view__data-cancel-annotation btn btn-default btn-sm"
                        onClick={this.onCancelAnnotation} />
               </div>
             </div>
           : <input type="submit"
                  value="Add Annotation"
-                 className="selected-view__data-add-annotation"
+                 className="selected-view__data-add-annotation btn btn-default"
                  onClick={this.onAddAnnotation} />
         }
       </div>

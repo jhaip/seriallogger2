@@ -26,7 +26,6 @@
 .row {
     font-family: monospace;
     font-size: 16px;
-    height: 18px;
     margin: 0;
 }
 .selected-view__data-container {
@@ -81,7 +80,7 @@
     margin-top: 20px;
 }
 
-body, .notebook, .notebook textarea {
+.notebook, .notebook textarea {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;

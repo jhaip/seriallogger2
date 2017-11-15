@@ -55,6 +55,7 @@ class SourcesPage extends React.Component {
         <DropdownList
           data={availableSources}
           value={this.state.selectedSourceName}
+          placeholder="Select a Data Source"
           onChange={(v) => this.setState({'selectedSourceName': v})}
         />
         <SourceEditor

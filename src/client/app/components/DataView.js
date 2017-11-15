@@ -128,7 +128,7 @@ class DataView extends React.Component {
   }
   render() {
     const source_dropdown_styles = {
-      width: "150px",
+      width: "120px",
       display: "inline-block",
       marginLeft: "5px",
       marginRight: "5px"
@@ -136,42 +136,45 @@ class DataView extends React.Component {
     let colors = ['orange', 'red', 'blue', 'purple'];
     return (
       <div>
-        <div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
+        <div style={{display: "flex"}}>
+          <div style={{paddingRight: "4px", width: "150px"}}>
             <DropdownList
               data={["raw", "line graph"]}
               value={this.props.visualType}
               onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
-              style={source_dropdown_styles}
             />
           </div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
+          <div style={{padding: "0px 4px"}}>
             <RangeSelection
               startTime={moment.utc(this.props.start).toDate()}
               endTime={moment.utc(this.props.stop).toDate()}
               onChange={this.onTimeChange} />
           </div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
+          <div style={{padding: "0px 4px"}}>
             <input
               type="submit"
+              className="btn btn-default"
               id="copy-selected-view-embed-button"
               data-clipboard-text={this.state.embedCode}
               value="Copy"
               readOnly
             />
           </div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
+          <div style={{padding: "0px 4px"}}>
             <FilterDataViewToSelected dataViewId={this.props.id} />
           </div>
-          <div>
+        </div>
+        <div style={{display: "flex", marginTop: "10px"}}>
+          <div style={{width: "632px"}}>
             <Multiselect
               value={this.props.sourceNames}
               data={this.props.availableSourceNames}
+              placeholder="Choose Data Sources to show"
               onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
             />
           </div>
         </div>
-        <div className="selected-view__data-container">
+        <div className="selected-view__data-container" style={{marginTop: "10px"}}>
           { this.renderVisual() }
           <div className="selected-view__data-annotations-col">
             <AnnotationView dataViewId={this.props.id} />
