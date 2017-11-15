@@ -127,51 +127,46 @@ class DataView extends React.Component {
     this.props.changeDataViewEnd(this.props.id, end);
   }
   render() {
-    const source_dropdown_styles = {
-      width: "120px",
-      display: "inline-block",
-      marginLeft: "5px",
-      marginRight: "5px"
-    }
-    let colors = ['orange', 'red', 'blue', 'purple'];
     return (
-      <div>
-        <div style={{display: "flex"}}>
-          <div style={{paddingRight: "4px", width: "150px"}}>
-            <DropdownList
-              data={["raw", "line graph"]}
-              value={this.props.visualType}
-              onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
-            />
+      <div style={{display: "grid", height: "90vh", gridTemplateRows: "auto 1fr"}}>
+        <div>
+          <div style={{display: "flex"}}>
+            <div style={{paddingRight: "4px", width: "150px"}}>
+              <DropdownList
+                data={["raw", "line graph"]}
+                value={this.props.visualType}
+                onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
+              />
+            </div>
+            <div style={{padding: "0px 4px"}}>
+              <RangeSelection
+                startTime={moment.utc(this.props.start).toDate()}
+                endTime={moment.utc(this.props.stop).toDate()}
+                onChange={this.onTimeChange} />
+            </div>
+            <div style={{padding: "0px 4px"}}>
+              <input
+                type="submit"
+                className="btn btn-default"
+                id="copy-selected-view-embed-button"
+                data-clipboard-text={this.state.embedCode}
+                value="Copy"
+                readOnly
+              />
+            </div>
+            <div style={{padding: "0px 4px"}}>
+              <FilterDataViewToSelected dataViewId={this.props.id} />
+            </div>
           </div>
-          <div style={{padding: "0px 4px"}}>
-            <RangeSelection
-              startTime={moment.utc(this.props.start).toDate()}
-              endTime={moment.utc(this.props.stop).toDate()}
-              onChange={this.onTimeChange} />
-          </div>
-          <div style={{padding: "0px 4px"}}>
-            <input
-              type="submit"
-              className="btn btn-default"
-              id="copy-selected-view-embed-button"
-              data-clipboard-text={this.state.embedCode}
-              value="Copy"
-              readOnly
-            />
-          </div>
-          <div style={{padding: "0px 4px"}}>
-            <FilterDataViewToSelected dataViewId={this.props.id} />
-          </div>
-        </div>
-        <div style={{display: "flex", marginTop: "10px"}}>
-          <div style={{width: "632px"}}>
-            <Multiselect
-              value={this.props.sourceNames}
-              data={this.props.availableSourceNames}
-              placeholder="Choose Data Sources to show"
-              onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
-            />
+          <div style={{display: "flex", marginTop: "10px"}}>
+            <div style={{width: "632px"}}>
+              <Multiselect
+                value={this.props.sourceNames}
+                data={this.props.availableSourceNames}
+                placeholder="Choose Data Sources to show"
+                onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
+              />
+            </div>
           </div>
         </div>
         <div className="selected-view__data-container" style={{marginTop: "10px"}}>

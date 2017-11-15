@@ -11,7 +11,11 @@ class DataViewText extends React.Component {
     );
     return (
       <div className="selected-view__data">
-        {listRows}
+        <div style={{overflow: "hidden", flexGrow: 1, position: "relative"}}>
+          <div style={{position: "absolute", overflow: "scroll", top: 0, bottom: 0, left: 0, right: 0}}>
+            {listRows}
+          </div>
+        </div>
       </div>
     );
   }

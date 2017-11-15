@@ -2,9 +2,9 @@
     fill: red;
 }
 .selected-view__data, .selected-view__data-line-graph {
-    width: 600px;
-    height: 300px;
+    flex-grow: 1;
     overflow: scroll;
+    display: flex;
     border: 1px solid #CCC;
     padding: 10px;
 }
@@ -15,7 +15,7 @@
 }
 .selected-view__data-annotations-col {
     padding-left: 10px;
-    width: 200px;
+    flex-basis: 200px;
 }
 .selected-text {
     background-color: rgba(255, 0, 255, 0.5);
@@ -38,6 +38,10 @@
             flex-direction: row;
     -ms-flex-wrap: nowrap;
         flex-wrap: nowrap;
+        -webkit-flex-align: stretch;
+      -ms-flex-align: stretch;
+      -webkit-align-items: stretch;
+      align-items: stretch;
 }
 .selected-view__new-annotation-input-container {
     display: none;
