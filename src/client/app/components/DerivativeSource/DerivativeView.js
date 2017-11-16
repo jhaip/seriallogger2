@@ -5,30 +5,33 @@ import moment from 'moment'
 import 'react-widgets/dist/css/react-widgets.css'
 import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
-import RangeSelection from "./RangeSelection"
-import AnnotationView from "./Annotations/AnnotationView"
-import DataViewText from "./DataViews/Text/DataViewText"
-import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
+import RangeSelection from "../RangeSelection"
+import AnnotationView from "../Annotations/AnnotationView"
+import DataViewText from "../DataViews/Text/DataViewText"
+import DataViewLineGraph from "../DataViews/LineGraph/DataViewLineGraph"
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/javascript/javascript'
 import {
   getDataViewData,
   getAnnotatedDataTree
-} from '../selectors'
+} from '../../selectors'
 import {
   changeDataViewVisualType,
   changeDataViewStart,
   changeDataViewEnd,
   changeDataViewSourceNames
-} from '../actions/DataViewActions'
+} from '../../actions/DataViewActions'
 import {
   computeDerivativeSource,
   fetchDerivativeSourceDefinitions,
   saveDerivativeSourceDefinition,
   deleteDerivativeSourceDefinition
-} from '../actions/DerivativeSourceActions'
+} from '../../actions/DerivativeSourceActions'
 import {
   createDerivativeDataSource
-} from '../actions/DataSourceActions'
-import { fetchData } from '../actions/DataActions'
+} from '../../actions/DataSourceActions'
+import { fetchData } from '../../actions/DataActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -130,9 +133,8 @@ class DerivativeView extends React.Component {
   componentWillMount() {
     this.props.fetchDerivativeSourceDefinitions();
   }
-  onChangeInput(e) {
-    e.preventDefault();
-    this.setState({input: e.target.value});
+  onChangeInput(newCode) {
+    this.setState({input: newCode});
   }
   save(e) {
     e.preventDefault();
@@ -152,7 +154,7 @@ class DerivativeView extends React.Component {
     const sourceData = this.props.data;
     let result = null;
     try {
-      result = computeDerivativeSource(sourceData, funcBody);
+      result = computeDerivativeSource(sourceData, funcBody, true);
       this.setState({error: ''});
     } catch (e) {
         if (e instanceof SyntaxError) {
@@ -224,12 +226,31 @@ class DerivativeView extends React.Component {
                     </p>
                   </div>
                   <div>
-                    <textarea
-                      className="form-control"
-                      style={{'width': '100%', 'height': '200px', resize: "vertical"}}
-                      value={this.state.input}
-                      onChange={this.onChangeInput} />
+                    <div style={{border: "1px solid #CCC"}}>
+                      <CodeMirror
+                        value={this.state.input}
+                        onBeforeChange={(editor, data, value) => {
+                          this.onChangeInput(value);
+                        }}
+                        options={{
+                          lineNumbers: true,
+                          mode: 'javascript'
+                        }}
+                      />
+                    </div>
                   </div>
+                  {
+                    this.state.error &&
+                    <div
+                      className="alert alert-danger"
+                      role="alert"
+                      style={{marginBottom: 0}}
+                    >
+                      <span className="glyphicon glyphicon-exclamation-sign"></span>
+                      <span className="sr-only">Error:</span>
+                      &nbsp;{ this.state.error }
+                    </div>
+                  }
                   <div>
                     <div style={{display: "flex", marginTop: "10px"}}>
                       <button
@@ -275,10 +296,6 @@ class DerivativeView extends React.Component {
                     { this.state.output }
                   </pre>
                   <div />
-                  {
-                    this.state.error &&
-                    <p style={{color: 'red'}}>{ this.state.error }</p>
-                  }
                 </div>
               </div>
             </div>

@@ -42,7 +42,7 @@ export function addDerivativeDataSource(sourceName, derivativeFunc) {
   }
 }
 
-export function computeDerivativeSource(sourceData, funcBody) {
+export function computeDerivativeSource(sourceData, funcBody, throwError) {
   try {
     console.log(sourceData);
     const func = `(function (sourceData) { ${funcBody} })(sourceData)`;
@@ -53,6 +53,9 @@ export function computeDerivativeSource(sourceData, funcBody) {
   } catch (e) {
     console.error("error computing derivative source");
     console.error(e);
+    if (throwError) {
+      throw e;
+    }
     return [];
   }
 }

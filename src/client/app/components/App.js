@@ -8,7 +8,7 @@ import {
 import Notebook from './Notebook/Notebook'
 import DataOverviewPage from './DataOverviewPage'
 import SourcesPage from './Sources/SourcesPage'
-import DerivativeSourcesPage from './DerivativeSourcesPage'
+import DerivativeSourcesPage from './DerivativeSource/DerivativeSourcesPage'
 
 
 class App extends React.Component {
