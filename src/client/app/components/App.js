@@ -30,7 +30,7 @@ class App extends React.Component {
               <Link to="/derivative-sources/">Derivative Sources</Link>
             </div>
           </div>
-          <div style={{padding: "10px"}}>
+          <div style={{padding: "0 10px 10px 10px"}}>
             <Route exact path="/" component={DataOverviewPage}/>
             <Route path="/notebook/" component={Notebook}/>
             <Route path="/sources/" component={SourcesPage}/>

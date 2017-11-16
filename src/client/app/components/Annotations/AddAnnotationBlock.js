@@ -101,10 +101,14 @@ class AddAnnotationBlock extends React.Component {
                        onClick={this.onCancelAnnotation} />
               </div>
             </div>
-          : <input type="submit"
-                 value="Add Annotation"
-                 className="selected-view__data-add-annotation btn btn-default"
-                 onClick={this.onAddAnnotation} />
+          : <button
+              type="button"
+              style={{width: "100%"}}
+              className="selected-view__data-add-annotation btn btn-default"
+              onClick={this.onAddAnnotation}
+            >
+              Add Annotation
+            </button>
         }
       </div>
     );

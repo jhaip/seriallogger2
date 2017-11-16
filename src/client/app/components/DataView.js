@@ -131,40 +131,37 @@ class DataView extends React.Component {
       <div style={{display: "grid", height: "90vh", gridTemplateRows: "auto 1fr"}}>
         <div>
           <div style={{display: "flex"}}>
-            <div style={{paddingRight: "4px", width: "150px"}}>
-              <DropdownList
-                data={["raw", "line graph"]}
-                value={this.props.visualType}
-                onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
+            <div style={{paddingRight: "4px", flexGrow: "1"}}>
+              <Multiselect
+                value={this.props.sourceNames}
+                data={this.props.availableSourceNames}
+                placeholder="Choose Data Sources to show"
+                onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
               />
             </div>
-            <div style={{padding: "0px 4px"}}>
+            <div>
               <RangeSelection
                 startTime={moment.utc(this.props.start).toDate()}
                 endTime={moment.utc(this.props.stop).toDate()}
                 onChange={this.onTimeChange} />
             </div>
             <div style={{padding: "0px 4px"}}>
-              <input
-                type="submit"
+              <button
+                type="button"
                 className="btn btn-default"
                 id="copy-selected-view-embed-button"
                 data-clipboard-text={this.state.embedCode}
-                value="Copy"
-                readOnly
-              />
+              >
+                &nbsp;
+                <span className="glyphicon glyphicon-copy"></span>
+                &nbsp;
+              </button>
             </div>
-            <div style={{padding: "0px 4px"}}>
-              <FilterDataViewToSelected dataViewId={this.props.id} />
-            </div>
-          </div>
-          <div style={{display: "flex", marginTop: "10px"}}>
-            <div style={{width: "632px"}}>
-              <Multiselect
-                value={this.props.sourceNames}
-                data={this.props.availableSourceNames}
-                placeholder="Choose Data Sources to show"
-                onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
+            <div style={{paddingLeft: "4px", width: "100px"}}>
+              <DropdownList
+                data={["raw", "line graph"]}
+                value={this.props.visualType}
+                onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
               />
             </div>
           </div>
