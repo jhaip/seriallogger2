@@ -145,7 +145,14 @@ class DataView extends React.Component {
                 endTime={moment.utc(this.props.stop).toDate()}
                 onChange={this.onTimeChange} />
             </div>
-            <div style={{padding: "0px 4px"}}>
+            <div style={{padding: "0 4px", width: "100px"}}>
+              <DropdownList
+                data={["raw", "line graph"]}
+                value={this.props.visualType}
+                onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
+              />
+            </div>
+            <div style={{paddingLeft: "4px"}}>
               <button
                 type="button"
                 className="btn btn-default"
@@ -156,13 +163,6 @@ class DataView extends React.Component {
                 <span className="glyphicon glyphicon-copy"></span>
                 &nbsp;
               </button>
-            </div>
-            <div style={{paddingLeft: "4px", width: "100px"}}>
-              <DropdownList
-                data={["raw", "line graph"]}
-                value={this.props.visualType}
-                onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
-              />
             </div>
           </div>
         </div>
