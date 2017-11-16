@@ -97,7 +97,6 @@ class DerivativeView extends React.Component {
       sourceName: '',
       derivativeSourceBase: 'Blank'
     };
-    this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
     this.getSampleOutput = this.getSampleOutput.bind(this);
     this.onChangeInput = this.onChangeInput.bind(this);
@@ -182,82 +181,108 @@ class DerivativeView extends React.Component {
     e.preventDefault();
     this.setState({sourceName: e.target.value});
   }
-  renderVisual() {
-    return (
-      <div>
-        <div>
-          <textarea
-            style={{'width': '630px', 'height': '100px'}}
-            value={this.state.input}
-            onChange={this.onChangeInput} />
-        </div>
-        <div>
-          <pre style={{'width': '630px', 'height': '200px', 'border': '1px solid #CCC'}}>
-            { this.state.output }
-          </pre>
-        </div>
-        <div />
-        {
-          this.state.error &&
-          <p style={{color: 'red'}}>{ this.state.error }</p>
-        }
-      </div>
-    );
-  }
   onTimeChange(start, end) {
     this.props.changeDataViewStart(this.props.id, start);
     this.props.changeDataViewEnd(this.props.id, end);
   }
   render() {
-    const source_dropdown_styles = {
-      width: "150px",
-      display: "inline-block",
-      marginLeft: "5px",
-      marginRight: "5px"
-    }
-    let colors = ['orange', 'red', 'blue', 'purple'];
     return (
-      <div>
+      <div style={{display: "grid", height: "90vh", gridTemplateRows: "auto 1fr"}}>
         <div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
-            <DropdownList
-              data={["Blank"].concat(Object.keys(this.props.derivativeSourceDefinitions))}
-              value={this.state.derivativeSourceBase}
-              onChange={this.onDerivativeSourceBaseChange}
-              style={source_dropdown_styles}
-            />
+          <div style={{display: "flex"}}>
+            <div style={{width: "150px", paddingRight: "4px"}}>
+              <DropdownList
+                data={["Blank"].concat(Object.keys(this.props.derivativeSourceDefinitions))}
+                value={this.state.derivativeSourceBase}
+                onChange={this.onDerivativeSourceBaseChange}
+              />
+            </div>
+            <div style={{padding: "0 4px", flexGrow: "1"}}>
+              <Multiselect
+                value={this.props.sourceNames}
+                data={this.props.availableSourceNames}
+                placeholder="Dependencies"
+                onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
+              />
+            </div>
+            <div>
+              <RangeSelection
+                startTime={moment.utc(this.props.start).toDate()}
+                endTime={moment.utc(this.props.stop).toDate()}
+                onChange={this.onTimeChange} />
+            </div>
           </div>
-          <div style={{padding: "10px 0px", display: "inline-block"}}>
-            <RangeSelection
-              startTime={moment.utc(this.props.start).toDate()}
-              endTime={moment.utc(this.props.stop).toDate()}
-              onChange={this.onTimeChange} />
-          </div>
-          <div>
-            Dependencies:
-            <Multiselect
-              value={this.props.sourceNames}
-              data={this.props.availableSourceNames}
-              onChange={(v) => this.props.changeDataViewSourceNames(this.props.id, v)}
-            />
-          </div>
-        </div>
-        <div>
-          <button onClick={ this.getSampleOutput }>Run</button>
-          <button onClick={ this.save }>Save</button>
-          <button onClick={ this.delete }>Delete</button>
-          <input
-            type="text"
-            value={this.state.sourceName}
-            placeholder="New source name"
-            onChange={this.handleSourceNameChange} />
-          <button onClick={ this.createSource }>Add source to Overview</button>
-        </div>
-        <div>
-          <div>return a derivative source given variable "sourceData".</div>
         </div>
         <div className="selected-view__data-container">
-          { this.renderVisual() }
+          <div style={{flexGrow: 1, overflow: "scroll", display: "flex", width: '100%'}}>
+            <div style={{overflow: "hidden", flexGrow: 1, position: "relative"}}>
+              <div style={{position: "absolute", overflow: "scroll", top: 0, bottom: 0, left: 0, right: 0}}>
+                <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+                  <div style={{marginTop: "10px"}}>
+                    <p className="text-muted">
+                      Return a derivative source given variable <code>sourceData</code>.
+                    </p>
+                  </div>
+                  <div>
+                    <textarea
+                      className="form-control"
+                      style={{'width': '100%', 'height': '200px', resize: "vertical"}}
+                      value={this.state.input}
+                      onChange={this.onChangeInput} />
+                  </div>
+                  <div>
+                    <div style={{display: "flex", marginTop: "10px"}}>
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={ this.getSampleOutput }
+                      >
+                        Run
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-default"
+                        style={{margin: "0 4px"}}
+                        onClick={ this.save }
+                      >
+                        Save Code
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={ this.delete }
+                      >
+                        Delete
+                      </button>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={this.state.sourceName}
+                        placeholder="New source name"
+                        style={{margin: "0 4px", maxWidth: "200px"}}
+                        onChange={this.handleSourceNameChange}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={ this.createSource }
+                      >
+                        Create Source
+                      </button>
+                    </div>
+                  </div>
+                  <pre style={{'width': '100%', flexGrow: '1', 'border': '1px solid #CCC', marginTop: "10px"}}>
+                    { this.state.output }
+                  </pre>
+                  <div />
+                  {
+                    this.state.error &&
+                    <p style={{color: 'red'}}>{ this.state.error }</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
