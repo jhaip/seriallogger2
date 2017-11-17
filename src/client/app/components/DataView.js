@@ -74,11 +74,16 @@ class DataView extends React.Component {
         `start="${getUtcDateString(props.start)}" ` +
         `end="${getUtcDateString(props.stop)}" ` +
         `visualType="${props.visualType}"` +
-        `></Embed>`
+        `></Embed>`,
+      'autoRefresh': false,
+      'timerIconFlipFlop': false
     };
     this.renderVisual = this.renderVisual.bind(this);
     this.onTimeChange = this.onTimeChange.bind(this);
     this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
+    this.onAutoRefreshClicked = this.onAutoRefreshClicked.bind(this);
+    this.flipTimerIcon = this.flipTimerIcon.bind(this);
+    this.timer = null;
   }
   fetchDataForAllSources(nextProps) {
     nextProps.sourceNames.forEach(sourceName => {
@@ -126,6 +131,26 @@ class DataView extends React.Component {
     this.props.changeDataViewStart(this.props.id, start);
     this.props.changeDataViewEnd(this.props.id, end);
   }
+  flipTimerIcon() {
+    this.setState({
+      timerIconFlipFlop: !this.state.timerIconFlipFlop
+    });
+  }
+  onAutoRefreshClicked(e) {
+    const newAutoRefreshSetting = !this.state.autoRefresh;
+    this.setState({
+      autoRefresh: newAutoRefreshSetting
+    });
+    if (newAutoRefreshSetting) {
+      this.timer = setInterval(() => {
+        console.log("TIMER!");
+        this.props.changeDataViewEnd(this.props.id, moment.utc().toDate());
+        this.flipTimerIcon();
+      }, 1000);
+    } else {
+      clearInterval(this.timer);
+    }
+  }
   render() {
     return (
       <div style={{display: "grid", height: "90vh", gridTemplateRows: "auto 1fr"}}>
@@ -161,6 +186,25 @@ class DataView extends React.Component {
               >
                 &nbsp;
                 <span className="glyphicon glyphicon-copy"></span>
+                &nbsp;
+              </button>
+            </div>
+            <div style={{paddingLeft: "4px"}}>
+              <button
+                type="button"
+                className={ this.state.autoRefresh
+                  ? "btn btn-primary"
+                  : "btn btn-default"
+                }
+                onClick={ this.onAutoRefreshClicked }
+              >
+                &nbsp;
+                <span
+                  className={ this.state.timerIconFlipFlop
+                    ? "glyphicon glyphicon-refresh"
+                    : "glyphicon glyphicon-repeat"
+                  }
+                ></span>
                 &nbsp;
               </button>
             </div>
