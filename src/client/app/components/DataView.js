@@ -84,6 +84,7 @@ class DataView extends React.Component {
     this.onAutoRefreshClicked = this.onAutoRefreshClicked.bind(this);
     this.flipTimerIcon = this.flipTimerIcon.bind(this);
     this.timer = null;
+    this.autoRefreshDelayMs = 4000;
   }
   fetchDataForAllSources(nextProps) {
     nextProps.sourceNames.forEach(sourceName => {
@@ -142,11 +143,12 @@ class DataView extends React.Component {
       autoRefresh: newAutoRefreshSetting
     });
     if (newAutoRefreshSetting) {
+      this.props.changeDataViewEnd(this.props.id, moment.utc().toDate());
       this.timer = setInterval(() => {
         console.log("TIMER!");
         this.props.changeDataViewEnd(this.props.id, moment.utc().toDate());
         this.flipTimerIcon();
-      }, 1000);
+      }, this.autoRefreshDelayMs);
     } else {
       clearInterval(this.timer);
     }

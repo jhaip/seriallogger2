@@ -206,13 +206,24 @@ export function createAnnotatedSelectedDataTree(data, annotations, potential_ann
   return newRows;
 }
 
-function getCacheData(state, sourceName, start, end) {
+function getCacheData(state, sourceName, start, end, partialMatchAllowed) {
   const cacheData = state.data[sourceName].cache;
-  const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
-  if (cacheDataMatch) {
-    return cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
+  if (partialMatchAllowed) {
+    const partialCacheDataMatch = cacheData.filter(d => {
+      return d.start <= start || d.end >= end;
+    }).reduce((acc, match) => {
+      return acc.concat(match.data.filter(
+        d => d.timestamp >= start && d.timestamp <= end
+      ));
+    }, []);
+    return partialCacheDataMatch;
+  } else {
+    const cacheDataMatch = find(cacheData, d => d.start <= start && d.end >= end);
+    if (cacheDataMatch) {
+      return cacheDataMatch.data.filter(d => d.timestamp >= start && d.timestamp <= end);
+    }
+    console.error("DIDN't find a exact cache data match "+sourceName);
   }
-  console.error("DIDN't find a cache data match "+sourceName);
   return [];
 }
 
@@ -229,7 +240,7 @@ function getCacheDataAnnotations(state, sourceName, start, end) {
 export const getDataViewData = (state, start, end, sourceNames) => {
   const data = sourceNames.reduce((acc, sourceName) => {
     if (state.data[sourceName]) {
-      acc = acc.concat(getCacheData(state, sourceName, start, end));
+      acc = acc.concat(getCacheData(state, sourceName, start, end, true));
     }
     return acc;
   }, []);
