@@ -70,11 +70,7 @@ class DataView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      'embedCode': `<Embed source="${props.sourceNames.join(", ")}" ` +
-        `start="${getUtcDateString(props.start)}" ` +
-        `end="${getUtcDateString(props.stop)}" ` +
-        `visualType="${props.visualType}"` +
-        `></Embed>`,
+      'embedCode': this.getEmbedCode(props),
       'autoRefresh': false,
       'timerIconFlipFlop': false
     };
@@ -83,12 +79,23 @@ class DataView extends React.Component {
     this.fetchDataForAllSources = this.fetchDataForAllSources.bind(this);
     this.onAutoRefreshClicked = this.onAutoRefreshClicked.bind(this);
     this.flipTimerIcon = this.flipTimerIcon.bind(this);
+    this.getEmbedCode = this.getEmbedCode.bind(this);
     this.timer = null;
     this.autoRefreshDelayMs = 4000;
+  }
+  getEmbedCode(props) {
+    return `<Embed source="${props.sourceNames.join(", ")}" ` +
+      `start="${getUtcDateString(props.start)}" ` +
+      `end="${getUtcDateString(props.stop)}" ` +
+      `visualType="${props.visualType}"` +
+      `></Embed>`;
   }
   fetchDataForAllSources(nextProps) {
     nextProps.sourceNames.forEach(sourceName => {
       nextProps.fetchData(sourceName, nextProps.start, nextProps.stop);
+    });
+    this.setState({
+      embedCode: this.getEmbedCode(nextProps)
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -107,7 +114,7 @@ class DataView extends React.Component {
     }
   }
   componentDidMount() {
-    var clipboard = new Clipboard('#-selected-view-embed-button');
+    var clipboard = new Clipboard('#copy-selected-view-embed-button');
   }
   renderVisual() {
     switch (this.props.visualType) {
