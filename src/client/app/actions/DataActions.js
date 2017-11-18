@@ -29,7 +29,7 @@ function guid() {
 
 
 function applyTranformFunction(source, json) {
-  let clean_data;
+  let clean_data = json.results;
   if (source.name === "annotations") {
     clean_data = json.results.map(d => {
       const value = `${d.annotation}\r\nSource: ${d.source}\r\nStart: ${d.start_timestamp}\r\nEnd: ${d.end_timestamp}`;

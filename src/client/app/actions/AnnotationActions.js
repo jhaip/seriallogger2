@@ -12,7 +12,9 @@ export function changeActiveAnnotation(activeAnnotation, dataViewId) {
 
 export function saveNewAnnotation(annotation) {
   return (dispatch, getState) => {
-    const currentSelectionDetails = getState().selected.potential_annotation;
+    // TODO: more robust handling of getting potential annotation
+    // TODO: should be passing in data view ID
+    const currentSelectionDetails = getState().dataview.views[0].potential_annotation;
     let data;
     if (currentSelectionDetails === null) {
       // If no text is highlighted, make a global annotation

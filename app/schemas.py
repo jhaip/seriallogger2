@@ -68,6 +68,13 @@ class DataSchema(Schema):
     def process_timestamp(self, data):
         data['timestamp'] = utcnow()
 
+    @pre_load
+    def process_type(self, data):
+        if not data.get('type'):
+            data['type'] = ''
+        if not data.get('overflow'):
+            data['overflow'] = ''
+
     @post_load
     def make_data(self, data):
         return Data(**data)

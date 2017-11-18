@@ -64,8 +64,11 @@ class AnnotationList extends React.Component {
         </div>
         {(this.props.activeAnnotation === "") ?
           null :
-          <button onClick={this.props.clearActiveAnnotation}
-                  style={{marginTop: "10px"}}>
+          <button
+            onClick={this.props.clearActiveAnnotation}
+            style={{marginTop: "10px"}}
+            className="btn btn-default"
+          >
             Clear Selection
           </button>}
       </div>
