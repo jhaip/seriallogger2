@@ -31,8 +31,21 @@ def create_app():
     app.add_url_rule("/api/derivative_sources", view_func=DerivativeSourceView.as_view('derivative_sources_view'))
     app.add_url_rule("/api/notebook/entries", view_func=NotebookEntriesView.as_view('notebook_entries_view'))
     app.add_url_rule("/api/notebook/entries/<int:entry_id>", view_func=NotebookEntryView.as_view('notebook_entry_view'))
-    app.add_url_rule("/admin/database", view_func=DatabaseAdminView.as_view('database_admin_view'))
     return app
+
+
+def init_db():
+    print("INIT DB")
+
+    app = Flask(__name__, template_folder=template_dir)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+PROJECT_ROOT+'/db/log.db'
+    app.config['SQLALCHEMY_ECHO'] = True
+
+    with app.app_context():
+        db.init_app(app)
+        db.create_all(app=app)
+
+    print("DONE")
 
 
 def add_header(r):
