@@ -43,6 +43,7 @@ int analogReadMQTT(int port) {
   delay(10);
   int value = analogRead(A0);    // read the input pin
   sprintf(msg, "{\"type\": \"BINARY\", \"label\": \"A0\", \"value\": %d, \"tick\": \"%lu\"}", value, millis());
+  Serial.println(value);
   // client.publish("/outTopic", msg);
   return value;
 }
@@ -51,6 +52,7 @@ int analogReadMQTT(int port) {
 void setup() {
     myServo.attach(servoPin);
     myServo.write(67);
+    Serial.begin(9600);
 }
 
 void loop() {
