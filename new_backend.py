@@ -1,12 +1,13 @@
 def create_data(source, start, end, results, new_data_range):
-    for d in results.filter(timestamp__gte=start, timestamp__lte=end):
-        data = Data(
-            data_range=new_data_range,
-            data_source=source,
-            timestamp=d.timestamp,
-            value=d.value
-        )
-        db.session.add(data)
+    for d in results:
+        if d["timestamp"] >= start and d["timestamp"] <= end
+            data = Data(
+                data_range=new_data_range,
+                data_source=source,
+                timestamp=d.timestamp,
+                value=d.value
+            )
+            db.session.add(data)
     db.session.commit()
 
 
@@ -67,8 +68,27 @@ def get_data(data_source, start, end):
     for dependency in source.dependencies:
         dependent_data[dependency.name] = get_data(dependency, start, end)
 
-    # TODO: convert derivative function from text to callable function
-    results = source.derivative_function(dependent_data, start, end)
+    f = """
+    def transform_function_wrapper(dependent_data, start, end):
+        {body}
+
+    results = transform_function_wrapper(dependent_data, start, end)
+    """.format(body=source.transform_function)
+    # TODO:
+    # - limit scope of exec or make it harmless
+    # - support other languages (source.transform_function_language)
+    exec(f)
+
+    # Validate results
+    if type(results) is not list:
+        raise "results is not a list!"
+    for r in results:
+        if type(r) is not dict:
+            raise 'results element is not a dict!'
+        if r["timestamp"] is not valid date:
+            raise "result element's timestamp field is not a valid datetime"
+        if type(r["value"]) is not in [str, int, float]:
+            raise "result element's value field is not a str, int, or float"
 
     cache_results(source, start, end, results)
 
@@ -100,3 +120,21 @@ with app.app_context():
 
 with app.app_context():
     print(DataSource.query.one().dependencies)
+
+f = """
+def foo():
+    return 5+5
+
+print(foo())
+"""
+exec(f, {'__builtins__':{}, 'print': print})
+
+transform_function = "return 11"
+
+f = """
+def bar():
+    {body}
+
+x = bar()
+""".format(body=transform_function)
+exec(f)
