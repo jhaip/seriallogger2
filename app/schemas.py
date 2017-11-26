@@ -53,41 +53,14 @@ class AnnotationsSchema(Schema):
     def make_annotation(self, data):
         return Annotations(**data)
 
-class DataSchema(Schema):
-    id = fields.Int(dump_only=True)
-    source = fields.Str()
-    timestamp = fields.Str()  # auto assign time, make a DateTime(), dump_only=True
-    value = fields.Str()
-    type = fields.Str()
-    overflow = fields.Str()
-
-    def __repr__(self):
-        return '<DataSchema %r>' % self.id
-
-    @pre_load
-    def process_timestamp(self, data):
-        data['timestamp'] = utcnow()
-
-    @pre_load
-    def process_type(self, data):
-        if not data.get('type'):
-            data['type'] = ''
-        if not data.get('overflow'):
-            data['overflow'] = ''
-
-    @post_load
-    def make_data(self, data):
-        return Data(**data)
 
 class DataSourceSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
     description = fields.Str()
-    url = fields.Str()
-    headers = fields.Str()
-    request_data = fields.Str()
-    request_type = fields.Str()
+    dependencies = fields.Nested(DataSourceSchema, many=True)
     transform_function = fields.Str()
+    transform_function_language = fields.Str()
 
     def __repr__(self):
         return '<DataSourceSchema %r>' % self.id
@@ -95,6 +68,43 @@ class DataSourceSchema(Schema):
     @post_load
     def make_datasource(self, data):
         return DataSource(**data)
+
+
+class DataRange(Schema):
+    id = fields.Int(dump_only=True)
+    start = fields.DateTime(dump_only=True)
+    end = fields.DateTime(dump_only=True)
+
+    def __repr__(self):
+        return '<DataRangeSchema %r>' % self.id
+
+    @post_load
+    def make_datarange(self, data):
+        return DataRange(**data)
+
+# TODO: when data is POSTed from outside:
+# How to assign data_source and data_range?
+# DataRange: assume it's the latest value and extend the most recent values's range
+# or create a range
+
+class DataSchema(Schema):
+    id = fields.Int(dump_only=True)
+    data_source = fields.Nested(DataSourceSchema)
+    data_range = fields.Nested(DataRangeSchema, dump_only=True)
+    timestamp = fields.DateTime()
+    value = fields.Str()
+
+    def __repr__(self):
+        return '<DataSchema %r>' % self.id
+
+    @pre_load
+    def process_timestamp(self, data):
+        data['timestamp'] = datetime.now(tz=pytz.utc)
+
+    @post_load
+    def make_data(self, data):
+        return Data(**data)
+
 
 class NotebookEntrySchema(Schema):
     id = fields.Int(dump_only=True)

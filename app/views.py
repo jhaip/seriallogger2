@@ -92,8 +92,8 @@ class DataView(MethodView):
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
                 datas = (Data.query
                     .filter_by(source=filter_source)
-                    .filter(db.func.date(Data.timestamp) >= filter_start_date)
-                    .filter(db.func.date(Data.timestamp) <= filter_stop_date)
+                    .filter(Data.timestamp >= filter_start_date)
+                    .filter(Data.timestamp <= filter_stop_date)
                 )
             else:
                 datas = Data.query.filter_by(source=filter_source)
@@ -151,20 +151,6 @@ class DerivativeSourceDefinitionView(MethodView):
             result = derivativesourcedefinitions_schema.dump(derivative_source_definitions)
             # print(result, file=sys.stderr)
             return jsonify({'results': result.data})
-
-
-class DerivativeSourceView(MethodView):
-
-    def post(self):
-        return postHelper(request, derivativesource_schema)
-
-    def delete(self):
-        return deleteHelper(request, Derivativesources, "name", "name")
-
-    def get(self):
-        derivative_sources = Derivativesources.query.all()
-        result = derivativesources_schema.dump(derivative_sources)
-        return jsonify({'results': result.data})
 
 
 class NotebookEntriesView(MethodView):
