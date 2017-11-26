@@ -58,7 +58,7 @@ class DataSourceSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str()
     description = fields.Str()
-    dependencies = fields.Nested(DataSourceSchema, many=True)
+    dependencies = fields.Nested('DataSourceSchema', many=True)
     transform_function = fields.Str()
     transform_function_language = fields.Str()
 
@@ -70,7 +70,7 @@ class DataSourceSchema(Schema):
         return DataSource(**data)
 
 
-class DataRange(Schema):
+class DataRangeSchema(Schema):
     id = fields.Int(dump_only=True)
     start = fields.DateTime(dump_only=True)
     end = fields.DateTime(dump_only=True)
@@ -89,7 +89,7 @@ class DataRange(Schema):
 
 class DataSchema(Schema):
     id = fields.Int(dump_only=True)
-    data_source = fields.Nested(DataSourceSchema)
+    data_source = fields.Nested(DataSourceSchema, only=('id',))
     data_range = fields.Nested(DataRangeSchema, dump_only=True)
     timestamp = fields.DateTime()
     value = fields.Str()

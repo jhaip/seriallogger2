@@ -77,3 +77,26 @@ def get_data(data_source, start, end):
         db.func.date(Data.timestamp) >= start,
         db.func.date(Data.timestamp) <= end
     )
+
+
+# Setup Notes
+
+from app import create_app
+from models import DataSource, DataRange, Data
+app = create_app()
+with app.app_context():
+    DataSource.query.all()
+
+dsd = {}
+dsd["name"] = "test"
+dsd["description"] = ""
+dsd["dependencies"] = []
+dsd["transform_function"] = 'return [{"timestamp": "2017-10-05T14:48:00.000Z", "value": "1"}]'
+dsd["transform_function_language"] = 'python'
+ds = DataSource(**dsd)
+with app.app_context():
+    db.session.add(ds)
+    db.session.commit()
+
+with app.app_context():
+    print(DataSource.query.one().dependencies)

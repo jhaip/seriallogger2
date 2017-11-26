@@ -42,11 +42,17 @@ data_source_dependencies = db.Table('data_source_dependencies',
 
 
 class DataSource(db.Model):
+    __tablename__ = 'data_source'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    dependencies = db.relationship('DataSource', secondary=data_source_dependencies, lazy='subquery',
-        backref=db.backref('dependents', lazy=True))
+    dependencies = db.relationship(
+        'DataSource',
+        secondary=data_source_dependencies,
+        primaryjoin=id==data_source_dependencies.c.data_source_id,
+        secondaryjoin=id==data_source_dependencies.c.data_source_dependency_id,
+        backref="parents"
+    )
     transform_function = db.Column(db.Text, nullable=False)
     transform_function_language = db.Column(db.String(100), nullable=False)
 
