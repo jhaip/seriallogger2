@@ -1,3 +1,5 @@
+import datetime
+
 def create_data(source, start, end, results, new_data_range):
     for d in results:
         if d["timestamp"] >= start and d["timestamp"] <= end
@@ -16,8 +18,8 @@ def cache_results(source, start, end, results):
     db.session.add(new_data_range)
     db.session.commit()
     overlapping_data_ranges = DataRange.query.filter(
-        db.func.date(DataRange.start) <= end,
-        db.func.date(DataRange.end) >= start
+        DataRange.start <= end,
+        DataRange.end >= start
     ).order_by(DataRange.start)
 
     overlapping_data_ranges_count = overlapping_data_ranges.count()
@@ -31,8 +33,8 @@ def cache_results(source, start, end, results):
     for i, data_range in enumerate(overlapping_data_ranges):
         Data.query.filter(
             Data.data_range == data_range,
-            db.func.date(Data.timestamp) >= start,
-            db.func.date(Data.timestamp) <= end
+            Data.timestamp >= start,
+            Data.timestamp <= end
         ).update({Data.data_range: new_data_range})
         if i < overlapping_data_ranges_count:
             create_data(
@@ -52,14 +54,14 @@ def cache_results(source, start, end, results):
 def get_data(data_source, start, end):
     # Check cache
     data_ranges = DataRange.query.filter(
-        db.func.date(DataRange.start) <= start,
-        db.func.date(DataRange.end) >= end
+        DataRange.start <= start,
+        DataRange.end >= end
     )
     if data_ranges.count() == 1:
         results = Data.query.filter(
             Data.data_range == data_ranges.one(),
-            db.func.date(Data.timestamp) >= start,
-            db.func.date(Data.timestamp) <= end
+            Data.timestamp >= start,
+            Data.timestamp <= end
         )
         return results
 
@@ -85,7 +87,7 @@ def get_data(data_source, start, end):
     for r in results:
         if type(r) is not dict:
             raise 'results element is not a dict!'
-        if r["timestamp"] is not valid date:
+        if isinstance(r["timestamp"]):
             raise "result element's timestamp field is not a valid datetime"
         if type(r["value"]) is not in [str, int, float]:
             raise "result element's value field is not a str, int, or float"
@@ -94,16 +96,19 @@ def get_data(data_source, start, end):
 
     return Data.query.filter(
         Data.data_source == source,
-        db.func.date(Data.timestamp) >= start,
-        db.func.date(Data.timestamp) <= end
+        Data.timestamp >= start,
+        Data.timestamp <= end
     )
 
 
 # Setup Notes
 
 from app import create_app
+from database import db
 from models import DataSource, DataRange, Data
 app = create_app()
+with app.app_context():
+    db.init_app(app)
 with app.app_context():
     DataSource.query.all()
 
@@ -138,3 +143,17 @@ def bar():
 x = bar()
 """.format(body=transform_function)
 exec(f)
+
+with app.app_context():
+    d1 = DataSource.query.one()
+
+dsd = {}
+dsd["name"] = "two"
+dsd["description"] = "test"
+dsd["dependencies"] = [d1]
+dsd["transform_function"] = 'return dependent_data["test"]'
+dsd["transform_function_language"] = 'python'
+ds = DataSource(**dsd)
+with app.app_context():
+    db.session.add(ds)
+    db.session.commit()
