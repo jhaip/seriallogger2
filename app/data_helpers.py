@@ -37,12 +37,16 @@ def cache_results(source, start, end, results):
         create_data(source, start, data_range.start, results, new_data_range)
 
     for i, data_range in enumerate(overlapping_data_ranges):
-        Data.query.filter(
+        existing_data = Data.query.filter(
             Data.data_range == data_range,
             Data.timestamp >= start,
             Data.timestamp <= end
-        ).update({Data.data_range: new_data_range})
-        if i < overlapping_data_ranges_count:
+        )
+        for d in existing_data:
+            d.data_range = new_data_range
+            db.session.add(data)
+        db.session.commit()
+        if i < overlapping_data_ranges_count-1:
             create_data(
                 source,
                 data_range.end,
@@ -54,7 +58,24 @@ def cache_results(source, start, end, results):
     if overlapping_data_ranges[-1].end < end:
         create_data(source, data_range.end, end, results, new_data_range)
 
-    overlapping_data_ranges.delete()
+    for odr in overlapping_data_ranges:
+        db.session.delete(odr)
+    db.session.commit()
+
+
+def compute(transform_function):
+    l = {"dependent_data": [], "start": [], "end": []}
+    f = """
+def transform_function_wrapper(dependent_data, start, end):
+    {body}
+
+results = transform_function_wrapper(dependent_data, start, end)
+""".format(body=transform_function)
+    # TODO:
+    # - limit scope of exec or make it harmless
+    # - support other languages (data_source.transform_function_language)
+    exec(f, l)
+    return l["results"]
 
 
 def get_data(data_source, start, end):
@@ -79,23 +100,10 @@ def get_data(data_source, start, end):
         print("FETCHING - " + str(dependency.name))
         dependent_data[dependency.name] = get_data(dependency, start, end)
 
-    results = None
-    f = """
-def transform_function_wrapper(dependent_data, start, end):
-    {body}
-
-results = transform_function_wrapper(dependent_data, start, end)
-""".format(body=data_source.transform_function)
-    # TODO:
-    # - limit scope of exec or make it harmless
-    # - support other languages (data_source.transform_function_language)
-    exec(f, globals(), locals())
+    results = compute(data_source.transform_function)
 
     # Validate results
-    print(f)
     print(data_source.transform_function)
-    print(globals())
-    print(locals())
     print("RESULTS:")
     print(results)
     if type(results) is not list:
@@ -103,7 +111,7 @@ results = transform_function_wrapper(dependent_data, start, end)
     for r in results:
         if type(r) is not dict:
             raise Exception('results element is not a dict!')
-        if isinstance(r["timestamp"]):
+        if isinstance(r["timestamp"], datetime):
             raise Exception("result element's timestamp field is not a valid datetime")
         if type(r["value"]) not in [str, int, float]:
             raise Exception("result element's value field is not a str, int, or float")

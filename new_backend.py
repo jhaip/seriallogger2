@@ -36,7 +36,7 @@ def cache_results(source, start, end, results):
             Data.timestamp >= start,
             Data.timestamp <= end
         ).update({Data.data_range: new_data_range})
-        if i < overlapping_data_ranges_count:
+        if i < overlapping_data_ranges_count-1:
             create_data(
                 source,
                 data_range.end,
@@ -171,3 +171,9 @@ with app.app_context():
 with app.app_context():
     d = get_data(DataSource.query.get(1), datetime(2016,1,1), datetime(2018,1,1))
     print(d)
+
+
+with app.app_context():
+    for d in DataRange.query.all():
+        db.session.delete(d)
+    db.session.commit()
