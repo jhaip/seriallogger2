@@ -1,8 +1,14 @@
+from database import db
+from models import *
+from schemas import *
+import pytz
+import iso8601
 from datetime import datetime
+
 
 def create_data(source, start, end, results, new_data_range):
     for d in results:
-        if d["timestamp"] >= start and d["timestamp"] <= end
+        if d["timestamp"] >= start and d["timestamp"] <= end:
             data = Data(
                 data_range=new_data_range,
                 data_source=source,
@@ -53,6 +59,7 @@ def cache_results(source, start, end, results):
 
 def get_data(data_source, start, end):
     # Check cache
+    print("CHECK CACHE")
     data_ranges = DataRange.query.filter(
         DataRange.start <= start,
         DataRange.end >= end
@@ -66,108 +73,47 @@ def get_data(data_source, start, end):
         return results
 
     # Fetch dependencies
+    print("FETCHING DEPENDENCIES:")
     dependent_data = {}
-    for dependency in source.dependencies:
+    for dependency in data_source.dependencies:
+        print("FETCHING - " + str(dependency.name))
         dependent_data[dependency.name] = get_data(dependency, start, end)
 
+    results = None
     f = """
-    def transform_function_wrapper(dependent_data, start, end):
-        {body}
+def transform_function_wrapper(dependent_data, start, end):
+    {body}
 
-    results = transform_function_wrapper(dependent_data, start, end)
-    """.format(body=source.transform_function)
+results = transform_function_wrapper(dependent_data, start, end)
+""".format(body=data_source.transform_function)
     # TODO:
     # - limit scope of exec or make it harmless
-    # - support other languages (source.transform_function_language)
-    exec(f)
+    # - support other languages (data_source.transform_function_language)
+    exec(f, globals(), locals())
 
     # Validate results
+    print(f)
+    print(data_source.transform_function)
+    print(globals())
+    print(locals())
+    print("RESULTS:")
+    print(results)
     if type(results) is not list:
-        raise "results is not a list!"
+        raise Exception("results is not a list!")
     for r in results:
         if type(r) is not dict:
-            raise 'results element is not a dict!'
+            raise Exception('results element is not a dict!')
         if isinstance(r["timestamp"]):
-            raise "result element's timestamp field is not a valid datetime"
+            raise Exception("result element's timestamp field is not a valid datetime")
         if type(r["value"]) not in [str, int, float]:
-            raise "result element's value field is not a str, int, or float"
+            raise Exception("result element's value field is not a str, int, or float")
 
-    cache_results(source, start, end, results)
+    print("CACHING RESULTS")
+    cache_results(data_source, start, end, results)
 
+    print("RETURNING")
     return Data.query.filter(
-        Data.data_source == source,
+        Data.data_source == data_source,
         Data.timestamp >= start,
         Data.timestamp <= end
     )
-
-
-# Setup Notes
-
-from app import create_app
-from database import db
-from models import DataSource, DataRange, Data
-app = create_app()
-with app.app_context():
-    db.init_app(app)
-with app.app_context():
-    DataSource.query.all()
-
-dsd = {}
-dsd["name"] = "test"
-dsd["description"] = ""
-dsd["dependencies"] = []
-dsd["transform_function"] = 'return [{"timestamp": "2017-10-05T14:48:00.000Z", "value": "1"}]'
-dsd["transform_function_language"] = 'python'
-ds = DataSource(**dsd)
-with app.app_context():
-    db.session.add(ds)
-    db.session.commit()
-
-with app.app_context():
-    print(DataSource.query.one().dependencies)
-
-f = """
-def foo():
-    return 5+5
-
-print(foo())
-"""
-exec(f, {'__builtins__':{}, 'print': print})
-
-transform_function = "return 11"
-
-f = """
-def bar():
-    {body}
-
-x = bar()
-""".format(body=transform_function)
-exec(f)
-
-with app.app_context():
-    d1 = DataSource.query.one()
-
-dsd = {}
-dsd["name"] = "two"
-dsd["description"] = "test"
-dsd["dependencies"] = [d1]
-dsd["transform_function"] = 'return dependent_data["test"]'
-dsd["transform_function_language"] = 'python'
-ds = DataSource(**dsd)
-with app.app_context():
-    db.session.add(ds)
-    db.session.commit()
-
-from datetime import datetime
-from data_helpers import get_data
-from app import create_app
-from database import db
-from models import DataSource, DataRange, Data
-app = create_app()
-with app.app_context():
-    db.init_app(app)
-
-
-with app.app_context():
-    d = get_data(DataSource.query.get(1), datetime(2016,1,1), datetime(2018,1,1))
-    print(d)
