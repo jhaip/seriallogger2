@@ -8,7 +8,16 @@ from datetime import datetime
 
 def create_data(source, start, end, results, new_data_range):
     for d in results:
-        if d["timestamp"] >= start and d["timestamp"] <= end:
+        d_timestamp = d["timestamp"]
+        if not isinstance(d_timestamp, datetime):
+            d_timestamp = iso8601.parse_date(d_timestamp)
+        print("----- TIMESTAMP:")
+        print(d_timestamp)
+        print(type(d_timestamp))
+        print(start)
+        print(type(start))
+        print(end)
+        if d_timestamp >= start and d_timestamp <= end:
             data = Data(
                 data_range=new_data_range,
                 data_source=source,
@@ -23,13 +32,24 @@ def cache_results(source, start, end, results):
     new_data_range = DataRange(start=start, end=end)
     db.session.add(new_data_range)
     db.session.commit()
+
     overlapping_data_ranges = DataRange.query.filter(
         DataRange.start <= end,
-        DataRange.end >= start
+        DataRange.end >= start,
+        DataRange.id != new_data_range.id
     ).order_by(DataRange.start)
+
+    print("INSIDE cache_results")
+    print(start)
+    print(type(start))
+    print(end)
+    print(type(end))
+    print(results)
+    print(type(results))
 
     overlapping_data_ranges_count = overlapping_data_ranges.count()
     if overlapping_data_ranges_count is 0:
+        print("REturning early because overlapping_data_ranges_count is 0")
         create_data(source, start, end, results, new_data_range)
         return
 
@@ -37,6 +57,7 @@ def cache_results(source, start, end, results):
         create_data(source, start, data_range.start, results, new_data_range)
 
     for i, data_range in enumerate(overlapping_data_ranges):
+        print("looking at overlapping_data_ranges index "+str(i))
         existing_data = Data.query.filter(
             Data.data_range == data_range,
             Data.timestamp >= start,
@@ -57,6 +78,8 @@ def cache_results(source, start, end, results):
 
     if overlapping_data_ranges[-1].end < end:
         create_data(source, data_range.end, end, results, new_data_range)
+
+    print("after, deleting")
 
     for odr in overlapping_data_ranges:
         db.session.delete(odr)

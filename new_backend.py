@@ -24,6 +24,7 @@ def cache_results(source, start, end, results):
 
     overlapping_data_ranges_count = overlapping_data_ranges.count()
     if overlapping_data_ranges_count is 0:
+        print("REturning early because overlapping_data_ranges_count is 0")
         create_data(source, start, end, results, new_data_range)
         return
 
@@ -164,16 +165,16 @@ from app import create_app
 from database import db
 from models import DataSource, DataRange, Data
 app = create_app()
+
 with app.app_context():
     db.init_app(app)
-
-
-with app.app_context():
-    d = get_data(DataSource.query.get(1), datetime(2016,1,1), datetime(2018,1,1))
-    print(d)
-
 
 with app.app_context():
     for d in DataRange.query.all():
         db.session.delete(d)
     db.session.commit()
+
+
+with app.app_context():
+    d = get_data(DataSource.query.get(1), datetime(2016,1,1), datetime(2018,1,1))
+    print(d)
