@@ -159,11 +159,12 @@ with app.app_context():
     db.session.add(ds)
     db.session.commit()
 
-from datetime import datetime
+from datetime import datetime, timezone
 from data_helpers import get_data
 from app import create_app
 from database import db
 from models import DataSource, DataRange, Data
+import pytz
 app = create_app()
 
 with app.app_context():
@@ -176,5 +177,5 @@ with app.app_context():
 
 
 with app.app_context():
-    d = get_data(DataSource.query.get(1), datetime(2016,1,1), datetime(2018,1,1))
+    d = get_data(DataSource.query.get(1), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
     print(d)

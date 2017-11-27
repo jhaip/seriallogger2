@@ -21,8 +21,8 @@ def create_data(source, start, end, results, new_data_range):
             data = Data(
                 data_range=new_data_range,
                 data_source=source,
-                timestamp=d.timestamp,
-                value=d.value
+                timestamp=d_timestamp,
+                value=d["value"]
             )
             db.session.add(data)
     db.session.commit()
