@@ -113,7 +113,7 @@ def get_data(data_source, start, end):
             Data.data_range == data_ranges.one(),
             Data.timestamp >= start,
             Data.timestamp <= end
-        )
+        ).all()
         return results
 
     # Fetch dependencies
