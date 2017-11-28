@@ -62,6 +62,8 @@ class DataSource(db.Model):
 
 class DataRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    data_source_id = db.Column(db.Integer, db.ForeignKey('data_source.id'), nullable=False)
+    data_source = db.relationship('DataSource', backref='data_ranges', lazy=True)
     start = db.Column(db.DateTime)
     end = db.Column(db.DateTime)
 

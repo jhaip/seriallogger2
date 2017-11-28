@@ -29,11 +29,12 @@ def create_data(source, start, end, results, new_data_range):
 
 
 def cache_results(source, start, end, results):
-    new_data_range = DataRange(start=start, end=end)
+    new_data_range = DataRange(start=start, end=end, data_source=source)
     db.session.add(new_data_range)
     db.session.commit()
 
     overlapping_data_ranges = DataRange.query.filter(
+        DataRange.data_source == source,
         DataRange.start <= end,
         DataRange.end >= start,
         DataRange.id != new_data_range.id
@@ -105,6 +106,7 @@ def get_data(data_source, start, end):
     # Check cache
     print("CHECK CACHE")
     data_ranges = DataRange.query.filter(
+        DataRange.data_source == data_source,
         DataRange.start <= start,
         DataRange.end >= end
     )
@@ -147,4 +149,4 @@ def get_data(data_source, start, end):
         Data.data_source == data_source,
         Data.timestamp >= start,
         Data.timestamp <= end
-    )
+    ).all()

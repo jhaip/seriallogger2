@@ -179,3 +179,17 @@ with app.app_context():
 with app.app_context():
     d = get_data(DataSource.query.get(1), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
     print(d)
+
+with app.app_context():
+    d = get_data(DataSource.query.get(2), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    print(d)
+
+
+with app.app_context():
+    results = Data.query.filter(
+        Data.data_range == DataSource.query.get(1),
+        Data.timestamp >= datetime(2016,1,1).replace(tzinfo=pytz.UTC),
+        Data.timestamp <= datetime(2018,1,1).replace(tzinfo=pytz.UTC)
+    ).all()
+    print("RESULTS:")
+    print(results)
