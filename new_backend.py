@@ -149,7 +149,7 @@ with app.app_context():
     d1 = DataSource.query.one()
 
 dsd = {}
-dsd["name"] = "two"
+dsd["name"] = "four"
 dsd["description"] = "test"
 dsd["dependencies"] = [d1]
 dsd["transform_function"] = 'return dependent_data["test"]'
@@ -181,7 +181,7 @@ with app.app_context():
     print(d)
 
 with app.app_context():
-    d = get_data(DataSource.query.get(2), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    d = get_data(DataSource.query.get(4), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
     print(d)
 
 

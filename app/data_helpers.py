@@ -87,8 +87,8 @@ def cache_results(source, start, end, results):
     db.session.commit()
 
 
-def compute(transform_function):
-    l = {"dependent_data": [], "start": [], "end": []}
+def compute(transform_function, dependent_data, start, end):
+    l = {"dependent_data": dependent_data, "start": start, "end": end}
     f = """
 def transform_function_wrapper(dependent_data, start, end):
     {body}
@@ -125,7 +125,7 @@ def get_data(data_source, start, end):
         print("FETCHING - " + str(dependency.name))
         dependent_data[dependency.name] = get_data(dependency, start, end)
 
-    results = compute(data_source.transform_function)
+    results = compute(data_source.transform_function, dependent_data, start, end)
 
     # Validate results
     print(data_source.transform_function)
@@ -135,6 +135,8 @@ def get_data(data_source, start, end):
         raise Exception("results is not a list!")
     for r in results:
         if type(r) is not dict:
+            print(r)
+            print(type(r))  # write now it's a data model!
             raise Exception('results element is not a dict!')
         if isinstance(r["timestamp"], datetime):
             raise Exception("result element's timestamp field is not a valid datetime")
