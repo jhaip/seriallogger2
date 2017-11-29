@@ -3,6 +3,7 @@ from models import *
 from schemas import *
 import pytz
 import iso8601
+import json
 from datetime import datetime
 
 
@@ -111,12 +112,13 @@ def get_data(data_source, start, end):
         DataRange.end >= end
     )
     if data_ranges.count() == 1:
-        results = Data.query.filter(
+        data = Data.query.filter(
             Data.data_range == data_ranges.one(),
             Data.timestamp >= start,
             Data.timestamp <= end
         ).all()
-        return results
+        data_dump = datas_schema.dump(data)
+        return data_dump.data
 
     # Fetch dependencies
     print("FETCHING DEPENDENCIES:")
@@ -132,6 +134,7 @@ def get_data(data_source, start, end):
     print("RESULTS:")
     print(results)
     if type(results) is not list:
+        print(type(results))
         raise Exception("results is not a list!")
     for r in results:
         if type(r) is not dict:
@@ -139,16 +142,20 @@ def get_data(data_source, start, end):
             print(type(r))  # write now it's a data model!
             raise Exception('results element is not a dict!')
         if isinstance(r["timestamp"], datetime):
+            print(r["timestamp"])
             raise Exception("result element's timestamp field is not a valid datetime")
         if type(r["value"]) not in [str, int, float]:
+            print(r["value"])
             raise Exception("result element's value field is not a str, int, or float")
 
     print("CACHING RESULTS")
     cache_results(data_source, start, end, results)
 
     print("RETURNING")
-    return Data.query.filter(
+    data = Data.query.filter(
         Data.data_source == data_source,
         Data.timestamp >= start,
         Data.timestamp <= end
     ).all()
+    data_dump = datas_schema.dump(data)
+    return data_dump.data
