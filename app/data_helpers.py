@@ -12,12 +12,6 @@ def create_data(source, start, end, results, new_data_range):
         d_timestamp = d["timestamp"]
         if not isinstance(d_timestamp, datetime):
             d_timestamp = iso8601.parse_date(d_timestamp)
-        print("----- TIMESTAMP:")
-        print(d_timestamp)
-        print(type(d_timestamp))
-        print(start)
-        print(type(start))
-        print(end)
         if d_timestamp >= start and d_timestamp <= end:
             data = Data(
                 data_range=new_data_range,
@@ -40,14 +34,6 @@ def cache_results(source, start, end, results):
         DataRange.end >= start,
         DataRange.id != new_data_range.id
     ).order_by(DataRange.start)
-
-    print("INSIDE cache_results")
-    print(start)
-    print(type(start))
-    print(end)
-    print(type(end))
-    print(results)
-    print(type(results))
 
     overlapping_data_ranges_count = overlapping_data_ranges.count()
     if overlapping_data_ranges_count is 0:
@@ -80,8 +66,6 @@ def cache_results(source, start, end, results):
 
     if overlapping_data_ranges[-1].end < end:
         create_data(source, data_range.end, end, results, new_data_range)
-
-    print("after, deleting")
 
     for odr in overlapping_data_ranges:
         db.session.delete(odr)
