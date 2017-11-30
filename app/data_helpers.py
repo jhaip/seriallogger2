@@ -4,6 +4,7 @@ from schemas import *
 import pytz
 import iso8601
 import json
+import requests
 from datetime import datetime
 
 
@@ -143,3 +144,16 @@ def get_data(data_source, start, end):
     ).all()
     data_dump = datas_schema.dump(data)
     return data_dump.data
+
+
+def make_data_source(name, func, func_lang, description="", dependencies=[]):
+    data_source = DataSource(
+        name=name,
+        description=description,
+        dependencies=dependencies,
+        transform_function=func,
+        transform_function_language=func_lang
+    )
+    db.session.add(data_source)
+    db.session.commit()
+    return data_source

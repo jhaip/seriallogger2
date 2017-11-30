@@ -160,7 +160,7 @@ with app.app_context():
     db.session.commit()
 
 from datetime import datetime, timezone
-from data_helpers import get_data
+from data_helpers import get_data, make_data_source
 from app import create_app
 from database import db
 from models import DataSource, DataRange, Data
@@ -193,3 +193,26 @@ with app.app_context():
     ).all()
     print("RESULTS:")
     print(results)
+
+with app.app_context():
+    # Weird how "import requests" is needed inside the function
+    # Not nice that indentation is needed
+    transform_function = """
+    import requests
+    url = "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data"
+    headers = {"X-AIO-Key": "3a3688bc5a6f46da9c5281823032892f"}
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        data = r.json()
+        for d in data:
+            d["timestamp"] = d["created_at"]
+        return data
+    return []
+    """
+    ds = make_data_source("code", transform_function, "python")
+    print(ds)
+
+
+with app.app_context():
+    d = get_data(DataSource.query.get(8), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    print(d)
