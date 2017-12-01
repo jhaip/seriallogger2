@@ -160,7 +160,7 @@ with app.app_context():
     db.session.commit()
 
 from datetime import datetime, timezone
-from data_helpers import get_data, make_data_source
+from data_helpers import get_data, make_data_source, find_data_source
 from app import create_app
 from database import db
 from models import DataSource, DataRange, Data
@@ -171,25 +171,47 @@ with app.app_context():
     db.init_app(app)
 
 with app.app_context():
+    for d in Data.query.all():
+        db.session.delete(d)
+    db.session.commit()
+
+with app.app_context():
     for d in DataRange.query.all():
         db.session.delete(d)
     db.session.commit()
 
 
 with app.app_context():
-    d = get_data(DataSource.query.get(1), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    d = get_data(DataSource.query.get(1), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
     print(d)
 
 with app.app_context():
-    d = get_data(DataSource.query.get(4), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    d = get_data(DataSource.query.get(1), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,2).replace(tzinfo=timezone.utc))
+    print(d)
+
+with app.app_context():
+    ds = DataSource.query.get(1)
+    start = datetime(2016,1,1)
+    end = datetime(2018,1,2)
+    q = DataRange.query.filter(DataRange.data_source==ds, DataRange.end >= start, DataRange.end <= end, DataRange.start <= start)
+    print(q.one().start)
+    print(q.one().end)
+
+with app.app_context():
+    data_source = DataSource.query.get(1)
+    data_ranges = DataRange.query.filter(DataRange.data_source == data_source)
+    print(data_ranges.all())
+
+with app.app_context():
+    d = get_data(DataSource.query.get(4), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
     print(d)
 
 
 with app.app_context():
     results = Data.query.filter(
         Data.data_range == DataSource.query.get(1),
-        Data.timestamp >= datetime(2016,1,1).replace(tzinfo=pytz.UTC),
-        Data.timestamp <= datetime(2018,1,1).replace(tzinfo=pytz.UTC)
+        Data.timestamp >= datetime(2016,1,1).replace(tzinfo=timezone.utc),
+        Data.timestamp <= datetime(2018,1,1).replace(tzinfo=timezone.utc)
     ).all()
     print("RESULTS:")
     print(results)
@@ -197,22 +219,10 @@ with app.app_context():
 with app.app_context():
     # Weird how "import requests" is needed inside the function
     # Not nice that indentation is needed
-    transform_function = """
-    import requests
-    url = "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data"
-    headers = {"X-AIO-Key": "3a3688bc5a6f46da9c5281823032892f"}
-    r = requests.get(url, headers=headers)
-    if r.status_code == 200:
-        data = r.json()
-        for d in data:
-            d["timestamp"] = d["created_at"]
-        return data
-    return []
-    """
-    ds = make_data_source("code", transform_function, "python")
+    ds = make_http_request_data_source("code2", "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data", headers={"X-AIO-Key": "3a3688bc5a6f46da9c5281823032892f"})
     print(ds)
 
 
 with app.app_context():
-    d = get_data(DataSource.query.get(8), datetime(2016,1,1).replace(tzinfo=pytz.UTC), datetime(2018,1,1).replace(tzinfo=pytz.UTC))
+    d = get_data(find_data_source("code2"), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
     print(d)

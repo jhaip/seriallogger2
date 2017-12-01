@@ -1,11 +1,9 @@
 from database import db
-from models import *
-from schemas import *
-import pytz
+from models import Data, DataRange, DataSource
+from schemas import datas_schema
 import iso8601
 import json
-import requests
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def create_data(source, start, end, results, new_data_range):
@@ -13,6 +11,15 @@ def create_data(source, start, end, results, new_data_range):
         d_timestamp = d["timestamp"]
         if not isinstance(d_timestamp, datetime):
             d_timestamp = iso8601.parse_date(d_timestamp)
+            print("-------- PARSE DATE")
+            print(d_timestamp)
+            print(d_timestamp.tzinfo)
+        else:
+            if d_timestamp.tzinfo is not timezone.utc:
+                print("d_timestamp is not timezone.utc, converting it")
+                d_timestamp = d_timestamp.replace(tzinfo=timezone.utc)
+        print("----- NEW DATA RANGE")
+        print(new_data_range)
         if d_timestamp >= start and d_timestamp <= end:
             data = Data(
                 data_range=new_data_range,
@@ -28,6 +35,9 @@ def cache_results(source, start, end, results):
     new_data_range = DataRange(start=start, end=end, data_source=source)
     db.session.add(new_data_range)
     db.session.commit()
+    new_data_range = DataRange.query.filter(DataRange.start==start,
+                                            DataRange.end==end,
+                                            DataRange.data_source==source).one()
 
     overlapping_data_ranges = DataRange.query.filter(
         DataRange.data_source == source,
@@ -42,32 +52,39 @@ def cache_results(source, start, end, results):
         create_data(source, start, end, results, new_data_range)
         return
 
-    if overlapping_data_ranges[0].start > start:
-        create_data(source, start, data_range.start, results, new_data_range)
+    first_overlapping_data_range_datetime = (
+        overlapping_data_ranges[0].start.replace(tzinfo=timezone.utc))
+    if first_overlapping_data_range_datetime > start:
+        print("----- first overlapping")
+        create_data(source, start, first_overlapping_data_range_datetime, results, new_data_range)
 
     for i, data_range in enumerate(overlapping_data_ranges):
-        print("looking at overlapping_data_ranges index "+str(i))
-        existing_data = Data.query.filter(
-            Data.data_range == data_range,
-            Data.timestamp >= start,
-            Data.timestamp <= end
-        )
+        print("looking at overlapping_data_ranges index " + str(i))
+        existing_data = Data.query.filter(Data.data_range == data_range)
         for d in existing_data:
             d.data_range = new_data_range
-            db.session.add(data)
+            db.session.add(d)
         db.session.commit()
-        if i < overlapping_data_ranges_count-1:
+        if i < overlapping_data_ranges_count - 1:
+            next_overlapping_data_range_datetime = (
+                overlapping_data_ranges[i + 1].start.replace(tzinfo=timezone.utc))
+            print("----- overlapping")
             create_data(
                 source,
-                data_range.end,
-                overlapping_data_ranges[i+1].start,
+                data_range.end.replace(tzinfo=timezone.utc),
+                next_overlapping_data_range_datetime,
                 results,
                 new_data_range
             )
 
-    if overlapping_data_ranges[-1].end < end:
-        create_data(source, data_range.end, end, results, new_data_range)
+    end_overlapping_data_range_datetime = (
+        overlapping_data_ranges[-1].end.replace(tzinfo=timezone.utc))
+    if end_overlapping_data_range_datetime < end:
+        print("----- end overlapping")
+        create_data(source, end_overlapping_data_range_datetime,
+                    end, results, new_data_range)
 
+    print("---- deleting overlapping ranges")
     for odr in overlapping_data_ranges:
         db.session.delete(odr)
     db.session.commit()
@@ -89,6 +106,7 @@ results = transform_function_wrapper(dependent_data, start, end)
 
 
 def get_data(data_source, start, end):
+    results = None
     # Check cache
     print("CHECK CACHE")
     data_ranges = DataRange.query.filter(
@@ -97,22 +115,52 @@ def get_data(data_source, start, end):
         DataRange.end >= end
     )
     if data_ranges.count() == 1:
+        print("------ RETURNING CACHE")
         data = Data.query.filter(
+            Data.data_source == data_source,
             Data.data_range == data_ranges.one(),
             Data.timestamp >= start,
             Data.timestamp <= end
         ).all()
         data_dump = datas_schema.dump(data)
         return data_dump.data
+    else:
+        # No full cache hit, but check for a partial cache hit
+        # from start to somewhere in the middle
+        # and filling in the gap to the end will only take one fetch
+        data_ranges = DataRange.query.filter(DataRange.data_source == data_source,
+                                             DataRange.end > start,
+                                             DataRange.end <= end,
+                                             DataRange.start <= start)
+        if data_ranges.count() == 1:
+            print("FILLING IN END GAP")
+            data_range = data_ranges.one()
+            cached_data = Data.query.filter(
+                Data.data_source == data_source,
+                Data.data_range == data_range,
+                Data.timestamp >= start,
+                Data.timestamp <= end).all()
+            cached_data_dump = datas_schema.dump(cached_data)
+            new_data_dump = get_data(data_source, data_range.end.replace(tzinfo=timezone.utc), end)
+            # new data won't hit the cache
+            # new data will overlap cached_data range and auto join
+            print("FILLING IN END GAP RESULTS:")
+            print(cached_data_dump.data)
+            print(type(cached_data_dump.data))
+            print(new_data_dump)
+            print(type(new_data_dump))
+            results = list(cached_data_dump.data) + list(new_data_dump)
+            return results
 
-    # Fetch dependencies
-    print("FETCHING DEPENDENCIES:")
-    dependent_data = {}
-    for dependency in data_source.dependencies:
-        print("FETCHING - " + str(dependency.name))
-        dependent_data[dependency.name] = get_data(dependency, start, end)
+    if results is None:
+        # Fetch dependencies
+        print("FETCHING DEPENDENCIES:")
+        dependent_data = {}
+        for dependency in data_source.dependencies:
+            print("FETCHING - " + str(dependency.name))
+            dependent_data[dependency.name] = get_data(dependency, start, end)
 
-    results = compute(data_source.transform_function, dependent_data, start, end)
+        results = compute(data_source.transform_function, dependent_data, start, end)
 
     # Validate results
     print(data_source.transform_function)
@@ -126,11 +174,15 @@ def get_data(data_source, start, end):
             print(r)
             print(type(r))  # write now it's a data model!
             raise Exception('results element is not a dict!')
-        if isinstance(r["timestamp"], datetime):
-            print(r["timestamp"])
-            raise Exception("result element's timestamp field is not a valid datetime")
+        r_timestamp_date = iso8601.parse_date(r["timestamp"])
+        if r_timestamp_date.tzinfo is not timezone.utc:
+            print(r_timestamp_date)
+            print(r_timestamp_date.tzinfo)
+            print(timezone.utc)
+            raise Exception("result element's timestamp field must have tzinfo = UTC")
         if type(r["value"]) not in [str, int, float]:
             print(r["value"])
+            print(type(r["value"]))
             raise Exception("result element's value field is not a str, int, or float")
 
     print("CACHING RESULTS")
@@ -157,3 +209,23 @@ def make_data_source(name, func, func_lang, description="", dependencies=[]):
     db.session.add(data_source)
     db.session.commit()
     return data_source
+
+
+def find_data_source(name):
+    return DataSource.query.filter(DataSource.name==name).one()
+
+
+def make_http_request_data_source(name, url, headers={}, description=""):
+    transform_function = """
+    import requests
+    url = "{}"
+    headers = {}
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        data = r.json()
+        for d in data:
+            d["timestamp"] = d["created_at"]
+        return data
+    return []
+    """.format(url, json.dumps(headers))
+    return make_data_source(name, transform_function, "python", description=description)

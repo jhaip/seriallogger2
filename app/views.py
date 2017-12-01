@@ -4,7 +4,7 @@ from sqlalchemy import distinct
 from database import db
 from models import *
 from schemas import *
-from data_helpers import get_data
+from data_helpers import get_data, find_data_source
 import pytz
 import iso8601
 from datetime import datetime
@@ -86,21 +86,19 @@ class DataView(MethodView):
         filter_source = request.args.get('source')
         filter_start = request.args.get('start')
         filter_stop = request.args.get('stop')
-        datas = []
         if filter_source:
+            data_source = find_data_source(filter_source)
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                datas = (Data.query
-                    .filter_by(source=filter_source)
-                    .filter(Data.timestamp >= filter_start_date)
-                    .filter(Data.timestamp <= filter_stop_date)
-                )
+                result = get_data(data_source, filter_start_date, filter_stop_date)
             else:
-                datas = Data.query.filter_by(source=filter_source)
+                datas = Data.query.filter_by(data_source=data_source)
+                result = datas_schema.dump(datas)
         else:
             datas = Data.query.all()
-        result = datas_schema.dump(datas)
+            result = datas_schema.dump(datas)
+
         return jsonify({'results': result.data})
 
 
