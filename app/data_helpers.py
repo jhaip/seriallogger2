@@ -32,6 +32,8 @@ def create_data(source, start, end, results, new_data_range):
 
 
 def cache_results(source, start, end, results):
+    # TODO: new data range override all but has the wrong range!
+    # Should be the min and max of start, end and it's overalapping ranges
     new_data_range = DataRange(start=start, end=end, data_source=source)
     db.session.add(new_data_range)
     db.session.commit()
