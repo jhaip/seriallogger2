@@ -34,11 +34,15 @@ def putHelper(request, schema, model, key):
     data, errors = schema.load(json_data)
     if errors:
         return jsonify(errors), 422
-    instance = model.query.get_or_404(key)
-    for k,v in json_data.items():
-        setattr(instance, k, v)
+    # instance = model.query.get_or_404(key)
+    # for k,v in json_data.items():
+    #     setattr(instance, k, v)
+    # db.session.commit()
+    # return jsonify(message='Successfuly updated'), 200
+    db.session.add(data)
     db.session.commit()
-    return jsonify(message='Successfuly updated'), 200
+    result = schema.dump(data)
+    return jsonify(result.data)
 
 def deleteHelper(request, model, key, value):
     json_data = request.get_json()

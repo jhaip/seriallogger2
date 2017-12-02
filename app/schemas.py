@@ -66,6 +66,16 @@ class DataSourceSchema(Schema):
         print(data)
         if not data.get("description"):
             data["description"] = ""
+        dependencies_data = data.get("dependencies")
+        if dependencies_data:
+            # data only needs to include dependency IDs
+            # this code looks up the full serialization of the DataSource
+            dependency_ids = set(map(lambda d: d["id"], dependencies_data))
+            new_ds = DataSource.query.filter(
+                DataSource.id.in_(dependency_ids)).all()
+            data["dependencies"] = datasources_schema.dump(new_ds).data
+        else:
+            data["dependencies"] = []
 
     @post_load
     def make_datasource(self, data):
