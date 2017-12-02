@@ -121,3 +121,10 @@ with app.app_context():
 with app.app_context():
     d = get_data(find_data_source("code2"), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
     print(d)
+
+with app.app_context():
+    make_http_request_data_source("serial", "https://io.adafruit.com/api/v2/jhaip/feeds/serial-log-data/data", headers={"X-AIO-Key":"3a3688bc5a6f46da9c5281823032892f"})
+
+with app.app_context():
+    d = get_data(find_data_source("serial"), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
+    print(d)
