@@ -40,18 +40,16 @@ x = bar()
 exec(f)
 
 with app.app_context():
-    d1 = DataSource.query.one()
-
-dsd = {}
-dsd["name"] = "four"
-dsd["description"] = "test"
-dsd["dependencies"] = [d1]
-dsd["transform_function"] = 'return dependent_data["test"]'
-dsd["transform_function_language"] = 'python'
-ds = DataSource(**dsd)
-with app.app_context():
-    db.session.add(ds)
-    db.session.commit()
+    dsd = {}
+    dsd["name"] = "four"
+    dsd["description"] = "test"
+    dsd["dependencies"] = [find_data_source("test")]
+    dsd["transform_function"] = 'return dependent_data["test"]'
+    dsd["transform_function_language"] = 'python'
+    ds = DataSource(**dsd)
+    with app.app_context():
+        db.session.add(ds)
+        db.session.commit()
 
 from datetime import datetime, timezone
 from data_helpers import get_data, make_data_source, find_data_source

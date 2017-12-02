@@ -60,6 +60,13 @@ class DataSourceSchema(Schema):
     transform_function_language = fields.Str()
     data_type = fields.Str()
 
+    @pre_load
+    def process_timestamp(self, data):
+        print("process timestamp")
+        print(data)
+        if not data.get("description"):
+            data["description"] = ""
+
     @post_load
     def make_datasource(self, data):
         return DataSource(**data)

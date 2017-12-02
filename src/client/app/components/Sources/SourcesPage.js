@@ -74,6 +74,7 @@ class SourcesPage extends React.Component {
           }
           isNew={this.state.selectedSourceName == ''}
           saveSourceDescription={this.saveSourceDescription}
+          data={this.props.data}
         />
       </div>
     );

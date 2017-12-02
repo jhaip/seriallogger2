@@ -46,11 +46,10 @@ export function updateDataSource(opts, action) {
     const dataSourceOptions = {
       name: opts.name || "Untitled",
       description: opts.description || "",
-      url: opts.url || "",
-      headers: opts.headers || "",
-      request_data: opts.request_data || "",
-      request_type: opts.request_type || "",
-      transform_function: opts.transform_function || ""
+      dependencies: opts.dependencies || [],
+      transform_function_language: opts.transform_function_language || "",
+      transform_function: opts.transform_function || "",
+      data_type: opts.data_type || ""
     }
     let url = `${window.API_URL}/api/sources`;
     let update_http_verb = 'POST';
