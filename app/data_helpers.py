@@ -37,6 +37,7 @@ def cache_results(source, start, end, results):
     new_data_range = DataRange(start=start, end=end, data_source=source)
     db.session.add(new_data_range)
     db.session.commit()
+    # Might not need to refetch
     new_data_range = DataRange.query.filter(DataRange.start==start,
                                             DataRange.end==end,
                                             DataRange.data_source==source).one()
@@ -59,6 +60,10 @@ def cache_results(source, start, end, results):
     if first_overlapping_data_range_datetime > start:
         print("----- first overlapping")
         create_data(source, start, first_overlapping_data_range_datetime, results, new_data_range)
+    elif first_overlapping_data_range_datetime < start:
+        new_data_range.start = first_overlapping_data_range_datetime
+        db.session.add(new_data_range)
+        db.session.commit()
 
     for i, data_range in enumerate(overlapping_data_ranges):
         print("looking at overlapping_data_ranges index " + str(i))
@@ -85,6 +90,10 @@ def cache_results(source, start, end, results):
         print("----- end overlapping")
         create_data(source, end_overlapping_data_range_datetime,
                     end, results, new_data_range)
+    elif end_overlapping_data_range_datetime > end:
+        new_data_range.end = end_overlapping_data_range_datetime
+        db.session.add(new_data_range)
+        db.session.commit()
 
     print("---- deleting overlapping ranges")
     for odr in overlapping_data_ranges:
