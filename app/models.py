@@ -55,6 +55,7 @@ class DataSource(db.Model):
     )
     transform_function = db.Column(db.Text, nullable=False)
     transform_function_language = db.Column(db.String(100), nullable=False)
+    data_type = db.Column(db.String(100), nullable=False, default="TEXT")
 
     def __repr__(self):
         return '<DataSource %r>' % self.id

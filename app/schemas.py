@@ -58,6 +58,7 @@ class DataSourceSchema(Schema):
     dependencies = fields.Nested('DataSourceSchema', many=True)
     transform_function = fields.Str()
     transform_function_language = fields.Str()
+    data_type = fields.Str()
 
     @post_load
     def make_datasource(self, data):
