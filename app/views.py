@@ -154,15 +154,10 @@ class DataView(MethodView):
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                result = get_data(data_source, filter_start_date, filter_stop_date)
-            else:
-                datas = Data.query.filter_by(data_source=data_source)
-                result = datas_schema.dump(datas)
-        else:
-            datas = Data.query.all()
-            result = datas_schema.dump(datas)
+                results = get_data(data_source, filter_start_date, filter_stop_date)
+                return jsonify({'results': results})
 
-        return jsonify({'results': result.data})
+        return jsonify({'message': 'Invalid URL format'}), 400
 
 
 class AnnotationView(MethodView):

@@ -51,6 +51,9 @@ export function updateDataSource(opts, action) {
       transform_function: opts.transform_function || "",
       data_type: opts.data_type || ""
     }
+    if (typeof(opts.id) !== 'undefined') {
+      dataSourceOptions.id = opts.id;
+    }
     let url = `${window.API_URL}/api/sources`;
     let update_http_verb = 'POST';
     switch (action) {

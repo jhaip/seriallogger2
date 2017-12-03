@@ -55,11 +55,13 @@ function applyTranformFunction(source, json) {
         overflow: d.overflow ? JSON.parse(d.overflow) : {}
       };
     });
-  } else if (!!source.transform_function) {
-    console.log("computing source with transform_function");
-    console.log(source);
-    clean_data = computeDerivativeSource(json, source.transform_function);
   }
+  // TODO: bring back frontend transform function sometimes?
+  //  else if (!!source.transform_function) {
+  //   console.log("computing source with transform_function");
+  //   console.log(source);
+  //   clean_data = computeDerivativeSource(json, source.transform_function);
+  // }
 
   // clean up dates
   clean_data = clean_data.map(d => {
@@ -76,18 +78,22 @@ function applyTranformFunction(source, json) {
 function fetchSourceData(source, start, stop) {
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
-  const url = source.url
-    .replace('{{start}}', url_start)
-    .replace('{{stop}}', url_stop);
-  let options = {
-    method: source.request_type || 'GET'
-  };
-  if (!!source.headers) {
-    options.headers = JSON.parse(source.headers);
-  }
-  if (!!source.body) {
-    options.body = JSON.parse(source.body);
-  }
+
+  const url = `http://localhost:5000/api/data?source=${source.name}&start=${url_start}&stop=${url_stop}`;
+  const options = {method: 'GET'};
+
+  // const url = source.url
+  //   .replace('{{start}}', url_start)
+  //   .replace('{{stop}}', url_stop);
+  // let options = {
+  //   method: source.request_type || 'GET'
+  // };
+  // if (!!source.headers) {
+  //   options.headers = JSON.parse(source.headers);
+  // }
+  // if (!!source.body) {
+  //   options.body = JSON.parse(source.body);
+  // }
 
   return new Promise((resolve, reject) => {
     fetch(url, options)
