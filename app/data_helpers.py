@@ -7,17 +7,15 @@ from datetime import datetime, timezone
 
 
 def create_data(source, start, end, results, new_data_range):
+    start = start.replace(tzinfo=None)
+    end = end.replace(tzinfo=None)
     for d in results:
         d_timestamp = d["timestamp"]
         if not isinstance(d_timestamp, datetime):
             d_timestamp = iso8601.parse_date(d_timestamp)
-            print("-------- PARSE DATE")
-            print(d_timestamp)
-            print(d_timestamp.tzinfo)
+            d_timestamp = d_timestamp.replace(tzinfo=None)
         else:
-            if d_timestamp.tzinfo is not timezone.utc:
-                print("d_timestamp is not timezone.utc, converting it")
-                d_timestamp = d_timestamp.replace(tzinfo=timezone.utc)
+            d_timestamp = d_timestamp.replace(tzinfo=None)
         print("----- NEW DATA RANGE")
         print(new_data_range)
         if d_timestamp >= start and d_timestamp <= end:
@@ -56,7 +54,7 @@ def cache_results(source, start, end, results):
         return
 
     first_overlapping_data_range_datetime = (
-        overlapping_data_ranges[0].start.replace(tzinfo=timezone.utc))
+        overlapping_data_ranges[0].start.replace(tzinfo=None))
     if first_overlapping_data_range_datetime > start:
         print("----- first overlapping")
         create_data(source, start, first_overlapping_data_range_datetime, results, new_data_range)
@@ -74,18 +72,18 @@ def cache_results(source, start, end, results):
         db.session.commit()
         if i < overlapping_data_ranges_count - 1:
             next_overlapping_data_range_datetime = (
-                overlapping_data_ranges[i + 1].start.replace(tzinfo=timezone.utc))
+                overlapping_data_ranges[i + 1].start.replace(tzinfo=None))
             print("----- overlapping")
             create_data(
                 source,
-                data_range.end.replace(tzinfo=timezone.utc),
+                data_range.end.replace(tzinfo=None),
                 next_overlapping_data_range_datetime,
                 results,
                 new_data_range
             )
 
     end_overlapping_data_range_datetime = (
-        overlapping_data_ranges[-1].end.replace(tzinfo=timezone.utc))
+        overlapping_data_ranges[-1].end.replace(tzinfo=None))
     if end_overlapping_data_range_datetime < end:
         print("----- end overlapping")
         create_data(source, end_overlapping_data_range_datetime,
@@ -112,11 +110,16 @@ results = transform_function_wrapper(dependent_data, start, end)
     # TODO:
     # - limit scope of exec or make it harmless
     # - support other languages (data_source.transform_function_language)
+    print("----")
+    print(f)
+    print("----")
     exec(f, l)
     return l["results"]
 
 
 def get_data(data_source, start, end):
+    start = start.replace(tzinfo=None)
+    end = end.replace(tzinfo=None)
     results = None
     # Check cache
     print("CHECK CACHE")
@@ -152,7 +155,7 @@ def get_data(data_source, start, end):
                 Data.timestamp >= start,
                 Data.timestamp <= end).all()
             cached_data_dump = datas_schema.dump(cached_data)
-            new_data_dump = get_data(data_source, data_range.end.replace(tzinfo=timezone.utc), end)
+            new_data_dump = get_data(data_source, data_range.end, end)
             # new data won't hit the cache
             # new data will overlap cached_data range and auto join
             print("FILLING IN END GAP RESULTS:")
@@ -186,11 +189,6 @@ def get_data(data_source, start, end):
             print(type(r))  # write now it's a data model!
             raise Exception('results element is not a dict!')
         r_timestamp_date = iso8601.parse_date(r["timestamp"])
-        if r_timestamp_date.tzinfo is not timezone.utc:
-            print(r_timestamp_date)
-            print(r_timestamp_date.tzinfo)
-            print(timezone.utc)
-            raise Exception("result element's timestamp field must have tzinfo = UTC")
         if type(r["value"]) not in [str, int, float]:
             print(r["value"])
             print(type(r["value"]))
