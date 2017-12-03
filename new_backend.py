@@ -61,7 +61,6 @@ app = create_app()
 
 with app.app_context():
     db.init_app(app)
-    db.create_all(app=app)
 
 with app.app_context():
     for d in Data.query.all():
@@ -70,6 +69,11 @@ with app.app_context():
 
 with app.app_context():
     for d in DataRange.query.all():
+        db.session.delete(d)
+    db.session.commit()
+
+with app.app_context():
+    for d in DataSource.query.all():
         db.session.delete(d)
     db.session.commit()
 

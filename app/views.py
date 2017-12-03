@@ -63,21 +63,73 @@ class IndexView(MethodView):
 class SourcesView(MethodView):
 
     def post(self):
-        return postHelper(request, datasource_schema)
+        schema = datasource_schema
+
+        json_data = request.get_json()
+        dependencies_data = json_data.pop("dependencies", None)
+        if not json_data:
+            return jsonify({'message': 'No input data provided'}), 400
+        data, errors = schema.load(json_data)
+        if errors:
+            return jsonify(errors), 422
+        # print(data, file=sys.stderr)
+        db.session.add(data)
+        db.session.commit()
+
+        result = schema.dump(data)
+        result_data = result.data
+
+        instance = DataSource.query.filter(DataSource.id == result_data["id"]).one()  # todo: handle error
+
+        if dependencies_data:
+            # data only needs to include dependency IDs
+            # this code looks up the full serialization of the DataSource
+            dependency_ids = set(map(lambda d: d["id"], dependencies_data))
+            corrected_dependencies = DataSource.query.filter(
+                DataSource.id.in_(dependency_ids)).all()
+            setattr(instance, "dependencies", corrected_dependencies)
+            result_data["dependencies"] = datasources_schema.dump(corrected_dependencies).data
+            db.session.commit()
+
+        return jsonify(result_data)
 
     def put(self, datasource_id):
         schema = datasource_schema
         model = DataSource
+        model_key = DataSource.id
+        key_value = datasource_id
+
         json_data = request.get_json()
         if not json_data:
             return jsonify({'message': 'No input data provided'}), 400
         data, errors = schema.load(json_data)
         if errors:
             return jsonify(errors), 422
-        db.session.add(data)
+        instance = model.query.filter(model_key == key_value).one()  # todo: handle error
+
+        dependencies_data = json_data.get("dependencies")
+        if dependencies_data:
+            # data only needs to include dependency IDs
+            # this code looks up the full serialization of the DataSource
+            dependency_ids = set(map(lambda d: d["id"], dependencies_data))
+            corrected_dependencies = DataSource.query.filter(
+                DataSource.id.in_(dependency_ids)).all()
+            json_data["dependencies"] = corrected_dependencies
+
+        for k,v in json_data.items():
+            setattr(instance, k, v)
         db.session.commit()
-        result = schema.dump(data)
-        return jsonify(result.data)
+        return jsonify(message='Successfuly updated'), 200
+        # json_data = request.get_json()
+        # if not json_data:
+        #     return jsonify({'message': 'No input data provided'}), 400
+        # data, errors = schema.load(json_data)
+        # if errors:
+        #     return jsonify(errors), 422
+        # db.session.add(data)
+        # db.session.commit()
+        # result = schema.dump(data)
+        # return jsonify(result.data)
 
     def get(self):
         datasources = DataSource.query.all()
