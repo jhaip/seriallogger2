@@ -27,22 +27,18 @@ def postHelper(request, schema):
     result = schema.dump(data)
     return jsonify(result.data)
 
-def putHelper(request, schema, model, key):
+def putHelper(request, schema, model, model_key, key_value):
     json_data = request.get_json()
     if not json_data:
         return jsonify({'message': 'No input data provided'}), 400
     data, errors = schema.load(json_data)
     if errors:
         return jsonify(errors), 422
-    # instance = model.query.get_or_404(key)
-    # for k,v in json_data.items():
-    #     setattr(instance, k, v)
-    # db.session.commit()
-    # return jsonify(message='Successfuly updated'), 200
-    db.session.add(data)
+    instance = model.query.filter(model_key == key_value).one()  # todo: handle error
+    for k,v in json_data.items():
+        setattr(instance, k, v)
     db.session.commit()
-    result = schema.dump(data)
-    return jsonify(result.data)
+    return jsonify(message='Successfuly updated'), 200
 
 def deleteHelper(request, model, key, value):
     json_data = request.get_json()
@@ -70,7 +66,18 @@ class SourcesView(MethodView):
         return postHelper(request, datasource_schema)
 
     def put(self, datasource_id):
-        return putHelper(request, datasource_schema, DataSource, datasource_id)
+        schema = datasource_schema
+        model = DataSource
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'message': 'No input data provided'}), 400
+        data, errors = schema.load(json_data)
+        if errors:
+            return jsonify(errors), 422
+        db.session.add(data)
+        db.session.commit()
+        result = schema.dump(data)
+        return jsonify(result.data)
 
     def get(self):
         datasources = DataSource.query.all()
@@ -181,7 +188,7 @@ class NotebookEntriesView(MethodView):
 class NotebookEntryView(MethodView):
 
     def put(self, entry_id):
-        return putHelper(request, notebookentry_schema, Notebookentry, entry_id)
+        return putHelper(request, notebookentry_schema, Notebookentry, Notebookentry.id, entry_id)
 
     def get(self, entry_id):
         print("--")
