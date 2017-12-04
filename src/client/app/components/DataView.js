@@ -112,6 +112,11 @@ class DataView extends React.Component {
         console.log("VIEW CHANGED, FETCHING SOURCE NAMES FOR DATA VIEW");
         this.fetchDataForAllSources(nextProps);
       }
+      if (this.props.visualType !== nextProps.visualType) {
+        this.setState({
+          embedCode: this.getEmbedCode(nextProps)
+        });
+      }
     }
   }
   componentDidMount() {
