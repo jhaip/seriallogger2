@@ -238,3 +238,18 @@ def make_http_request_data_source(name, url, headers={}, description=""):
     return []
     """.format(url, json.dumps(headers))
     return make_data_source(name, transform_function, "python", description=description)
+
+
+def clear_cache(data_source):
+    # TODO: check for circular dependencies
+    for d in Data.query.filter(Data.data_source == data_source):
+        db.session.delete(d)
+    db.session.commit()
+
+    for d in DataRange.query.filter(DataRange.data_source == data_source):
+        db.session.delete(d)
+    db.session.commit()
+
+    for dependent_data_source in data_source.parents:
+        print("GOING DEEPER!!!!!!!!")
+        clear_cache(dependent_data_source)

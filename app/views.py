@@ -4,7 +4,7 @@ from sqlalchemy import distinct
 from database import db
 from models import *
 from schemas import *
-from data_helpers import get_data, find_data_source
+from data_helpers import get_data, find_data_source, clear_cache
 import pytz
 import iso8601
 from datetime import datetime
@@ -119,6 +119,10 @@ class SourcesView(MethodView):
         for k,v in json_data.items():
             setattr(instance, k, v)
         db.session.commit()
+
+        # Clear cached data
+        clear_cache(instance)
+
         return jsonify(message='Successfuly updated'), 200
         # json_data = request.get_json()
         # if not json_data:
