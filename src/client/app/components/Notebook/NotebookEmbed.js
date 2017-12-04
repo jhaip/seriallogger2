@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import DataViewText from "../DataViews/Text/DataViewText"
 import DataViewLineGraph from "../DataViews/LineGraph/DataViewLineGraph"
+import DataViewHTML from '../DataViews/HTML/DataViewHTML'
 import moment from 'moment'
 import { fetchDataOrGetCacheData } from '../../actions/DataActions'
 import { createAnnotatedSelectedDataTree } from '../../selectors/index'
@@ -33,6 +34,7 @@ class NotebookEmbed extends React.Component {
       props.state
     ).then(data => {
       switch (props.visualType) {
+        case "html":
         case "line graph":
           this.setState({data: data, is_fetching: false});
           break;
@@ -60,6 +62,13 @@ class NotebookEmbed extends React.Component {
 
   renderVisual() {
     switch (this.props.visualType) {
+      case "html":
+        return (
+          <DataViewHTML
+            data={this.state.data}
+            activeAnnotation={""}
+          />
+        );
       case "line graph":
         return (
           <DataViewLineGraph
