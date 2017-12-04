@@ -79,7 +79,7 @@ function fetchSourceData(source, start, stop) {
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
 
-  const url = `http://localhost:5000/api/data?source=${source.name}&start=${url_start}&stop=${url_stop}`;
+  const url = `${window.API_URL}/api/data?source=${source.name}&start=${url_start}&stop=${url_stop}`;
   const options = {method: 'GET'};
 
   // const url = source.url
@@ -114,7 +114,7 @@ function fetchDataAnnotations(sourceName, start, stop) {
   }
   const url_start = getUtcDateString(start);
   const url_stop = getUtcDateString(stop);
-  const url = `http://localhost:5000/api/annotations?source=${sourceName}&start=${url_start}&stop=${url_stop}`;
+  const url = `${window.API_URL}/api/annotations?source=${sourceName}&start=${url_start}&stop=${url_stop}`;
   return new Promise((resolve, reject) => {
     fetch(url)
       .then(response => response.json())
