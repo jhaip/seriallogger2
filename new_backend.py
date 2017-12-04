@@ -130,3 +130,18 @@ with app.app_context():
 with app.app_context():
     d = get_data(find_data_source("serial"), datetime(2016,1,1).replace(tzinfo=timezone.utc), datetime(2018,1,1).replace(tzinfo=timezone.utc))
     print(d)
+
+
+
+	results = []
+	for d in dependent_data["adafruit"]:
+		r = int(d["value"])*10
+		a = """
+		<div>
+		<svg width="{}" height="{}">
+		<circle cx="{}" cy="{}" r="{}" fill="purple" />
+		</svg>
+        </div>
+		""".format(r*2, r*2, r, r, r)
+		results.append({"timestamp": d["timestamp"], "value": a})
+	return results

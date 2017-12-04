@@ -11,6 +11,7 @@ import AnnotationView from "./Annotations/AnnotationView"
 import FilterDataViewToSelected from "./FilterDataViewToSelected"
 import DataViewText from "./DataViews/Text/DataViewText"
 import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
+import DataViewHTML from './DataViews/HTML/DataViewHTML'
 import {
   getDataViewData,
   getAnnotatedDataTree,
@@ -118,6 +119,13 @@ class DataView extends React.Component {
   }
   renderVisual() {
     switch (this.props.visualType) {
+      case "html":
+        return (
+          <DataViewHTML
+            data={this.props.data}
+            activeAnnotation={this.props.activeAnnotation}
+          />
+        );
       case "line graph":
         return (
           <DataViewLineGraph
@@ -181,7 +189,7 @@ class DataView extends React.Component {
             </div>
             <div style={{padding: "0 4px", width: "100px"}}>
               <DropdownList
-                data={["raw", "line graph"]}
+                data={["raw", "line graph", "html"]}
                 value={this.props.visualType}
                 onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
               />
