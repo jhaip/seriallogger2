@@ -1,0 +1,9 @@
+version: '3'
+services:
+    nginx:
+        restart: always
+        build: .
+        volumes:
+            - ./static:/static
+        ports:
+            - "8080:8080"
