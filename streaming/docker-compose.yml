@@ -1,9 +1,25 @@
 version: '3'
 services:
+    web:
+        restart: always
+        build: ./app
+        working_dir: /app
+        volumes:
+            - ./app:/app
+        networks:
+            - web_nw
     nginx:
         restart: always
         build: .
+        ports:
+            - "8080:80"
         volumes:
             - ./static:/static
-        ports:
-            - "8080:8080"
+        networks:
+            - web_nw
+        depends_on:
+            - web
+
+networks:
+    web_nw:
+        driver: bridge

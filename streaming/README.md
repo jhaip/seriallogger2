@@ -11,7 +11,7 @@ docker-compose up
 From the `/static` folder:
 
 ```
-ffmpeg -f avfoundation -r 30 -i "0" -map 0 -f segment -segment_list playlist.m3u8 -segment_list_flags +live -segment_time 1 out%03d.ts
+ffmpeg -f avfoundation -r 30 -i "0" -map 0 -f segment -segment_list playlist.m3u8 -segment_list_flags +live -segment_time 1 -strftime 1 "out%FT%H_%M_%SZ.ts"
 ```
 
 Go to `localhost:8080` in Safari
