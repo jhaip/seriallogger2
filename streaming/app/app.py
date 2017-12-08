@@ -2,14 +2,29 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 import iso8601
 import os
+import re
 
 app = Flask(__name__)
 
 
 def list_thumbnails():
-    f = os.listdir('../static/thumbs/')
-    print(f)
-    return f
+    thumbs = os.listdir('../static/thumbs/')
+    print(thumbs)
+    p = re.compile('out([^\.]*)\.png')
+    result = []
+    for t in thumbs:
+        #    "out2017-12-07T23_48_52Z.png"
+        # -> "out2017-12-07T23:48:52Z.png"
+        # -> "2017-12-07T23:48:52Z"
+        # -> datetime
+        m = p.search(t.replace("_", ":"))
+        if m:
+            t_timestamp = iso8601.parse_date(m.group(1))
+            result.append({
+                "timestamp": t_timestamp.isoformat(),
+                "url": "http://localhost:8080/play/thumbs/%s" % t
+            })
+    return result
 
 
 @app.route('/api/')
