@@ -1,17 +1,26 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 import iso8601
+import os
 
 app = Flask(__name__)
 
-@app.route('/api/')
+
 def list_thumbnails():
+    f = os.listdir('../static/thumbs/')
+    print(f)
+    return f
+
+
+@app.route('/api/')
+def list_thumbnails_view():
     filter_start = request.args.get('start')
     filter_stop = request.args.get('end')
     if filter_start and filter_stop:
         filter_start_date = iso8601.parse_date(filter_start)
         filter_stop_date = iso8601.parse_date(filter_stop)
-        return jsonify({'results': [1,2,3]})
+        thumbnails = list_thumbnails()
+        return jsonify({'results': thumbnails})
     return jsonify({'results': []})
 
 if __name__ == "__main__":

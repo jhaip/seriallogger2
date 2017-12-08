@@ -6,6 +6,7 @@ services:
         working_dir: /app
         volumes:
             - ./app:/app
+            - ./static:/static
         networks:
             - web_nw
     nginx:
