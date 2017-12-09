@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 
-def list_thumbnails():
+def list_thumbnails(start, end):
     thumbs = os.listdir('../static/thumbs/')
     print(thumbs)
     p = re.compile('out([^\.]*)\.png')
@@ -20,10 +20,11 @@ def list_thumbnails():
         m = p.search(t.replace("_", ":"))
         if m:
             t_timestamp = iso8601.parse_date(m.group(1))
-            result.append({
-                "timestamp": t_timestamp.isoformat(),
-                "url": "http://localhost:8080/play/thumbs/%s" % t
-            })
+            if t_timestamp >= start and t_timestamp <= end:
+                result.append({
+                    "timestamp": t_timestamp.isoformat(),
+                    "url": "http://localhost:8080/play/thumbs/%s" % t
+                })
     return result
 
 
@@ -34,7 +35,7 @@ def list_thumbnails_view():
     if filter_start and filter_stop:
         filter_start_date = iso8601.parse_date(filter_start)
         filter_stop_date = iso8601.parse_date(filter_stop)
-        thumbnails = list_thumbnails()
+        thumbnails = list_thumbnails(filter_start_date, filter_stop_date)
         return jsonify({'results': thumbnails})
     return jsonify({'results': []})
 
