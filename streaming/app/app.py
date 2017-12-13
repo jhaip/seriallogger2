@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 import iso8601
+import pytz
 import os
 import re
 
@@ -13,13 +14,15 @@ def list_thumbnails(start, end):
     p = re.compile('out([^\.]*)\.png')
     result = []
     for t in thumbs:
-        #    "out2017-12-07T23_48_52Z.png"
-        # -> "out2017-12-07T23:48:52Z.png"
-        # -> "2017-12-07T23:48:52Z"
-        # -> datetime
+        #    "out2017-12-07T23_48_52-0500.png"
+        # -> "out2017-12-07T23:48:52-0500.png"
+        # -> "2017-12-07T23:48:52-0500"
+        # -> local datetime
+        # -> utc datetime
         m = p.search(t.replace("_", ":"))
         if m:
             t_timestamp = iso8601.parse_date(m.group(1))
+            t_timestamp = t_timestamp.astimezone(pytz.utc)
             if t_timestamp >= start and t_timestamp <= end:
                 result.append({
                     "timestamp": t_timestamp.isoformat(),
