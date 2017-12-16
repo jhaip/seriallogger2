@@ -14,7 +14,7 @@ void loop() {
   delay(1000);*/
 
   myServo.write(67+10);
-  delay(1000);
+  delay(2000); // move forward more than backward
   myServo.write(67-10);
   delay(1000);
 }
