@@ -9,12 +9,16 @@ void setup() {
 }
 
 void loop() {
-  /*int val = analogRead(A0);
-  Serial.println(val);
-  delay(1000);*/
+  delay(200);
+  int goal = 2500;
+  int val = analogRead(A0);
+  int error = val-goal;
+  error = error / 20;
+  Serial.println(error);
 
-  myServo.write(67+10);
+  myServo.write(67+error);
+  /*myServo.write(67+10); // backwards
   delay(2000); // move forward more than backward
-  myServo.write(67-10);
-  delay(1000);
+  myServo.write(67-10); // forwards
+  delay(1000);*/
 }
