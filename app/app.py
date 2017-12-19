@@ -44,6 +44,8 @@ def init_db():
         db.init_app(app)
         db.create_all(app=app)
 
+    # TODO: create DataSource for Annotations and View
+
     print("DONE")
 
 

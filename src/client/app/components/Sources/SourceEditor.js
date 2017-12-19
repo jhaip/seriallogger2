@@ -99,7 +99,7 @@ class SourceEditor extends React.Component {
             <div className="form-group">
               <label>Transform Function Language</label>
                 <DropdownList
-                  data={["", "python"]}
+                  data={["", "python", "INTERNAL"]}
                   value={this.state.sourceDescription.transform_function_language || ""}
                   placeholder="Select a language"
                   onChange={(v) => this.update('transform_function_language', null, v)}

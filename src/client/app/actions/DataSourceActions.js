@@ -16,27 +16,7 @@ export function fetchSourcesList() {
         console.error(error);
       })
       .then(json => {
-        const results = json.results.concat([{
-            "description": "Annotations data",
-            "headers": "",
-            "id": 2,
-            "name": "annotations",
-            "request_data": "",
-            "request_type": "GET",
-            "transform_function": "",
-            "url": "http://localhost:5000/api/annotations?start={{start}}&stop={{stop}}"
-        },
-        {
-            "description": "view data",
-            "headers": "",
-            "id": 3,
-            "name": "view",
-            "request_data": "",
-            "request_type": "GET",
-            "transform_function": "",
-            "url": "http://localhost:5000/api/data?source=view&start={{start}}&stop={{stop}}"
-        }]);
-        dispatch(receiveSourcesList(results));
+        dispatch(receiveSourcesList(json.results));
       });
   }
 }

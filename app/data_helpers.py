@@ -1,6 +1,6 @@
 from database import db
-from models import Data, DataRange, DataSource
-from schemas import datas_schema
+from models import Data, DataRange, DataSource, Annotations
+from schemas import datas_schema, annotations_schema
 import iso8601
 import json
 from datetime import datetime, timezone
@@ -100,7 +100,11 @@ def cache_results(source, start, end, results):
 
 
 def compute(transform_function, dependent_data, start, end):
-    l = {"dependent_data": dependent_data, "start": start, "end": end}
+    l = {
+        "dependent_data": dependent_data,
+        "start": start,
+        "end": end
+    }
     f = "def transform_function_wrapper(dependent_data, start, end):\n"
     f += '\n'.join(map(lambda x: '\t'+x, transform_function.splitlines()))
     f += '\nresults = transform_function_wrapper(dependent_data, start, end)'
@@ -114,10 +118,32 @@ def compute(transform_function, dependent_data, start, end):
     return l["results"]
 
 
+def get_internal_data(data_source, start, end):
+    if data_source.name == "Annotations":
+        data = Annotations.query.filter(
+            Annotations.timestamp >= start,
+            Annotations.timestamp <= end
+        ).all()
+        data_dump = annotations_schema.dump(data)
+        def convert_value(x):
+            return {"timestamp": x["timestamp"], "value": x["annotation"]}
+        return list(map(convert_value, data_dump.data))
+    else:
+        data = Data.query.filter(
+            Data.data_source == data_source,
+            Data.timestamp >= start,
+            Data.timestamp <= end
+        ).all()
+        data_dump = datas_schema.dump(data)
+        return data_dump.data
+
+
 def get_data(data_source, start, end):
     start = start.replace(tzinfo=None)
     end = end.replace(tzinfo=None)
     results = None
+    if data_source.transform_function_language == "INTERNAL":
+        return get_internal_data(data_source, start, end)
     # Check cache
     print("CHECK CACHE")
     data_ranges = DataRange.query.filter(
