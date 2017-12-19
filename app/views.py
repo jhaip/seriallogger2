@@ -147,7 +147,21 @@ class SourcesView(MethodView):
 class DataView(MethodView):
 
     def post(self):
-        return postHelper(request, data_schema)
+        schema = data_schema
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'message': 'No input data provided'}), 400
+
+        data_source = DataSource.query.filter_by(name=json_data["data_source"]).first_or_404()
+
+        d = Data(data_source=data_source,
+                 timestamp=datetime.now(tz=pytz.utc),
+                 value=json_data["value"])
+        db.session.add(d)
+        db.session.commit()
+
+        result = schema.dump(d)
+        return jsonify(result.data)
 
     def get(self):
         filter_source = request.args.get('source')

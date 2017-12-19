@@ -55,12 +55,13 @@ from datetime import datetime, timezone
 from data_helpers import get_data, make_data_source, find_data_source
 from app import create_app
 from database import db
-from models import DataSource, DataRange, Data
+from models import DataSource, DataRange, Data, Annotations
 import pytz
 app = create_app()
 
 with app.app_context():
     db.init_app(app)
+    # db.create_all(app=app)
 
 with app.app_context():
     for d in Data.query.all():
@@ -73,9 +74,16 @@ with app.app_context():
     db.session.commit()
 
 with app.app_context():
+    Data.__table__.drop(db.engine)
+
+with app.app_context():
     for d in DataSource.query.all():
         db.session.delete(d)
     db.session.commit()
+
+with app.app_context():
+    for a in Annotations.query.all():
+        print(a)
 
 
 with app.app_context():

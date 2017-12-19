@@ -26,7 +26,7 @@ class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data_source_id = db.Column(db.Integer, db.ForeignKey('data_source.id'), nullable=False)
     data_source = db.relationship('DataSource', backref='data', lazy=True)
-    data_range_id = db.Column(db.Integer, db.ForeignKey('data_range.id'), nullable=False)
+    data_range_id = db.Column(db.Integer, db.ForeignKey('data_range.id'))
     data_range = db.relationship('DataRange', backref='data', lazy=True)
     timestamp = db.Column(db.DateTime)
     value = db.Column(db.Text, nullable=False)
