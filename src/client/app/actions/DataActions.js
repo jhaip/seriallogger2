@@ -101,7 +101,16 @@ function fetchSourceData(source, start, stop) {
       .then(json => {
         console.log(source);
         console.log(json);
-        resolve(applyTranformFunction(source, json));
+        if (json.error) {
+          resolve(applyTranformFunction(source, {
+            results: [{
+              timestamp: start,
+              value: json.error
+            }]
+          }));
+        } else {
+          resolve(applyTranformFunction(source, json));
+        }
       });
   });
 }
