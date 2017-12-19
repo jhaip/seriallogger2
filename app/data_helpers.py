@@ -121,8 +121,8 @@ def compute(transform_function, dependent_data, start, end):
 def get_internal_data(data_source, start, end):
     if data_source.name == "Annotations":
         data = Annotations.query.filter(
-            Annotations.timestamp >= start,
-            Annotations.timestamp <= end
+            db.func.date(Annotations.timestamp) >= start,
+            db.func.date(Annotations.timestamp) <= end
         ).all()
         data_dump = annotations_schema.dump(data)
         def convert_value(x):
