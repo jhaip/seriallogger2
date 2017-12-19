@@ -101,20 +101,21 @@ def cache_results(source, start, end, results):
 
 def compute(transform_function, dependent_data, start, end):
     l = {"dependent_data": dependent_data, "start": start, "end": end}
-    f = """
-def transform_function_wrapper(dependent_data, start, end):
-    {body}
-
-results = transform_function_wrapper(dependent_data, start, end)
-""".format(body=transform_function)
+    f = "def transform_function_wrapper(dependent_data, start, end):\n"
+    f += '\n'.join(map(lambda x: '\t'+x, transform_function.splitlines()))
+    f += '\nresults = transform_function_wrapper(dependent_data, start, end)'
     # TODO:
     # - limit scope of exec or make it harmless
     # - support other languages (data_source.transform_function_language)
     print("----")
     print(f)
     print("----")
-    exec(f, l)
-    return l["results"]
+    try:
+        exec(f, l)
+        return l["results"]
+    except BaseException as error:
+        print('An exception occurred: {}'.format(error))
+        return []
 
 
 def get_data(data_source, start, end):
