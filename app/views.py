@@ -158,8 +158,12 @@ class DataView(MethodView):
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                results = get_data(data_source, filter_start_date, filter_stop_date)
-                return jsonify({'results': results})
+                try:
+                    results = get_data(data_source, filter_start_date, filter_stop_date)
+                    return jsonify({'results': results})
+                except BaseException as error:
+                    # print('An exception occurred: {}'.format(error))
+                    return jsonify({'error': str(error)}), 400
 
         return jsonify({'message': 'Invalid URL format'}), 400
 

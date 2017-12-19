@@ -110,12 +110,8 @@ def compute(transform_function, dependent_data, start, end):
     print("----")
     print(f)
     print("----")
-    try:
-        exec(f, l)
-        return l["results"]
-    except BaseException as error:
-        print('An exception occurred: {}'.format(error))
-        return []
+    exec(f, l)
+    return l["results"]
 
 
 def get_data(data_source, start, end):
