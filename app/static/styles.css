@@ -15,7 +15,7 @@
 }
 .selected-view__data-annotations-col {
     padding-left: 10px;
-    flex-basis: 200px;
+    flex-basis: 300px;
 }
 .selected-text {
     background-color: rgba(255, 0, 255, 0.5);
