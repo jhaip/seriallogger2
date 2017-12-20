@@ -1,14 +1,18 @@
 .mark:hover {
     fill: red;
 }
-.selected-view__data, .selected-view__data-line-graph {
+.selected-view__data,
+.selected-view__data-line-graph,
+.selected-view__global-timeline {
     flex-grow: 1;
     overflow: scroll;
     display: flex;
     border: 1px solid #CCC;
     padding: 10px;
 }
-.notebook-embed .selected-view__data, .notebook-embed .selected-view__data-line-graph {
+.notebook-embed .selected-view__data,
+.notebook-embed .selected-view__data-line-graph,
+.notebook-embed .selected-view__global-timeline {
     width: auto;
     height: auto;
     min-height: 100px;

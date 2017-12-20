@@ -39,7 +39,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "victory": "^0.21.1"
+    "victory": "0.24.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

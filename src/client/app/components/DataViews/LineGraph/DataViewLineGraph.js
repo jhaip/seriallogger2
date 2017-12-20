@@ -1,6 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { VictoryChart, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryLegend,
+  VictoryAxis
+} from 'victory';
 
 
 class DataViewLineGraph extends React.Component {
@@ -65,6 +70,10 @@ class DataViewLineGraph extends React.Component {
           >
           { legend }
           { list }
+          <VictoryAxis
+            scale="time"
+            standalone={false}
+          />
         </VictoryChart>
       </div>
     );

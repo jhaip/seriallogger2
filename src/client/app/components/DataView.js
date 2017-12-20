@@ -12,6 +12,7 @@ import FilterDataViewToSelected from "./FilterDataViewToSelected"
 import DataViewText from "./DataViews/Text/DataViewText"
 import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
 import DataViewHTML from './DataViews/HTML/DataViewHTML'
+import DataViewGlobalTimeline from './DataViews/Timeline/GlobalTimeline'
 import {
   getDataViewData,
   getAnnotatedDataTree,
@@ -138,6 +139,16 @@ class DataView extends React.Component {
             activeAnnotation={this.props.activeAnnotation}
           />
         );
+      case "global timeline":
+      return (
+        <DataViewGlobalTimeline
+          data={this.props.data}
+          activeAnnotation={this.props.activeAnnotation}
+          start={this.props.start}
+          stop={this.props.stop}
+          changeTime={this.onTimeChange}
+        />
+      );
       case "raw":
       default:
         return (
@@ -194,7 +205,7 @@ class DataView extends React.Component {
             </div>
             <div style={{padding: "0 4px", width: "100px"}}>
               <DropdownList
-                data={["raw", "line graph", "html"]}
+                data={["raw", "line graph", "html", "global timeline"]}
                 value={this.props.visualType}
                 onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
               />
