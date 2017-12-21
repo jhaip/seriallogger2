@@ -154,9 +154,12 @@ class DataView(MethodView):
 
         data_source = DataSource.query.filter_by(name=json_data["data_source"]).first_or_404()
 
+        val = json_data["value"]
+        if type(val) is not str:
+            val = json.dumps(val)
         d = Data(data_source=data_source,
                  timestamp=datetime.now(tz=pytz.utc),
-                 value=json_data["value"])
+                 value=val)
         db.session.add(d)
         db.session.commit()
 

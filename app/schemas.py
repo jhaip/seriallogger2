@@ -4,7 +4,7 @@ from database import db
 import pytz
 import iso8601
 from datetime import datetime
-import sys
+import json
 
 def utcnow():
     return datetime.now(tz=pytz.utc).isoformat()
@@ -106,6 +106,8 @@ class DataSchema(Schema):
     @pre_load
     def process_timestamp(self, data):
         data['timestamp'] = datetime.now(tz=pytz.utc)
+        if type(data["value"]) is not str:
+            data['value'] = json.dumps(data['value'])
 
     @post_load
     def make_data(self, data):
