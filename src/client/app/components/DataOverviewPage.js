@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import DataView from "./DataView"
+import { saveView } from '../actions/ViewActions'
+import { isEqual } from 'lodash'
 
 const mapStateToProps = state => {
   return {
@@ -10,10 +12,34 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    saveView: (page, opts) => {
+      dispatch(saveView(page, opts));
+    }
+  }
 }
 
 class DataOverviewPage extends React.Component {
+  componentDidMount() {
+    this.props.saveView("DATA OVERVIEW", {});
+  }
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.views &&
+      this.props.views.length > 0 &&
+      nextProps.views &&
+      nextProps.views.length > 0 &&
+      !isEqual(this.props.views, nextProps.views)
+    ) {
+      const v = nextProps.views[0];
+      this.props.saveView("DATA VIEW", {
+        "sources": v.sourceNames,
+        "start": v.start,
+        "stop": v.stop,
+        "visualType": v.visualType
+      });
+    }
+  }
   render() {
     const v = this.props.views.length ? this.props.views[0] : null;
     return (
@@ -33,7 +59,8 @@ class DataOverviewPage extends React.Component {
   }
 }
 DataOverviewPage.propTypes = {
-  views: PropTypes.array.isRequired
+  views: PropTypes.array.isRequired,
+  saveView: PropTypes.func.isRequired
 };
 
 export default connect(

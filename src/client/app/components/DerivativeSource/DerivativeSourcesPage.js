@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import DerivativeView from "./DerivativeView"
+import { saveView } from '../../actions/ViewActions'
 
 const mapStateToProps = state => {
   return {
@@ -10,10 +11,17 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    saveView: (page, opts) => {
+      dispatch(saveView(page, opts));
+    }
+  }
 }
 
 class DerivativeSourcesPage extends React.Component {
+  componentDidMount() {
+    this.props.saveView("DERIVATIVE SOURCE", {});
+  }
   render() {
     const v = this.props.views.length ? this.props.views[1] : null;
     return (
@@ -34,7 +42,8 @@ class DerivativeSourcesPage extends React.Component {
 }
 
 DerivativeSourcesPage.propTypes = {
-  views: PropTypes.array.isRequired
+  views: PropTypes.array.isRequired,
+  saveView: PropTypes.func.isRequired
 };
 
 export default connect(

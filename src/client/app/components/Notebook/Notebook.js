@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { saveView } from '../../actions/ViewActions'
@@ -11,15 +12,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveView: () => {
-      dispatch(saveView());
+    saveView: (page, opts) => {
+      dispatch(saveView(page, opts));
     }
   }
 }
 
-class NotebookBase extends React.Component {
+class Notebook extends React.Component {
   componentDidMount() {
-    this.props.saveView();
+    this.props.saveView("NOTEBOOK", {});
   }
   render() {
     console.log(this.props);
@@ -31,10 +32,8 @@ class NotebookBase extends React.Component {
     );
   }
 }
+Notebook.propTypes = {
+  saveView: PropTypes.func.isRequired
+};
 
-const Notebook = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NotebookBase)
-
-export default Notebook
+export default connect(mapStateToProps, mapDispatchToProps)(Notebook)

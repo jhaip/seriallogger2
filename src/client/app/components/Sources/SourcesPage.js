@@ -5,6 +5,7 @@ import 'react-widgets/dist/css/react-widgets.css'
 import DropdownList from 'react-widgets/lib/DropdownList'
 import SourceEditor from './SourceEditor'
 import { updateDataSource, fetchSourcesList } from '../../actions/DataSourceActions'
+import { saveView } from '../../actions/ViewActions'
 
 
 const mapStateToProps = (state, props) => {
@@ -19,6 +20,9 @@ const mapDispatchToProps = dispatch => {
       dispatch(updateDataSource(sourceDescription, action)).then(() => {
         dispatch(fetchSourcesList());
       });
+    },
+    saveView: (page, opts) => {
+      dispatch(saveView(page, opts));
     }
   }
 }
@@ -30,6 +34,9 @@ class SourcesPage extends React.Component {
       'selectedSourceName': ''
     };
     this.saveSourceDescription = this.saveSourceDescription.bind(this);
+  }
+  componentDidMount() {
+    this.props.saveView("DATA SOURCES", {});
   }
   componentWillReceiveProps(nextProps) {
     if (!nextProps.data.hasOwnProperty(this.state.selectedSourceName)) {
@@ -82,7 +89,8 @@ class SourcesPage extends React.Component {
 }
 DataView.propTypes = {
   data: PropTypes.any.isRequired,
-  saveSource: PropTypes.func.isRequired
+  saveSource: PropTypes.func.isRequired,
+  saveView: PropTypes.func.isRequired
 };
 
 export default connect(
