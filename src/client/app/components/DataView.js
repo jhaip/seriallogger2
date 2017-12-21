@@ -13,6 +13,7 @@ import DataViewText from "./DataViews/Text/DataViewText"
 import DataViewLineGraph from "./DataViews/LineGraph/DataViewLineGraph"
 import DataViewHTML from './DataViews/HTML/DataViewHTML'
 import DataViewGlobalTimeline from './DataViews/Timeline/GlobalTimeline'
+import DataViewViewViewer from './DataViews/DataViewViewViewer'
 import {
   getDataViewData,
   getAnnotatedDataTree,
@@ -149,6 +150,15 @@ class DataView extends React.Component {
           changeTime={this.onTimeChange}
         />
       );
+      case "view history":
+      return (
+        <DataViewViewViewer
+          data={this.props.data}
+          activeAnnotation={this.props.activeAnnotation}
+          start={this.props.start}
+          stop={this.props.stop}
+        />
+      );
       case "raw":
       default:
         return (
@@ -205,7 +215,7 @@ class DataView extends React.Component {
             </div>
             <div style={{padding: "0 4px", width: "100px"}}>
               <DropdownList
-                data={["raw", "line graph", "html", "global timeline"]}
+                data={["raw", "line graph", "html", "global timeline", "view history"]}
                 value={this.props.visualType}
                 onChange={(v) => this.props.changeDataViewVisualType(this.props.id, v)}
               />
