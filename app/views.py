@@ -196,24 +196,27 @@ class AnnotationView(MethodView):
         filter_stop = request.args.get('stop')
         datas = []
         if filter_source:
+            data_source = DataSource.query.filter_by(name=filter_source).first_or_404()
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                datas = (Annotations.query
-                    .filter_by(source=filter_source)
-                    .filter(db.func.date(Annotations.start_timestamp) >= filter_start_date)
-                    .filter(db.func.date(Annotations.start_timestamp) <= filter_stop_date)
-                )
+                datas = Annotations.query.filter(
+                    Annotations.data_source == data_source,
+                    Annotations.data_source_timestamp >= filter_start_date,
+                    Annotations.data_source_timestamp <= filter_stop_date
+                ).all()
             else:
-                datas = Annotations.query.filter_by(source=filter_source)
+                datas = Annotations.query.filter(
+                    Annotations.data_source == data_source
+                ).all()
         else:
             if filter_start and filter_stop:
                 filter_start_date = iso8601.parse_date(request.args.get('start'))
                 filter_stop_date = iso8601.parse_date(request.args.get('stop'))
-                datas = (Annotations.query
-                    .filter(db.func.date(Annotations.timestamp) >= filter_start_date)
-                    .filter(db.func.date(Annotations.timestamp) <= filter_stop_date)
-                )
+                datas = Annotations.query.filter(
+                    Annotations.timestamp >= filter_start_date,
+                    Annotations.timestamp <= filter_stop_date
+                ).all()
             else:
                 datas = Annotations.query.all()
         result = annotations_schema.dump(datas)

@@ -1,22 +1,13 @@
 from database import db
-import sys
 
 
 class Annotations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime)
     annotation = db.Column(db.String(200), nullable=False)
-    source = db.Column(db.String(100), nullable=False)
-    source_type = db.Column(db.String(100), nullable=False)
-    value = db.Column(db.Text, nullable=False)
-    start_id = db.Column(db.String(100), nullable=False)
-    start_timestamp = db.Column(db.String(100), nullable=False)
-    start_line = db.Column(db.Integer, nullable=False)
-    start_char = db.Column(db.Integer, nullable=False)
-    end_id = db.Column(db.String(100), nullable=False)
-    end_timestamp = db.Column(db.String(100), nullable=False)
-    end_line = db.Column(db.Integer, nullable=False)
-    end_char = db.Column(db.Integer, nullable=False)
+    data_source_id = db.Column(db.Integer, db.ForeignKey('data_source.id'))
+    data_source = db.relationship('DataSource', backref='annotations', lazy=True)
+    data_source_timestamp = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<Annotation %r>' % self.id

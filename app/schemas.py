@@ -9,47 +9,6 @@ import json
 def utcnow():
     return datetime.now(tz=pytz.utc).isoformat()
 
-class AnnotationsSchema(Schema):
-    id = fields.Int(dump_only=True)
-    timestamp = fields.Str()  # auto assign time, make a DateTime(), dump_only=True
-    annotation = fields.Str()
-    source = fields.Str()
-    source_type = fields.Str()
-    value = fields.Str()
-    start_id = fields.Str()
-    start_timestamp = fields.Str()
-    start_line = fields.Integer()
-    start_char = fields.Integer()
-    end_id = fields.Str()
-    end_timestamp = fields.Str()
-    end_line = fields.Integer()
-    end_char = fields.Integer()
-
-    @pre_load
-    def process_timestamps(self, data):
-        data['timestamp'] = utcnow()
-        data['start_timestamp'] = str(data['start_timestamp'])
-        data['end_timestamp'] = str(data['end_timestamp'])
-
-    @pre_load
-    def process_start_id(self, data):
-        data['start_id'] = str(data['start_id'])
-
-    @pre_load
-    def process_end_id(self, data):
-        data['end_id'] = str(data['end_id'])
-
-    @pre_load
-    def process_source_type(self, data):
-        if 'source_type' in data:
-            data['source_type'] = data['source_type']
-        else:
-            data['source_type'] = ''
-
-    @post_load
-    def make_annotation(self, data):
-        return Annotations(**data)
-
 
 class DataSourceSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -80,6 +39,30 @@ class DataSourceSchema(Schema):
     @post_load
     def make_datasource(self, data):
         return DataSource(**data)
+
+
+class AnnotationsSchema(Schema):
+    id = fields.Int(dump_only=True)
+    timestamp = fields.DateTime()
+    annotation = fields.Str()
+    data_source = fields.Nested(DataSourceSchema, only=('id',), required=False,
+                                default=None, allow_none=True)
+    data_source_timestamp = fields.DateTime()
+
+    @pre_load
+    def process_timestamps(self, data):
+        data['timestamp'] = utcnow()
+
+        data_source_id = data.get("data_source")
+        if data_source_id:
+            ds = DataSource.query.filter(DataSource.id==data_source_id).all()
+            data["data_source"] = datasource_schema.dump(ds).data
+        else:
+            data["data_source"] = None
+
+    @post_load
+    def make_annotation(self, data):
+        return Annotations(**data)
 
 
 class DataRangeSchema(Schema):
