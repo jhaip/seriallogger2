@@ -266,10 +266,17 @@ function unpackSourceFromHexAsync(dat) {
     }
 }
 
-var path = './circuitplayground-Loudness-necklace-2.uf2';
+var path = process.argv[2];
 unpackSourceFromHexFileAsync(new File(path)).then(function(r) {
     // console.log(r);  // everything
     var source = JSON.parse(r.source);
     console.log(Object.keys(source));
     console.log(source["main.ts"]);
+    fs.writeFile(path.replace(".uf2", ".json"), JSON.stringify(source), function(err) {
+        if(err) {
+            console.log(err);
+            process.exit(1);
+        }
+        process.exit()
+    });
 });
