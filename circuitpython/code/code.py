@@ -16,8 +16,8 @@ analogin = AnalogIn(board.LIGHT)
 while True:
     #light value remaped to pixel position
     peak = map_range(analogin.value, 2000, 62000, 0, 9)
-    print(analogin.value)
-    print(int(peak))
+    # print(analogin.value)
+    # print(int(peak))
 
     for i in range(0, 10, 1):
         pixels[i] = (255, 0, 0)
