@@ -41,4 +41,4 @@ while True:
     x, y, z = lis3dh.acceleration
     print('x = {}G, y = {}G, z = {}G'.format(x / 9.806, y / 9.806, z / 9.806))
     # Small delay to keep things responsive but give time for interrupt processing.
-    time.sleep(0.1)
+    time.sleep(1)
