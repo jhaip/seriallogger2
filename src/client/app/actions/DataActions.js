@@ -65,7 +65,7 @@ function applyTranformFunction(source, json) {
 
   // clean up dates
   clean_data = clean_data.map(d => {
-    d.timestamp = moment.utc(d.timestamp).toDate()
+    d.timestamp = Date.parse(d.timestamp); // moment.utc(d.timestamp).toDate()
     d.source = source;
     d.id = d.id || guid();
     return d;
