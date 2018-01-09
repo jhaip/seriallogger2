@@ -24,6 +24,7 @@ class DataOverviewPage extends React.Component {
     this.props.saveView("DATA OVERVIEW", {});
   }
   componentWillReceiveProps(nextProps) {
+    // TODO: don't resave view if the view was refreshed because of long polling
     if (
       this.props.views &&
       this.props.views.length > 0 &&
