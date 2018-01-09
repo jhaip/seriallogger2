@@ -265,6 +265,8 @@ def make_http_request_data_source(name, url, headers={}, description=""):
 
 def clear_cache(data_source):
     # TODO: check for circular dependencies
+    if data_source.transform_function_language == "INTERNAL":
+        return
     for d in Data.query.filter(Data.data_source == data_source):
         db.session.delete(d)
     db.session.commit()
